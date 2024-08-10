@@ -4,6 +4,7 @@ import { entitySelect } from '../../const/entity.const';
 export const recipeSelect = {
   ...entitySelect,
   name: true,
+  imagePath: true,
   preppingTime: true,
   cookingTime: true,
   steps: {
@@ -11,6 +12,7 @@ export const recipeSelect = {
       ...entitySelect,
       description: true,
     },
+    orderBy: { order: 'asc' },
   },
   ingredients: {
     select: {
@@ -20,6 +22,7 @@ export const recipeSelect = {
         select: {
           ...entitySelect,
           name: true,
+          imagePath: true,
           energy: true,
         },
       },

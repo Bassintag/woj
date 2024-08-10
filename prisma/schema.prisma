@@ -10,10 +10,11 @@ datasource db {
 }
 
 model Recipe {
-  id           String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id           String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name         String
   preppingTime Int?
   cookingTime  Int?
+  imagePath    String?
 
   ingredients RecipeIngredient[]
   steps       Step[]
@@ -23,14 +24,16 @@ model Step {
   id          String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   description String
   recipeId    String @db.Uuid
+  order       Int    @db.SmallInt
 
   recipe Recipe @relation(fields: [recipeId], references: [id])
 }
 
 model Ingredient {
-  id     String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name   String
-  energy Int?
+  id        String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  energy    Int?
+  imagePath String?
 
   recipeIngredients RecipeIngredient[]
 }

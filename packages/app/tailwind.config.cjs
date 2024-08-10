@@ -1,4 +1,5 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
+const colors = require("tailwindcss/colors");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -12,7 +13,9 @@ module.exports = {
     extend: {
       fontFamily: {
         display: ['"Lobster"', ...defaultTheme.fontFamily.sans],
-        sans: ['"Poetsen"', ...defaultTheme.fontFamily.sans],
+      },
+      colors: {
+        accent: colors.orange,
       },
     },
   },

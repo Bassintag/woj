@@ -7,9 +7,13 @@
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "minio": "^8.0.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@types/uuid": "^10.0.0",
+    "@types/node": "^22.2.0",
     "@types/dotenv": "^8.2.0",
     "ts-node": "^10.9.2"
   }

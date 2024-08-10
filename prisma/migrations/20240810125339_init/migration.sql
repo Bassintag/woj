@@ -16,6 +16,7 @@ CREATE TABLE "Step" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "description" TEXT NOT NULL,
     "recipeId" UUID NOT NULL,
+    "order" SMALLINT NOT NULL,
 
     CONSTRAINT "Step_pkey" PRIMARY KEY ("id")
 );
