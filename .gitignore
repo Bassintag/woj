@@ -1,4 +1,8 @@
-node_modules/
+.docker/
+
+**/node_modules/
 
 .idea/
 *.iml
+
+.env

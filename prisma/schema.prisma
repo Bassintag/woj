@@ -1,0 +1,56 @@
+generator js {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [uuidOssp(map: "uuid-ossp")]
+}
+
+model Recipe {
+  id          String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String
+  prepingTime Int?
+  cookingTime Int?
+
+  ingredients RecipeIngredient[]
+  steps       Step[]
+}
+
+model Step {
+  id          String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  description String
+  recipeId    String @db.Uuid
+
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+}
+
+model Ingredient {
+  id     String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name   String
+  energy Int?
+
+  recipeIngredients RecipeIngredient[]
+}
+
+model RecipeIngredient {
+  id           String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  quantity     Float
+  unitId       String @db.Uuid
+  recipeId     String @db.Uuid
+  ingredientId String @db.Uuid
+
+  unit       Unit       @relation(fields: [unitId], references: [id])
+  recipe     Recipe     @relation(fields: [recipeId], references: [id])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+}
+
+model Unit {
+  id     String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name   String
+  symbol String
+
+  recipeIngredients RecipeIngredient[]
+}
