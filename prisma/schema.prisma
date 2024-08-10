@@ -10,10 +10,10 @@ datasource db {
 }
 
 model Recipe {
-  id          String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name        String
-  prepingTime Int?
-  cookingTime Int?
+  id           String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name         String
+  preppingTime Int?
+  cookingTime  Int?
 
   ingredients RecipeIngredient[]
   steps       Step[]

@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE "Recipe" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "name" TEXT NOT NULL,
-    "prepingTime" INTEGER,
+    "preppingTime" INTEGER,
     "cookingTime" INTEGER,
 
     CONSTRAINT "Recipe_pkey" PRIMARY KEY ("id")

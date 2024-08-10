@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Lobster';
+    src: local('Lobster'), url("./assets/Lobster-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: 'Poetsen';
+    src: local('PoetsenOne'), url("./assets/PoetsenOne-Regular.ttf") format("truetype");
+}
