@@ -1,0 +1,15 @@
+# Docker compose used to bring up dev environment
+
+services:
+
+  postgres:
+    container_name: woj-postgres
+    image: postgres:latest
+    volumes:
+      - ./.docker/data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: woj

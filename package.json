@@ -1,0 +1,19 @@
+{
+  "name": "woj",
+  "private": true,
+  "engines": {
+    "node": ">=20.0.0",
+    "yarn": ">=1.22.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "husky": "^9.1.4",
+    "prettier": "^3.3.3",
+    "lint-staged": "^15.2.8"
+  }
+}
