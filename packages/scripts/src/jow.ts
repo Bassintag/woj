@@ -76,7 +76,7 @@ const upsertRecipe = async (data: JowRecipe) => {
   const recipe = await prisma.recipe.create({
     data: {
       name: data.title,
-      prepingTime: data.preparationTime,
+      preppingTime: data.preparationTime,
       cookingTime: data.cookingTime,
     },
   });
