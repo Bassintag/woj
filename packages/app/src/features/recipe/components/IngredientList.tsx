@@ -1,6 +1,7 @@
-import { Ingredient, RecipeIngredient } from "@/features/recipe/domain/Recipe";
-import { getImageUrl } from "@/utils/getImageUrl";
+import { RecipeIngredient } from "@/features/recipe/domain/Recipe";
 import { Image } from "@/components/Image";
+import { formatWithUnit } from "@/features/unit/utils/formatWithUnit";
+import { useRecipePageState } from "@/features/recipe/hooks/useRecipePageState";
 
 export interface IngredientListProps {
   ingredients: RecipeIngredient[];
@@ -21,6 +22,7 @@ export interface IngredientListRowProps {
 }
 
 export const IngredientListRow = ({ ingredient }: IngredientListRowProps) => {
+  const quantity = useRecipePageState((s) => s.quantity);
   return (
     <li className="flex flex-col gap-1.5 items-center shrink-0 w-24 text-center">
       <Image
@@ -31,6 +33,12 @@ export const IngredientListRow = ({ ingredient }: IngredientListRowProps) => {
       <h3 className="text-sm font-medium leading-4">
         {ingredient.ingredient.name}
       </h3>
+      <p className="text-sm text-stone-600">
+        {formatWithUnit(
+          ingredient.ingredient.unit,
+          ingredient.quantity * quantity,
+        )}
+      </p>
     </li>
   );
 };

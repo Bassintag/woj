@@ -47,7 +47,10 @@ export interface JowNutritionalFact extends JowEntity {
 
 export interface JowAbbreviation extends JowEntity {
   label: string;
+  digits: number;
   divisor: number;
+  minAmount?: number;
+  maxAmount?: number;
 }
 
 export interface JowDirection extends JowEntity {

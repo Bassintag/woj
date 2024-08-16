@@ -9,7 +9,7 @@ export const Tag = ({
   return (
     <div
       className={classNames(
-        "inline-flex flex-row gap-1 items-center bg-accent-100 text-accent-500 px-1.5 h-6 rounded-full text-xs font-semibold",
+        "inline-flex flex-row gap-1.5 items-center bg-accent-100 text-accent-500 px-2 h-6 rounded-full text-xs font-semibold",
         className,
       )}
       {...rest}

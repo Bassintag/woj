@@ -1,4 +1,4 @@
-.docker/
+.docker/data
 
 **/node_modules/
 **/dist/
@@ -7,3 +7,5 @@
 *.iml
 
 .env
+
+*.log

@@ -1,10 +1,11 @@
 import { useRecipes } from "@/features/recipe/hooks/useRecipes";
 import { useInfiniteItems } from "@/hooks/useInfiniteItems";
 import { useSearchParams } from "react-router-dom";
-
 import { useInView } from "react-intersection-observer";
 import { RecipeList } from "@/features/recipe/components/RecipeList";
 import { Searchbar } from "@/components/Searchbar";
+import { Sidebar } from "@/components/Sidebar";
+import { PageTitle } from "@/features/recipe/components/PageTitle";
 
 export const RecipesPage = () => {
   const [searchParams] = useSearchParams();
@@ -22,7 +23,8 @@ export const RecipesPage = () => {
 
   return (
     <div className="container py-6 flex flex-col gap-6">
-      <Searchbar className="mx-auto w-1/2" placeholder="Rechercher" />
+      <PageTitle>Recettes</PageTitle>
+      <Searchbar placeholder="Rechercher" />
       {items && <RecipeList recipes={items} />}
       {hasNextPage && (
         <button ref={ref} disabled={isFetchingNextPage}>

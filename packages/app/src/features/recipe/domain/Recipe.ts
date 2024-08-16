@@ -20,17 +20,25 @@ export interface Step extends Entity {
 
 export interface RecipeIngredient extends Entity {
   quantity: number;
-  unit: Unit;
   ingredient: Ingredient;
 }
 
 export interface Unit extends Entity {
   name: string;
-  symbol: string;
+  symbols: Symbol[];
+}
+
+export interface Symbol extends Entity {
+  name: string;
+  factor: number;
+  digits: number;
+  min?: number;
+  max?: number;
 }
 
 export interface Ingredient extends Entity {
   name: string;
   imagePath?: string;
   energy?: number;
+  unit: Unit;
 }

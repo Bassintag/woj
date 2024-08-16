@@ -8,15 +8,15 @@ import {
   JowRecipe,
   JowUnit,
 } from "./domain/jow";
-import { createMinioClient } from "./utils/minio";
 import * as path from "node:path";
 import { v4 } from "uuid";
+import { ImagesClient } from "./utils/images";
 
 const upsertImage = async (imageUrl: string, folder: string) => {
   const extension = path.extname(imageUrl);
   const imageStream = await jow.fetchImage(imageUrl);
   const objectPath = `${folder}/${v4()}${extension}`;
-  await minio.putObject("woj", objectPath, imageStream);
+  await images.save(objectPath, imageStream);
   return objectPath;
 };
 
@@ -40,11 +40,9 @@ const upsertRecipe = async (data: JowRecipe) => {
   for (const item of recipeIngredients) {
     jowIngredient = item.ingredient;
     jowUnit = item.unit;
-    const [ingredient, unit] = await Promise.all([
-      upsertIngredient(jowIngredient),
-      upsertUnit(jowUnit),
-    ]);
-    await upsertRecipeIngredient(item, ingredient.id, recipe.id, unit.id);
+    const unit = await upsertUnit(jowUnit);
+    const ingredient = await upsertIngredient(jowIngredient, unit.id);
+    await upsertRecipeIngredient(item, ingredient.id, recipe.id);
   }
   await Promise.all(
     data.directions.map((direction, i) => upsertStep(direction, recipe.id, i)),
@@ -52,7 +50,7 @@ const upsertRecipe = async (data: JowRecipe) => {
   return recipe;
 };
 
-const upsertIngredient = async (data: JowIngredient) => {
+const upsertIngredient = async (data: JowIngredient, unitId: string) => {
   return prisma.$transaction(async (em) => {
     const existing = await em.ingredient.findFirst({
       where: { name: data.name },
@@ -66,6 +64,7 @@ const upsertIngredient = async (data: JowIngredient) => {
           (nutritionalFact) => nutritionalFact.code === "ENERC",
         )?.amount,
         imagePath,
+        unitId,
       },
     });
   });
@@ -75,7 +74,6 @@ const upsertRecipeIngredient = async (
   data: JowConstituent,
   ingredientId: string,
   recipeId: string,
-  unitId: string,
 ) => {
   const constituentUnitId = data.unit._id;
   let quantity: number;
@@ -93,7 +91,6 @@ const upsertRecipeIngredient = async (
   return prisma.recipeIngredient.create({
     data: {
       ingredientId,
-      unitId,
       recipeId,
       quantity,
     },
@@ -104,16 +101,20 @@ const upsertUnit = async (data: JowUnit) => {
   return prisma.$transaction(async (em) => {
     const existing = await em.unit.findFirst({ where: { name: data.name } });
     if (existing) return existing;
-    const abbreviation = data.abbreviations.find(
-      (abbreviation) => abbreviation.divisor === 1,
-    );
-    if (abbreviation == null) {
-      throw new Error("abbreviation unit not found");
-    }
     return em.unit.create({
       data: {
         name: data.name,
-        symbol: abbreviation?.label ?? "",
+        symbols: {
+          createMany: {
+            data: data.abbreviations.map((abbreviation) => ({
+              name: abbreviation.label,
+              factor: abbreviation.divisor,
+              digits: abbreviation.digits,
+              max: abbreviation.maxAmount,
+              min: abbreviation.minAmount,
+            })),
+          },
+        },
       },
     });
   });
@@ -135,7 +136,7 @@ config({
 
 const prisma = new PrismaClient();
 const jow = new JowClient();
-const minio = createMinioClient();
+const images = new ImagesClient(process.env.IMAGES_DIRECTORY as string);
 
 const main = async () => {
   const ingredients = await jow.fetchIngredients();

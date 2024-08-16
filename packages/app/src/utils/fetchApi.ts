@@ -1,18 +1,28 @@
 import qs from "qs";
 
+const apiUrl = import.meta.env.PUBLIC_API_URL;
+const pathPrefix = import.meta.env.PUBLIC_API_PATH_PREFIX || "";
+
 export interface FetchApiInit {
   query?: unknown;
+  method?: string;
+  json?: unknown;
 }
 
 export const fetchApi = async <T>(
   path: string,
-  { query }: FetchApiInit = {},
+  { query, method, json }: FetchApiInit = {},
 ) => {
-  const url = new URL(path, import.meta.env.PUBLIC_API_URL);
+  const url = new URL(`${pathPrefix}${path}`, apiUrl);
   if (query) {
     url.search = qs.stringify(query);
   }
-  const response = await fetch(url);
+  const init: RequestInit = { method };
+  if (json != null) {
+    init.body = JSON.stringify(json);
+    init.headers = { "Content-Type": "application/json" };
+  }
+  const response = await fetch(url, init);
   const text = await response.text();
   if (!response.ok) {
     throw new Error(text);

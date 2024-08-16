@@ -13,9 +13,7 @@ export const useRecipes = (query?: Omit<GetRecipePageQuery, "page">) => {
     queryFn: ({ pageParam }) => getRecipes({ ...query, page: pageParam }),
     initialPageParam: 0,
     getNextPageParam: (data) => {
-      if (data.page >= data.pages - 1) {
-        return null;
-      }
+      if (data.page >= data.pages - 1) return null;
       return data.page + 1;
     },
   });

@@ -14,7 +14,7 @@ export const Image = ({ className, path, alt }: ImageProps) => {
   ) : (
     <div
       className={classNames(
-        "flex justify-center items-center text-slate-400",
+        "flex justify-center items-center text-stone-400",
         className,
       )}
     >

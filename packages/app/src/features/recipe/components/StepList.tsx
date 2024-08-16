@@ -22,7 +22,7 @@ export interface StepListRowProps {
 export const StepListRow = ({ step, index }: StepListRowProps) => {
   return (
     <li>
-      <h3 className="text-sm text-slate-400 font-semibold">
+      <h3 className="text-sm text-stone-400 font-semibold">
         Etape {index + 1}
       </h3>
       <p className="whitespace-pre-wrap">{step.description}</p>

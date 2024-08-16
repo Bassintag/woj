@@ -8,6 +8,6 @@
 }
 
 @font-face {
-    font-family: 'Poetsen';
-    src: local('PoetsenOne'), url("./assets/PoetsenOne-Regular.ttf") format("truetype");
+    font-family: 'Poppins';
+    src: local('Poppins'), url("./assets/Poppins-Variable.otf") format("opentype");
 }

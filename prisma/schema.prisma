@@ -16,8 +16,9 @@ model Recipe {
   cookingTime  Int?
   imagePath    String?
 
-  ingredients RecipeIngredient[]
-  steps       Step[]
+  ingredients   RecipeIngredient[]
+  steps         Step[]
+  shoppingLists ShoppingList[]
 }
 
 model Step {
@@ -34,26 +35,59 @@ model Ingredient {
   name      String
   energy    Int?
   imagePath String?
+  unitId    String  @db.Uuid
 
+  unit              Unit               @relation(fields: [unitId], references: [id])
   recipeIngredients RecipeIngredient[]
+  shoppingItems     ShoppingItem[]
 }
 
 model RecipeIngredient {
   id           String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   quantity     Float
-  unitId       String @db.Uuid
   recipeId     String @db.Uuid
   ingredientId String @db.Uuid
 
-  unit       Unit       @relation(fields: [unitId], references: [id])
   recipe     Recipe     @relation(fields: [recipeId], references: [id])
   ingredient Ingredient @relation(fields: [ingredientId], references: [id])
 }
 
 model Unit {
+  id   String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name String
+
+  ingredients Ingredient[]
+  symbols     Symbol[]
+}
+
+model Symbol {
   id     String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name   String
-  symbol String
+  unitId String @db.Uuid
+  digits Int    @default(0)
+  factor Float
+  min    Float?
+  max    Float?
 
-  recipeIngredients RecipeIngredient[]
+  unit Unit @relation(fields: [unitId], references: [id])
+}
+
+model ShoppingList {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdAt DateTime @default(now())
+
+  recipes Recipe[]       @relation()
+  items   ShoppingItem[]
+}
+
+model ShoppingItem {
+  id             String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name           String
+  purchased      Boolean @default(false)
+  order          Int     @db.SmallInt
+  shoppingListId String  @db.Uuid
+  ingredientId   String? @db.Uuid
+
+  ingredient   Ingredient?  @relation(fields: [ingredientId], references: [id])
+  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id])
 }

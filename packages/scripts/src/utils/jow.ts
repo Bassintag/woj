@@ -16,7 +16,7 @@ export class JowClient {
     { method, json }: JowFetchInit = {},
   ): Promise<T> {
     const url = new URL(path, "https://api.jow.fr/");
-    const init: RequestInit = { method };
+    const init: RequestInit = { method, keepalive: true };
     if (json) {
       init.body = JSON.stringify(json);
       init.headers = { "Content-Type": "application/json" };

@@ -8,10 +8,14 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: defaultTheme.spacing["3"],
     },
     extend: {
+      aria: {
+        "current-page": 'current="page"',
+      },
       fontFamily: {
+        sans: ['"Poppins"', ...defaultTheme.fontFamily.sans],
         display: ['"Lobster"', ...defaultTheme.fontFamily.sans],
       },
       colors: {
@@ -19,4 +23,5 @@ module.exports = {
       },
     },
   },
+  plugins: [require("tailwindcss-animate")],
 };

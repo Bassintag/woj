@@ -1,6 +1,29 @@
 import { Prisma } from '@prisma/client';
 import { entitySelect } from '../../const/entity.const';
 
+export const ingredientSelect = {
+  ...entitySelect,
+  name: true,
+  imagePath: true,
+  energy: true,
+  unit: {
+    select: {
+      ...entitySelect,
+      name: true,
+      symbols: {
+        select: {
+          ...entitySelect,
+          name: true,
+          factor: true,
+          digits: true,
+          min: true,
+          max: true,
+        },
+      },
+    },
+  },
+} satisfies Prisma.IngredientSelect;
+
 export const recipeSelect = {
   ...entitySelect,
   name: true,
@@ -19,20 +42,9 @@ export const recipeSelect = {
       ...entitySelect,
       quantity: true,
       ingredient: {
-        select: {
-          ...entitySelect,
-          name: true,
-          imagePath: true,
-          energy: true,
-        },
-      },
-      unit: {
-        select: {
-          ...entitySelect,
-          name: true,
-          symbol: true,
-        },
+        select: ingredientSelect,
       },
     },
+    orderBy: { ingredient: { name: 'asc' } },
   },
 } satisfies Prisma.RecipeSelect;
