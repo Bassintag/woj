@@ -1,7 +1,7 @@
 import { useCartState } from "@/features/cart/hook/useCartState";
 import { CartItem } from "@/features/cart/domain/Cart";
 import { Image } from "@/components/Image";
-import { MinusIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import { Button } from "@/components/Button";
 
 export const CartRecipeList = () => {
@@ -35,7 +35,7 @@ export const CartRecipeListRow = ({ item }: CartRecipeListRowProps) => {
       </div>
       <Button
         className="shrink-0"
-        variant="icon"
+        colorScheme="white"
         onClick={() => remove(item.recipe)}
       >
         <TrashIcon className="size-6" />

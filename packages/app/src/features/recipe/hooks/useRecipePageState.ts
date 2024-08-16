@@ -14,7 +14,7 @@ export const useRecipePageState = create(
     }),
     {
       version: 1,
-      name: "woj:recipe-page-state",
+      name: "woj:recipe-page",
       storage: createJSONStorage(() => localStorage),
     },
   ),

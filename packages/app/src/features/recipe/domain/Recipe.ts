@@ -1,5 +1,6 @@
 import { Entity } from "@/domain/Entity";
 import { PageableQuery } from "@/domain/Page";
+import { Tag } from "@/features/tag/domain/Tag";
 
 export interface GetRecipePageQuery extends PageableQuery {
   search?: string;
@@ -12,6 +13,7 @@ export interface Recipe extends Entity {
   cookingTime?: number;
   steps: Step[];
   ingredients: RecipeIngredient[];
+  tags: Tag[];
 }
 
 export interface Step extends Entity {

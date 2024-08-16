@@ -1,18 +1,19 @@
 import { Prisma } from '@prisma/client';
-import { entitySelect } from '../../const/entity.const';
+import { selectEntity } from '../../const/entity.const';
+import { selectTag } from '../tag/tag.const';
 
-export const ingredientSelect = {
-  ...entitySelect,
+export const selectIngredient = {
+  ...selectEntity,
   name: true,
   imagePath: true,
   energy: true,
   unit: {
     select: {
-      ...entitySelect,
+      ...selectEntity,
       name: true,
       symbols: {
         select: {
-          ...entitySelect,
+          ...selectEntity,
           name: true,
           factor: true,
           digits: true,
@@ -24,27 +25,31 @@ export const ingredientSelect = {
   },
 } satisfies Prisma.IngredientSelect;
 
-export const recipeSelect = {
-  ...entitySelect,
+export const selectRecipe = {
+  ...selectEntity,
   name: true,
   imagePath: true,
   preppingTime: true,
   cookingTime: true,
   steps: {
     select: {
-      ...entitySelect,
+      ...selectEntity,
       description: true,
     },
     orderBy: { order: 'asc' },
   },
   ingredients: {
     select: {
-      ...entitySelect,
+      ...selectEntity,
       quantity: true,
       ingredient: {
-        select: ingredientSelect,
+        select: selectIngredient,
       },
     },
     orderBy: { ingredient: { name: 'asc' } },
+  },
+  tags: {
+    select: selectTag,
+    orderBy: { name: 'asc' },
   },
 } satisfies Prisma.RecipeSelect;

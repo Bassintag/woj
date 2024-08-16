@@ -1,6 +1,6 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import { Sidebar } from "@/components/Sidebar";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ArrowLeftIcon } from "lucide-react";
 
 export interface PageTitleProps extends PropsWithChildren {
@@ -8,11 +8,17 @@ export interface PageTitleProps extends PropsWithChildren {
 }
 
 export const PageTitle = ({ linkTo, children }: PageTitleProps) => {
+  const [searchParams] = useSearchParams();
+
+  const to = useMemo(() => {
+    return searchParams.get("back") ?? linkTo;
+  }, [searchParams, linkTo]);
+
   return (
     <div className="flex flex-row gap-3 items-start max-sm:text-center max-sm:pr-9">
       <div className="mt-1">
-        {linkTo ? (
-          <Link to={linkTo}>
+        {to ? (
+          <Link to={to}>
             <ArrowLeftIcon className="size-6" />
           </Link>
         ) : (

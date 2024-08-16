@@ -10,7 +10,7 @@ export const ShoppingListsPage = () => {
   return (
     <div className="py-6 flex flex-col gap-6">
       <div className="container">
-        <PageTitle>Recettes</PageTitle>
+        <PageTitle>Listes de courses</PageTitle>
       </div>
       {items && <ShoppingListList shoppingLists={items} />}
     </div>

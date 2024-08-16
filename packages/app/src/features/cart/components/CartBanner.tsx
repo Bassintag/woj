@@ -6,6 +6,7 @@ import { CartRecipeList } from "@/features/cart/components/CartRecipeList";
 import { CartIngredientList } from "@/features/cart/components/CartIngredientList";
 import * as Dialog from "@radix-ui/react-dialog";
 import { SubmitCartButton } from "@/features/cart/components/SubmitCartButton";
+import { Drawer, DrawerTitle } from "@/components/Drawer";
 
 export const CartBanner = () => {
   const items = useCartState((c) => c.items);
@@ -42,32 +43,18 @@ export const CartBanner = () => {
           </div>
         </div>
       </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Overlay
-          className={
-            "fixed inset-0 backdrop-blur-sm bg-black/50 z-20 duration-300 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out"
-          }
-        />
-        <Dialog.Content className="fixed inset-0 top-32 z-20 rounded-t-2xl bg-white mt-3 data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom overflow-y-auto pt-6 pb-3">
-          <div className="container min-h-full flex flex-col gap-6">
-            <div className="flex flex-row items-center gap-1.5">
-              <Dialog.Close>
-                <ChevronLeftIcon className="size-6" />
-              </Dialog.Close>
-              <h2 className="text-2xl font-medium text-stone-800">Panier</h2>
-            </div>
-            <section className="flex flex-col gap-1.5">
-              <h3 className="text-lg text-stone-400">Recettes</h3>
-              <CartRecipeList />
-            </section>
-            <section className="flex flex-col gap-1.5">
-              <h3 className="text-lg text-stone-400">Ingrédients</h3>
-              <CartIngredientList />
-            </section>
-            <SubmitCartButton />
-          </div>
-        </Dialog.Content>
-      </Dialog.Portal>
+      <Drawer className="container flex flex-col gap-6">
+        <DrawerTitle>Panier</DrawerTitle>
+        <section className="flex flex-col gap-1.5">
+          <h3 className="text-lg text-stone-400">Recettes</h3>
+          <CartRecipeList />
+        </section>
+        <section className="flex flex-col gap-1.5">
+          <h3 className="text-lg text-stone-400">Ingrédients</h3>
+          <CartIngredientList />
+        </section>
+        <SubmitCartButton />
+      </Drawer>
     </Dialog.Root>
   );
 };

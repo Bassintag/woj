@@ -19,6 +19,13 @@ model Recipe {
   ingredients   RecipeIngredient[]
   steps         Step[]
   shoppingLists ShoppingList[]
+  tags          Tag[]              @relation()
+}
+
+model Tag {
+  id      String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name    String   @unique
+  recipes Recipe[]
 }
 
 model Step {

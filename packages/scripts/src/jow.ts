@@ -20,6 +20,13 @@ const upsertImage = async (imageUrl: string, folder: string) => {
   return objectPath;
 };
 
+const seasons: Record<string, string> = {
+  spring: "Printemps",
+  summer: "Été",
+  automn: "Automne",
+  winter: "Hiver",
+};
+
 const upsertRecipe = async (data: JowRecipe) => {
   const existing = await prisma.recipe.findFirst({
     where: { name: data.title },
@@ -29,12 +36,22 @@ const upsertRecipe = async (data: JowRecipe) => {
   let jowIngredient: JowIngredient;
   let jowUnit: JowUnit;
   const imagePath = await upsertImage(data.imageUrl, "recipes");
+  const tags = [
+    ...data.seasons.map((s) => seasons[s]).filter((s) => s != null),
+    data.familyAncestors[data.familyAncestors.length - 1].name,
+  ];
   const recipe = await prisma.recipe.create({
     data: {
       name: data.title,
       preppingTime: data.preparationTime,
       cookingTime: data.cookingTime,
       imagePath,
+      tags: {
+        connectOrCreate: tags.map((tag) => ({
+          where: { name: tag },
+          create: { name: tag },
+        })),
+      },
     },
   });
   for (const item of recipeIngredients) {
@@ -107,7 +124,7 @@ const upsertUnit = async (data: JowUnit) => {
         symbols: {
           createMany: {
             data: data.abbreviations.map((abbreviation) => ({
-              name: abbreviation.label,
+              name: abbreviation.label ?? "",
               factor: abbreviation.divisor,
               digits: abbreviation.digits,
               max: abbreviation.maxAmount,

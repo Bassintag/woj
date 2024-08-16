@@ -5,29 +5,35 @@ import { getRecipeTime } from "@/features/recipe/utils/getRecipeTime";
 import { Image } from "@/components/Image";
 
 export interface RecipeListProps {
+  backLink?: string;
   recipes: Recipe[];
 }
 
-export const RecipeList = ({ recipes }: RecipeListProps) => {
+export const RecipeList = ({ backLink, recipes }: RecipeListProps) => {
   return (
     <ul className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 items-stretch justify-items-center">
       {recipes.map((recipe) => (
-        <RecipeListRow key={recipe.id} recipe={recipe} />
+        <RecipeListRow key={recipe.id} backLink={backLink} recipe={recipe} />
       ))}
     </ul>
   );
 };
 
 export interface RecipeListRowProps {
+  backLink?: string;
+
   recipe: Recipe;
 }
 
-export const RecipeListRow = ({ recipe }: RecipeListRowProps) => {
+export const RecipeListRow = ({ backLink, recipe }: RecipeListRowProps) => {
   const time = getRecipeTime(recipe);
 
   return (
     <li className="relative">
-      <Link to={`/${recipe.id}`} className="group flex flex-col h-full w-40">
+      <Link
+        to={`/recipes/${recipe.id}${backLink ? `?back=${backLink}` : ""}`}
+        className="group flex flex-col h-full w-40"
+      >
         <Image
           className="h-40 bg-stone-50 p-1.5 rounded-3xl z-10 self-center object-contain group-hover:bg-stone-100 transition"
           alt={recipe.name}

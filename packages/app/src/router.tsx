@@ -5,12 +5,17 @@ export const router = createBrowserRouter([
     lazy: () => import("./features/cart/pages/CartPage"),
     children: [
       {
-        index: true,
-        lazy: () => import("./features/recipe/pages/RecipesPage"),
-      },
-      {
-        path: ":id",
-        lazy: () => import("./features/recipe/pages/RecipePage"),
+        path: "recipes",
+        children: [
+          {
+            index: true,
+            lazy: () => import("./features/recipe/pages/RecipesPage"),
+          },
+          {
+            path: ":id",
+            lazy: () => import("./features/recipe/pages/RecipePage"),
+          },
+        ],
       },
       {
         path: "shopping-lists",
@@ -27,10 +32,15 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "menu",
+        index: true,
+        lazy: () => import("./features/menu/pages/MenuPage"),
+      },
     ],
   },
   {
     path: "*",
-    element: <Navigate to="/" replace />,
+    element: <Navigate to="/recipes" replace />,
   },
 ]);

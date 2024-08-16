@@ -1,7 +1,6 @@
 import { ShoppingItem } from "@/features/shoppingList/domain/ShoppingItem";
 import { CheckIcon, GripVerticalIcon, XIcon } from "lucide-react";
 import { Image } from "@/components/Image";
-import * as Checkbox from "@radix-ui/react-checkbox";
 import { useUpdateShoppingItem } from "@/features/shoppingList/hooks/useUpdateShoppingItem";
 import { useIdParam } from "@/hooks/useIdParam";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -25,6 +24,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useSetShoppingItemIndex } from "@/features/shoppingList/hooks/useSetShoppingItemIndex";
+import { Checkbox } from "@/components/Checkbox";
 
 export interface ShoppingItemListProps {
   items: ShoppingItem[];
@@ -125,7 +125,7 @@ export const ShoppingListRow = ({ item }: ShoppingItemListRowProps) => {
             },
           )}
         />
-        <Checkbox.Root
+        <Checkbox
           checked={item.purchased}
           onCheckedChange={(checked) => {
             updateShoppingItem({
@@ -135,11 +135,7 @@ export const ShoppingListRow = ({ item }: ShoppingItemListRowProps) => {
             });
           }}
           className="shrink-0 size-5 border-2 rounded flex items-center justify-center aria-checked:bg-stone-500 aria-checked:border-stone-500 aria-checked:text-white transition"
-        >
-          <Checkbox.Indicator>
-            <CheckIcon className="size-4 animate-in fade-in" />
-          </Checkbox.Indicator>
-        </Checkbox.Root>
+        />
         {item.ingredient?.imagePath && (
           <Image className="size-8 rounded" path={item.ingredient.imagePath} />
         )}

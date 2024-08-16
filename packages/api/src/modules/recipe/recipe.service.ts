@@ -1,6 +1,6 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { recipeSelect } from './recipe.const';
+import { selectRecipe } from './recipe.const';
 import { GetRecipePageQueryDto } from './recipe.dto';
 import { Prisma } from '@prisma/client';
 import { pageableToPrisma } from '../../utils/page.utils';
@@ -27,7 +27,7 @@ export class RecipeService {
     return this.prisma.$transaction([
       this.prisma.recipe.count({ where }),
       this.prisma.recipe.findMany({
-        select: recipeSelect,
+        select: selectRecipe,
         where,
         ...pageableToPrisma(query),
         orderBy: { name: 'asc' },
@@ -37,7 +37,7 @@ export class RecipeService {
 
   get(id: string) {
     return this.prisma.recipe.findUniqueOrThrow({
-      select: recipeSelect,
+      select: selectRecipe,
       where: { id },
     });
   }

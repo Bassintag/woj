@@ -9,6 +9,13 @@ export interface JowRecipe extends JowEntity {
   preparationTime: number;
   constituents: JowConstituent[];
   directions: JowDirection[];
+  seasons: string[];
+  family: JowFamily;
+  familyAncestors: JowFamily[];
+}
+
+export interface JowFamily extends JowEntity {
+  name: string;
 }
 
 export interface JowConstituent extends JowEntity {

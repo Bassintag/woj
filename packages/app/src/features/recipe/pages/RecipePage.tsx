@@ -1,20 +1,15 @@
-import { Link } from "react-router-dom";
 import { useRecipe } from "@/features/recipe/hooks/useRecipe";
 import { IngredientList } from "@/features/recipe/components/IngredientList";
 import { StepList } from "@/features/recipe/components/StepList";
 import { Image } from "@/components/Image";
-import { Button } from "@/components/Button";
-import {
-  ArrowLeftIcon,
-  ForkKnifeIcon,
-  MinusIcon,
-  PlusIcon,
-} from "lucide-react";
 import { useRecipePageState } from "@/features/recipe/hooks/useRecipePageState";
 import { RecipeFacts } from "@/features/recipe/components/RecipeFacts";
 import { RecipeCartButton } from "@/features/recipe/components/RecipeCartButton";
 import { useIdParam } from "@/hooks/useIdParam";
 import { PageTitle } from "@/features/recipe/components/PageTitle";
+import { QuantitySelector } from "@/components/QuantitySelector";
+import { TagLabel } from "@/features/tag/components/TagLabel";
+import { TagIcon } from "lucide-react";
 
 export const RecipePage = () => {
   const id = useIdParam();
@@ -24,7 +19,7 @@ export const RecipePage = () => {
   return (
     <>
       <div className="container py-6">
-        <PageTitle linkTo="/">{recipe?.name}</PageTitle>
+        <PageTitle linkTo="/recipes">{recipe?.name}</PageTitle>
       </div>
       {recipe && (
         <div className="flex flex-col gap-6">
@@ -33,34 +28,20 @@ export const RecipePage = () => {
               className="size-64 lg:size-96 rounded-xl"
               path={recipe.imagePath}
             />
-            <div className="flex flex-row items-center gap-6">
-              <Button
-                disabled={quantity <= 1}
-                onClick={() => setQuantity(quantity - 1)}
-                className="shadow-lg"
-                variant="icon"
-                size="lg"
-              >
-                <MinusIcon />
-              </Button>
-              <div className="flex flex-row gap-3 items-center">
-                <ForkKnifeIcon className="size-6" />
-                <span className="font-semibold">{quantity}</span>
-              </div>
-              <Button
-                onClick={() => setQuantity(quantity + 1)}
-                className="shadow-lg"
-                variant="icon"
-                size="lg"
-              >
-                <PlusIcon />
-              </Button>
-            </div>
+            <QuantitySelector value={quantity} onChange={setQuantity} />
             <RecipeCartButton recipe={recipe} />
           </div>
-          <div className="bg-stone-100 py-6">
+          <div className="bg-stone-100 py-6 flex flex-col gap-6">
             <RecipeFacts recipe={recipe} />
           </div>
+          {recipe && recipe.tags.length > 0 && (
+            <div className="flex flex-row justify-start items-center ml-8 gap-1.5">
+              <TagIcon className="size-4" />
+              {recipe.tags.map((tag) => (
+                <TagLabel key={tag.id} tag={tag} />
+              ))}
+            </div>
+          )}
           <div className="container flex flex-col gap-6 mb-6">
             <div className="flex flex-col gap-3">
               <h2 className="text-center font-semibold text-xl">Ingredients</h2>

@@ -3,7 +3,6 @@ import { Button } from "@/components/Button";
 import { useCartState } from "@/features/cart/hook/useCartState";
 import { useMemo } from "react";
 import { useRecipePageState } from "@/features/recipe/hooks/useRecipePageState";
-import { ShoppingCartIcon } from "lucide-react";
 
 export interface RecipeCartButtonProps {
   recipe: Recipe;

@@ -1,3 +1,3 @@
-export const entitySelect = {
+export const selectEntity = {
   id: true,
 };

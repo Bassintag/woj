@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import {
-  CookieIcon,
+  CalendarDaysIcon,
   CookingPotIcon,
   LucideIcon,
   MenuIcon,
@@ -36,7 +36,8 @@ export const Sidebar = () => {
             <XIcon className="size-6 absolute top-3 right-6" />
           </Dialog.Close>
           <SidebarContext.Provider value={{ open, setOpen }}>
-            <SidebarLink to="/" icon={CookingPotIcon} label="Recettes" />
+            <SidebarLink to="/recipes" icon={CookingPotIcon} label="Recettes" />
+            <SidebarLink to="/menu" icon={CalendarDaysIcon} label="Menu" />
             <SidebarLink
               to="/shopping-lists"
               icon={ShoppingBasketIcon}
