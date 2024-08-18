@@ -1,4 +1,4 @@
-import { IsArray, IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
+import { IsArray, IsOptional, IsInt, Max, Min } from 'class-validator';
 
 export class CreateMenuDto {
   @IsInt()
@@ -8,11 +8,11 @@ export class CreateMenuDto {
 
   @IsOptional()
   @IsArray()
-  @IsUUID(undefined, { each: true })
-  tags?: string[];
+  @IsInt({ each: true })
+  tags?: number[];
 
   @IsOptional()
   @IsArray()
-  @IsUUID(undefined, { each: true })
-  exclude?: string[];
+  @IsInt({ each: true })
+  exclude?: number[];
 }

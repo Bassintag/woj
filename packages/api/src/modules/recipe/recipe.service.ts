@@ -12,15 +12,9 @@ export class RecipeService {
   getPage({ search, ...query }: GetRecipePageQueryDto) {
     const where = {
       OR: [
+        { name: search ? { contains: search } : undefined },
         {
-          name: search ? { contains: search, mode: 'insensitive' } : undefined,
-        },
-        {
-          ingredients: {
-            some: {
-              ingredient: { name: { contains: search, mode: 'insensitive' } },
-            },
-          },
+          ingredients: { some: { ingredient: { name: { contains: search } } } },
         },
       ],
     } satisfies Prisma.RecipeWhereInput;
@@ -35,7 +29,7 @@ export class RecipeService {
     ]);
   }
 
-  get(id: string) {
+  get(id: number) {
     return this.prisma.recipe.findUniqueOrThrow({
       select: selectRecipe,
       where: { id },

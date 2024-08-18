@@ -1,6 +1,8 @@
 import qs from "qs";
 
-const apiUrl = import.meta.env.PUBLIC_API_URL;
+const apiUrl =
+  import.meta.env.PUBLIC_API_URL ||
+  `${window.location.protocol}//${window.location.host}`;
 const pathPrefix = import.meta.env.PUBLIC_API_PATH_PREFIX || "";
 
 export interface FetchApiInit {

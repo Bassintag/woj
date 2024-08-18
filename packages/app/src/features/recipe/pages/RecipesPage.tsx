@@ -4,7 +4,6 @@ import { useSearchParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { RecipeList } from "@/features/recipe/components/RecipeList";
 import { Searchbar } from "@/components/Searchbar";
-import { Sidebar } from "@/components/Sidebar";
 import { PageTitle } from "@/features/recipe/components/PageTitle";
 
 export const RecipesPage = () => {

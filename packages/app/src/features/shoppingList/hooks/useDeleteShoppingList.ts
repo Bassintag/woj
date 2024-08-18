@@ -6,7 +6,7 @@ import { fetchApi } from "@/utils/fetchApi";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/queryClient";
 
-export const deleteShoppingList = (id: string) => {
+export const deleteShoppingList = (id: number) => {
   return fetchApi<ShoppingList>(`shopping-lists/${id}`, {
     method: "DELETE",
   });

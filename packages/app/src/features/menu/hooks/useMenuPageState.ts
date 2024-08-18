@@ -5,11 +5,11 @@ import { createJSONStorage, persist } from "zustand/middleware";
 export interface MenuPageState {
   menu?: Menu;
   quantity: number;
-  tags: string[];
+  tags: number[];
 
   setMenu: (menu: Menu) => void;
   setQuantity: (quantity: number) => void;
-  setTags: (tags: string[]) => void;
+  setTags: (tags: number[]) => void;
 }
 
 export const useMenuPageState = create(
@@ -24,7 +24,7 @@ export const useMenuPageState = create(
     }),
     {
       name: "woj:menu-page",
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
     },
   ),

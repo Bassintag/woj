@@ -9,8 +9,8 @@ import { ShoppingList } from "@/features/shoppingList/domain/ShoppingList";
 import { arrayMove } from "@dnd-kit/sortable";
 
 export interface SetShoppingItemIndexParam extends SetShoppingItemIndex {
-  shoppingListId: string;
-  id: string;
+  shoppingListId: number;
+  id: number;
 }
 
 export const setShoppingItemIndex = ({

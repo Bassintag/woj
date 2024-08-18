@@ -1,0 +1,11 @@
+# Docker compose used to bring up dev environment
+
+services:
+
+  woj:
+    build: .
+    container_name: woj
+    ports:
+      - 80:80
+    volumes:
+      - ./.docker/data/woj:/data

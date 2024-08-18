@@ -3,10 +3,8 @@ import {
   IsArray,
   IsBoolean,
   IsInt,
-  IsNotEmpty,
   IsOptional,
   IsString,
-  IsUUID,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -30,9 +28,9 @@ export class CreateShoppingListRecipeDto extends EntityIdentifierDto {
 }
 
 export class CreateShoppingListItemDto {
-  @IsUUID()
+  @IsInt()
   @IsOptional()
-  ingredientId?: string;
+  ingredientId?: number;
 
   @IsString()
   name: string;

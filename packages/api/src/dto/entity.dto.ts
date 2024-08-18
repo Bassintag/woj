@@ -1,6 +1,6 @@
-import { IsUUID } from 'class-validator';
+import { IsInt } from 'class-validator';
 
 export class EntityIdentifierDto {
-  @IsUUID()
-  id: string;
+  @IsInt()
+  id: number;
 }

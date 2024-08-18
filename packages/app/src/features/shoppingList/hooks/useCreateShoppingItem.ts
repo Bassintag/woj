@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/queryClient";
 
 export interface CreateShoppingItemParam extends CreateShoppingItem {
-  shoppingListId: string;
+  shoppingListId: number;
 }
 
 export const createShoppingItem = ({

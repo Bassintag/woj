@@ -6,8 +6,8 @@ import { CreateMenuDto } from './menu.dto';
 
 export interface GetRandomRecipesParam {
   quantity: number;
-  withTags?: string[];
-  excludeIds?: string[];
+  withTags?: number[];
+  excludeIds?: number[];
 }
 
 @Injectable()

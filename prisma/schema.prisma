@@ -4,13 +4,12 @@ generator js {
 }
 
 datasource db {
-  provider   = "postgresql"
-  url        = env("DATABASE_URL")
-  extensions = [uuidOssp(map: "uuid-ossp")]
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model Recipe {
-  id           String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id           Int     @id @default(autoincrement())
   name         String
   preppingTime Int?
   cookingTime  Int?
@@ -23,26 +22,26 @@ model Recipe {
 }
 
 model Tag {
-  id      String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id      Int      @id @default(autoincrement())
   name    String   @unique
   recipes Recipe[]
 }
 
 model Step {
-  id          String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id          Int    @id @default(autoincrement())
   description String
-  recipeId    String @db.Uuid
-  order       Int    @db.SmallInt
+  recipeId    Int
+  order       Int
 
   recipe Recipe @relation(fields: [recipeId], references: [id])
 }
 
 model Ingredient {
-  id        String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id        Int     @id @default(autoincrement())
   name      String
   energy    Int?
   imagePath String?
-  unitId    String  @db.Uuid
+  unitId    Int
 
   unit              Unit               @relation(fields: [unitId], references: [id])
   recipeIngredients RecipeIngredient[]
@@ -50,17 +49,17 @@ model Ingredient {
 }
 
 model RecipeIngredient {
-  id           String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id           Int   @id @default(autoincrement())
   quantity     Float
-  recipeId     String @db.Uuid
-  ingredientId String @db.Uuid
+  recipeId     Int
+  ingredientId Int
 
   recipe     Recipe     @relation(fields: [recipeId], references: [id])
   ingredient Ingredient @relation(fields: [ingredientId], references: [id])
 }
 
 model Unit {
-  id   String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id   Int    @id @default(autoincrement())
   name String
 
   ingredients Ingredient[]
@@ -68,9 +67,9 @@ model Unit {
 }
 
 model Symbol {
-  id     String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id     Int    @id @default(autoincrement())
   name   String
-  unitId String @db.Uuid
+  unitId Int
   digits Int    @default(0)
   factor Float
   min    Float?
@@ -80,7 +79,7 @@ model Symbol {
 }
 
 model ShoppingList {
-  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
 
   recipes Recipe[]       @relation()
@@ -88,12 +87,12 @@ model ShoppingList {
 }
 
 model ShoppingItem {
-  id             String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id             Int     @id @default(autoincrement())
   name           String
   purchased      Boolean @default(false)
-  order          Int     @db.SmallInt
-  shoppingListId String  @db.Uuid
-  ingredientId   String? @db.Uuid
+  order          Int
+  shoppingListId Int
+  ingredientId   Int?
 
   ingredient   Ingredient?  @relation(fields: [ingredientId], references: [id])
   shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id])

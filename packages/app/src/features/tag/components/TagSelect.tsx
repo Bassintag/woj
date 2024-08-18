@@ -7,14 +7,14 @@ import { TagLabel } from "@/features/tag/components/TagLabel";
 import { Checkbox } from "@/components/Checkbox";
 
 export interface TagSelectProps {
-  value: string[];
-  onChange: (value: string[]) => void;
+  value: number[];
+  onChange: (value: number[]) => void;
 }
 
 export const TagSelect = ({ value, onChange }: TagSelectProps) => {
   const { data: tags } = useTags();
 
-  const handleToggle = (id: string) => {
+  const handleToggle = (id: number) => {
     const copy = [...value];
     const index = copy.indexOf(id);
     if (index >= 0) {

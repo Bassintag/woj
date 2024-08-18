@@ -1,5 +1,5 @@
 import { ShoppingItem } from "@/features/shoppingList/domain/ShoppingItem";
-import { CheckIcon, GripVerticalIcon, XIcon } from "lucide-react";
+import { GripVerticalIcon, XIcon } from "lucide-react";
 import { Image } from "@/components/Image";
 import { useUpdateShoppingItem } from "@/features/shoppingList/hooks/useUpdateShoppingItem";
 import { useIdParam } from "@/hooks/useIdParam";
@@ -49,7 +49,7 @@ export const ShoppingItemList = ({ items }: ShoppingItemListProps) => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over == null) return;
-    const id = active.id as string;
+    const id = active.id as number;
     const from = items.findIndex((item) => item.id === active.id);
     if (from < 0) return;
     const to = items.findIndex((item) => item.id === over.id);

@@ -26,7 +26,7 @@ export class ShoppingListService {
     ]);
   }
 
-  get(id: string) {
+  get(id: number) {
     return this.prisma.shoppingList.findUniqueOrThrow({
       select: selectShoppingList,
       where: { id },
@@ -98,13 +98,13 @@ export class ShoppingListService {
     });
   }
 
-  delete(id: string) {
+  delete(id: number) {
     return this.prisma.shoppingList.deleteMany({
       where: { id },
     });
   }
 
-  createItem(id: string, data: CreateShoppingListItemDto) {
+  createItem(id: number, data: CreateShoppingListItemDto) {
     return this.prisma.$transaction(async (em) => {
       const total = await em.shoppingItem.count({
         where: { shoppingListId: id },
@@ -115,7 +115,7 @@ export class ShoppingListService {
     });
   }
 
-  updateItem(id: string, itemId: string, data: UpdateShoppingItemDto) {
+  updateItem(id: number, itemId: number, data: UpdateShoppingItemDto) {
     return this.prisma.shoppingItem.update({
       select: selectShoppingItem,
       where: { shoppingListId: id, id: itemId },
@@ -123,7 +123,7 @@ export class ShoppingListService {
     });
   }
 
-  deleteItem(id: string, itemId: string) {
+  deleteItem(id: number, itemId: number) {
     return this.prisma.$transaction(async (em) => {
       const where = { id: itemId, shoppingListId: id };
       const item = await em.shoppingItem.findFirstOrThrow({
@@ -138,7 +138,7 @@ export class ShoppingListService {
     });
   }
 
-  setItemIndex(id: string, itemId: string, data: SetShoppingItemIndexDto) {
+  setItemIndex(id: number, itemId: number, data: SetShoppingItemIndexDto) {
     return this.prisma.$transaction(async (em) => {
       const agg = await em.shoppingItem.aggregate({
         _max: { order: true },

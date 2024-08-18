@@ -67,7 +67,7 @@ const upsertRecipe = async (data: JowRecipe) => {
   return recipe;
 };
 
-const upsertIngredient = async (data: JowIngredient, unitId: string) => {
+const upsertIngredient = async (data: JowIngredient, unitId: number) => {
   return prisma.$transaction(async (em) => {
     const existing = await em.ingredient.findFirst({
       where: { name: data.name },
@@ -89,8 +89,8 @@ const upsertIngredient = async (data: JowIngredient, unitId: string) => {
 
 const upsertRecipeIngredient = async (
   data: JowConstituent,
-  ingredientId: string,
-  recipeId: string,
+  ingredientId: number,
+  recipeId: number,
 ) => {
   const constituentUnitId = data.unit._id;
   let quantity: number;
@@ -139,7 +139,7 @@ const upsertUnit = async (data: JowUnit) => {
 
 const upsertStep = async (
   data: JowDirection,
-  recipeId: string,
+  recipeId: number,
   order: number,
 ) => {
   return prisma.step.create({

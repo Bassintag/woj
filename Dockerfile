@@ -15,7 +15,7 @@ RUN \
 
 COPY ./prisma ./prisma
 
-RUN yarn generate
+RUN yarn prisma generate
 
 COPY ./packages/api ./packages/api
 COPY ./packages/app ./packages/app
@@ -24,8 +24,8 @@ ENV PUBLIC_API_PATH_PREFIX "api/"
 ENV PUBLIC_IMAGES_PATH_PREFIX "images/"
 
 RUN \
-    yarn workspace api build && \
-    yarn workspace app build
+    yarn workspace @woj/api build && \
+    yarn workspace @woj/app build
 
 
 FROM base AS runner
@@ -41,15 +41,16 @@ COPY ./packages/api/package.json ./packages/api/
 
 RUN \
     yarn --prod --frozen-lockfile && \
-    rm -rf packages package.json yarn.lock
+    rm -rf packages yarn.lock
 
 COPY ./.docker/start.sh ./start.sh
 COPY ./.docker/nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /usr/src/app/packages/api/dist ./api
-COPY --from=builder /usr/src/app/packages/app/dist /var/www/html/app
+COPY --from=builder /usr/src/app/packages/app/dist /var/www/html
 
-ENV IMAGES_DIRECTORY=/var/www/html/images
+ENV DATABASE_URL=file:/data/app.db
+ENV IMAGES_DIRECTORY=/data/images
 
 ENTRYPOINT ["sh", "/usr/src/app/start.sh"]

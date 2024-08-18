@@ -6,6 +6,6 @@ export interface Menu {
 
 export interface CreateMenu {
   quantity: number;
-  tags?: string[];
-  exclude?: string[];
+  tags?: number[];
+  exclude?: number[];
 }
