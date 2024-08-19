@@ -846,10 +846,30 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.51.21.tgz#a510469c6c30d3de2a8b8798e340169a4b0fd08f"
   integrity sha512-POQxm42IUp6n89kKWF4IZi18v3fxQWFRolvBA6phNVmA8psdfB1MvDnGacCJdS+EOX12w/CyHM62z//rHmYmvw==
 
+"@tanstack/query-core@5.51.24":
+  version "5.51.24"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.51.24.tgz#da901637c8652ba5703b92bd07496e7c9ae27836"
+  integrity sha512-qtIR0FMHUDIWyIQw87q4C+so7XaN59MsGfWrc6rgi2VTHrVZF3Hd0St2dbpqRetHf6XW5yY5lzTrXpTilPlxUg==
+
 "@tanstack/query-devtools@5.51.16":
   version "5.51.16"
   resolved "https://registry.yarnpkg.com/@tanstack/query-devtools/-/query-devtools-5.51.16.tgz#d855d00e7939c1a442c2e8ae3ad1a5bd603d003b"
   integrity sha512-ajwuq4WnkNCMj/Hy3KR8d3RtZ6PSKc1dD2vs2T408MdjgKzQ3klVoL6zDgVO7X+5jlb5zfgcO3thh4ojPhfIaw==
+
+"@tanstack/query-persist-client-core@5.51.24":
+  version "5.51.24"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-persist-client-core/-/query-persist-client-core-5.51.24.tgz#073bd408cf766ec00005319f7e1a1d1be3fd79d2"
+  integrity sha512-Qdzx23JfNFv4EoPiAqd9Yp5tt8mdpCvhW55zlkyPZAqnPXNgoB5D8ZSFqf8b/MqBLqU0KGmG2NQxplzCPpHsXA==
+  dependencies:
+    "@tanstack/query-core" "5.51.24"
+
+"@tanstack/query-sync-storage-persister@^5.51.24":
+  version "5.51.24"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-sync-storage-persister/-/query-sync-storage-persister-5.51.24.tgz#6a293accf1fd8b1d0c94b0ae3b8365cbaa1ae244"
+  integrity sha512-zT6/qVOrjiSeQAFd8xcjCjcFR6Gu6n1F1sAIvt5umMjego5aRZCFFvnfVRtfdaHjK2YjiW2NgeKeFFOz/zS4Pw==
+  dependencies:
+    "@tanstack/query-core" "5.51.24"
+    "@tanstack/query-persist-client-core" "5.51.24"
 
 "@tanstack/react-query-devtools@^5.51.23":
   version "5.51.23"
@@ -857,6 +877,13 @@
   integrity sha512-XpHrdyfUPGULIyJ1K7UvhAcK+KjMJdw4NjmRjryoj3XEgfAU5qU1rz8gIFvGc3gTGT07yIseGo7GEll/ICfJfQ==
   dependencies:
     "@tanstack/query-devtools" "5.51.16"
+
+"@tanstack/react-query-persist-client@^5.51.24":
+  version "5.51.24"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query-persist-client/-/react-query-persist-client-5.51.24.tgz#7df640446e6bc653082713f48ad71199f041dce9"
+  integrity sha512-CIcusrPKKYR4YHGQtJHuy13ObC7ZSiK60/HzlSXWadQdDTCltwM2KkafLNSUNebWZHYELXgbhq44ZeJ2NxdVzA==
+  dependencies:
+    "@tanstack/query-persist-client-core" "5.51.24"
 
 "@tanstack/react-query@^5.51.23":
   version "5.51.23"
@@ -3797,7 +3824,16 @@ string-argv@~0.3.2:
   resolved "https://registry.yarnpkg.com/string-argv/-/string-argv-0.3.2.tgz#2b6d0ef24b656274d957d54e0a4bbf6153dc02b6"
   integrity sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==
 
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
+"string-width-cjs@npm:string-width@^4.2.0":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
+string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -3838,7 +3874,14 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
+
+strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
