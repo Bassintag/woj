@@ -118,7 +118,7 @@ export const ShoppingListRow = ({ item }: ShoppingItemListRowProps) => {
           {...attributes}
           {...listeners}
           className={classNames(
-            "text-stone-400 size-5 shrink-0 lg:opacity-0 group-hover:opacity-100 transition",
+            "text-stone-400 size-5 shrink-0 lg:opacity-0 group-hover:opacity-100 touch-none transition",
             {
               "cursor-grab": !isDragging,
               "cursor-grabbing": isDragging,
