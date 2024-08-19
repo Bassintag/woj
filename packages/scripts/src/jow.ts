@@ -32,7 +32,10 @@ const upsertRecipe = async (data: JowRecipe) => {
     where: { name: data.title },
   });
   if (existing) return existing;
-  const recipeIngredients = data.constituents;
+  const recipeIngredients = [
+    ...data.constituents,
+    ...data.additionalConstituents,
+  ];
   let jowIngredient: JowIngredient;
   let jowUnit: JowUnit;
   const imagePath = await upsertImage(data.imageUrl, "recipes");
@@ -43,7 +46,8 @@ const upsertRecipe = async (data: JowRecipe) => {
   const recipe = await prisma.recipe.create({
     data: {
       name: data.title,
-      preppingTime: data.preparationTime,
+      preppingTime:
+        data.preparationTime + data.preparationExtraTimePerCover * 4,
       cookingTime: data.cookingTime,
       imagePath,
       tags: {
@@ -56,7 +60,7 @@ const upsertRecipe = async (data: JowRecipe) => {
   });
   for (const item of recipeIngredients) {
     jowIngredient = item.ingredient;
-    jowUnit = item.unit;
+    jowUnit = item.ingredient.naturalUnit;
     const unit = await upsertUnit(jowUnit);
     const ingredient = await upsertIngredient(jowIngredient, unit.id);
     await upsertRecipeIngredient(item, ingredient.id, recipe.id);
@@ -74,12 +78,13 @@ const upsertIngredient = async (data: JowIngredient, unitId: number) => {
     });
     if (existing) return existing;
     const imagePath = await upsertImage(data.imageUrl, "ingredients");
+    const energyFact = data.editorialData.nutritionalFacts.find(
+      (nutritionalFact) => nutritionalFact.code === "ENERC",
+    );
     return em.ingredient.create({
       data: {
         name: data.name,
-        energy: data.editorialData?.nutritionalFacts.find(
-          (nutritionalFact) => nutritionalFact.code === "ENERC",
-        )?.amount,
+        energy: energyFact ? energyFact.amount / energyFact.portion : undefined,
         imagePath,
         unitId,
       },
@@ -106,11 +111,7 @@ const upsertRecipeIngredient = async (
     quantity = data.quantityPerCover * alternativeUnit.quantity;
   }
   return prisma.recipeIngredient.create({
-    data: {
-      ingredientId,
-      recipeId,
-      quantity,
-    },
+    data: { ingredientId, recipeId, quantity },
   });
 };
 
