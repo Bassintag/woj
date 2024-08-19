@@ -14,7 +14,11 @@ export class RecipeService {
       OR: [
         { name: search ? { contains: search } : undefined },
         {
-          ingredients: { some: { ingredient: { name: { contains: search } } } },
+          ingredients: {
+            some: {
+              ingredient: { name: { contains: search, mode: 'insensitive' } },
+            },
+          },
         },
       ],
     } satisfies Prisma.RecipeWhereInput;
