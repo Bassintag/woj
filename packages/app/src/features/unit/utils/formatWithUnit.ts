@@ -2,7 +2,7 @@ import { Unit } from "@/features/recipe/domain/Recipe";
 
 export const formatWithUnit = (unit: Unit, value: number) => {
   const symbol = unit.symbols.find(({ min, max }) => {
-    return !(min != null && min > value) && !(max != null && max < value);
+    return !(min != null && min >= value) && !(max != null && max < value);
   });
   if (symbol == null) return value.toFixed(2);
   let scaled = value * symbol.factor;
