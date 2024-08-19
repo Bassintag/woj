@@ -7,6 +7,8 @@ export interface JowRecipe extends JowEntity {
   imageUrl: string;
   cookingTime: number;
   preparationTime: number;
+  preparationExtraTimePerCover: number;
+  additionalConstituents: JowConstituent[];
   constituents: JowConstituent[];
   directions: JowDirection[];
   seasons: string[];
@@ -49,6 +51,7 @@ export interface JowEditorialData {
 
 export interface JowNutritionalFact extends JowEntity {
   amount: number;
+  portion: number;
   code: string;
 }
 
