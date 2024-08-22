@@ -9,7 +9,7 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <PersistQueryClientProvider
-      persistOptions={{ persister }}
+      persistOptions={{ persister, buster: "1" }}
       client={queryClient}
     >
       <RouterProvider router={router} />

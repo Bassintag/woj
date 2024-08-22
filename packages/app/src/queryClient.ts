@@ -11,4 +11,5 @@ export const queryClient = new QueryClient({
 
 export const persister = createSyncStoragePersister({
   storage: window.localStorage,
+  key: "woj:query-client",
 });
