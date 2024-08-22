@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { selectEntity } from '../../const/entity.const';
-import { selectIngredient } from '../recipe/recipe.const';
+import { selectIngredient, selectRecipe } from '../recipe/recipe.const';
 
 export const selectShoppingItem = {
   ...selectEntity,
@@ -13,4 +13,5 @@ export const selectShoppingList = {
   ...selectEntity,
   createdAt: true,
   items: { select: selectShoppingItem, orderBy: { order: 'asc' } },
+  recipes: { select: selectRecipe, orderBy: { name: 'asc' } },
 } satisfies Prisma.ShoppingListSelect;
