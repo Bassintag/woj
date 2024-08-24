@@ -14,10 +14,9 @@ model Recipe {
   cookingTime  Int?
   imagePath    String?
 
-  ingredients   RecipeIngredient[]
-  steps         Step[]
-  shoppingLists ShoppingList[]
-  tags          Tag[]              @relation()
+  ingredients RecipeIngredient[]
+  steps       Step[]
+  tags        Tag[]              @relation()
 }
 
 model Tag {
@@ -44,7 +43,6 @@ model Ingredient {
 
   unit              Unit               @relation(fields: [unitId], references: [id])
   recipeIngredients RecipeIngredient[]
-  shoppingItems     ShoppingItem[]
 }
 
 model RecipeIngredient {
@@ -75,24 +73,4 @@ model Symbol {
   max    Float?
 
   unit Unit @relation(fields: [unitId], references: [id])
-}
-
-model ShoppingList {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-
-  recipes Recipe[]       @relation()
-  items   ShoppingItem[]
-}
-
-model ShoppingItem {
-  id             Int     @id @default(autoincrement())
-  name           String
-  purchased      Boolean @default(false)
-  order          Int
-  shoppingListId Int
-  ingredientId   Int?
-
-  ingredient   Ingredient?  @relation(fields: [ingredientId], references: [id])
-  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id])
 }

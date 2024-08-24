@@ -1,11 +1,9 @@
 import { ShoppingItem } from "@/features/shoppingList/domain/ShoppingItem";
 import { GripVerticalIcon, XIcon } from "lucide-react";
 import { Image } from "@/components/Image";
-import { useUpdateShoppingItem } from "@/features/shoppingList/hooks/useUpdateShoppingItem";
-import { useIdParam } from "@/hooks/useIdParam";
+import { useStringIdParam } from "@/hooks/useIdParam";
 import { useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash.debounce";
-import { useDeleteShoppingItem } from "@/features/shoppingList/hooks/useDeleteShoppingItem";
 import classNames from "classnames";
 import {
   DndContext,
@@ -23,22 +21,19 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useSetShoppingItemIndex } from "@/features/shoppingList/hooks/useSetShoppingItemIndex";
 import { Checkbox } from "@/components/Checkbox";
+import { useShoppingListsState } from "@/features/shoppingList/hooks/useShoppingListsState";
+import { useShoppingList } from "@/features/shoppingList/hooks/useShoppingList";
 
 export interface ShoppingItemListProps {
   items: ShoppingItem[];
 }
 
 export const ShoppingItemList = ({ items }: ShoppingItemListProps) => {
-  const [localItems, setLocalItems] = useState(items);
+  const listId = useStringIdParam();
+  const shoppingList = useShoppingList(listId);
+  const setItems = useShoppingListsState((s) => s.setItems);
 
-  useEffect(() => {
-    setLocalItems(items);
-  }, [items]);
-
-  const shoppingListId = useIdParam();
-  const { mutate: setShoppingItemIndex } = useSetShoppingItemIndex();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -47,6 +42,7 @@ export const ShoppingItemList = ({ items }: ShoppingItemListProps) => {
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
+    if (shoppingList == null) return;
     const { active, over } = event;
     if (over == null) return;
     const id = active.id as number;
@@ -55,23 +51,24 @@ export const ShoppingItemList = ({ items }: ShoppingItemListProps) => {
     const to = items.findIndex((item) => item.id === over.id);
     if (to < 0) return;
     if (from === to) return;
-    setShoppingItemIndex({ id, shoppingListId, index: to });
-    setLocalItems((items) => arrayMove(items, from, to));
+    setItems(listId, arrayMove(shoppingList.items, from, to));
   };
 
   return (
-    <ol className="flex flex-col">
-      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <SortableContext
-          items={localItems}
-          strategy={verticalListSortingStrategy}
-        >
-          {localItems.map((item) => (
-            <ShoppingListRow key={item.id} item={item} />
-          ))}
-        </SortableContext>
-      </DndContext>
-    </ol>
+    shoppingList && (
+      <ol className="flex flex-col">
+        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+          <SortableContext
+            items={shoppingList.items}
+            strategy={verticalListSortingStrategy}
+          >
+            {shoppingList.items.map((item) => (
+              <ShoppingListRow key={item.id} item={item} />
+            ))}
+          </SortableContext>
+        </DndContext>
+      </ol>
+    )
   );
 };
 
@@ -80,9 +77,11 @@ export interface ShoppingItemListRowProps {
 }
 
 export const ShoppingListRow = ({ item }: ShoppingItemListRowProps) => {
-  const { mutate: updateShoppingItem } = useUpdateShoppingItem();
-  const { mutate: deleteShoppingItem } = useDeleteShoppingItem();
-  const id = useIdParam();
+  const [setItem, deleteItem] = useShoppingListsState((s) => [
+    s.setItem,
+    s.deleteItem,
+  ]);
+  const listId = useStringIdParam();
   const {
     setNodeRef,
     isDragging,
@@ -128,9 +127,8 @@ export const ShoppingListRow = ({ item }: ShoppingItemListRowProps) => {
         <Checkbox
           checked={item.purchased}
           onCheckedChange={(checked) => {
-            updateShoppingItem({
-              id: item.id,
-              shoppingListId: id,
+            setItem(listId, item.id, {
+              ...item,
               purchased: checked as boolean,
             });
           }}
@@ -142,12 +140,7 @@ export const ShoppingListRow = ({ item }: ShoppingItemListRowProps) => {
         <ShoppingItemListInput item={item} />
         <button
           className="text-stone-400 active:text-stone-600 lg:opacity-0 group-hover:opacity-100 transition"
-          onClick={() =>
-            deleteShoppingItem({
-              id: item.id,
-              shoppingListId: id,
-            })
-          }
+          onClick={() => deleteItem(listId, item.id)}
         >
           <XIcon className="size-5" />
         </button>
@@ -159,8 +152,8 @@ export const ShoppingListRow = ({ item }: ShoppingItemListRowProps) => {
 const ShoppingItemListInput = ({ item }: ShoppingItemListRowProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
-  const { mutate: updateShoppingItem } = useUpdateShoppingItem();
-  const id = useIdParam();
+  const setItem = useShoppingListsState((s) => s.setItem);
+  const listId = useStringIdParam();
 
   useEffect(() => {
     if (!ref.current || ref.current.textContent) return;
@@ -182,13 +175,9 @@ const ShoppingItemListInput = ({ item }: ShoppingItemListRowProps) => {
         }
       }
       const content = parts.join("");
-      updateShoppingItem({
-        id: item.id,
-        shoppingListId: id,
-        name: content,
-      });
+      setItem(listId, item.id, { ...item, name: content });
     }, 500),
-    [updateShoppingItem, item.id, id],
+    [setItem, item.id, listId],
   );
 
   return (

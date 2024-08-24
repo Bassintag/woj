@@ -1,16 +1,17 @@
 import { useShoppingList } from "@/features/shoppingList/hooks/useShoppingList";
-import { useIdParam } from "@/hooks/useIdParam";
+import { useStringIdParam } from "@/hooks/useIdParam";
 import { ShoppingItemList } from "@/features/shoppingList/components/ShoppingItemList";
-import { useCreateShoppingItem } from "@/features/shoppingList/hooks/useCreateShoppingItem";
 import { PlusIcon } from "lucide-react";
 import { PageTitle } from "@/features/recipe/components/PageTitle";
 import { getShoppingListName } from "@/features/recipe/utils/getShoppingListName";
 import { RecipeList } from "@/features/recipe/components/RecipeList";
+import { useShoppingListsState } from "@/features/shoppingList/hooks/useShoppingListsState";
+import { v4 } from "uuid";
 
 export const ShoppingListPage = () => {
-  const id = useIdParam();
-  const { data: shoppingList } = useShoppingList(id);
-  const { mutate: createItem } = useCreateShoppingItem();
+  const id = useStringIdParam();
+  const shoppingList = useShoppingList(id);
+  const createItem = useShoppingListsState((s) => s.createItem);
 
   return (
     <div className="py-6 flex flex-col gap-6 overflow-hidden">
@@ -24,7 +25,7 @@ export const ShoppingListPage = () => {
         <div className="container">
           <button
             onClick={() =>
-              createItem({ shoppingListId: id, name: "", purchased: false })
+              createItem(id, { id: v4(), name: "", purchased: false })
             }
             className="flex flex-row items-center gap-3 ml-6 rounded text-stone-500 hover:text-stone-600 active:text-stone-700 transition"
           >
