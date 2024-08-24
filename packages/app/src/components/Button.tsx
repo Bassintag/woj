@@ -9,7 +9,7 @@ export const buttonColorSchemes = {
 
 export const buttonSizes = {
   sm: "h-6 px-2 text-xs [&>svg]:size-3 [&>svg:first-child]:-ml-0.5 [&>svg:last-child]:-mr-0.5",
-  md: "h-10 px-4 text-sm [&>svg]:size-4 [&>svg:first-child]:-ml-1 [&>svg:last-child]:-mr-1",
+  md: "h-10 px-4 text-sm [&>svg]:size-5 [&>svg:first-child]:-ml-1 [&>svg:last-child]:-mr-1",
   lg: "h-12 px-6 [&>svg]:size-6 [&>svg:first-child]:-ml-6 [&>svg:last-child]:-mr-6",
 };
 

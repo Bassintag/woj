@@ -3,7 +3,11 @@ import { Button } from "@/components/Button";
 import { useCreateShoppingList } from "@/features/shoppingList/hooks/useCreateShoppingList";
 import { useNavigate } from "react-router-dom";
 
-export const SubmitCartButton = () => {
+export interface SubmitCartButtonProps {
+  closeDrawer: () => void;
+}
+
+export const SubmitCartButton = ({ closeDrawer }: SubmitCartButtonProps) => {
   const [items, resetCart] = useCartState((s) => [s.items, s.reset]);
   const { mutate: createShoppingList, isPending } = useCreateShoppingList();
   const navigate = useNavigate();
@@ -18,6 +22,7 @@ export const SubmitCartButton = () => {
       },
       {
         onSuccess: (list) => {
+          closeDrawer();
           resetCart();
           navigate(`/shopping-lists/${list.id}`);
         },

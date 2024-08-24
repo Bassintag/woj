@@ -6,16 +6,26 @@ import { RefreshCwIcon, TrashIcon } from "lucide-react";
 import { useCreateMenu } from "@/features/menu/hooks/useCreateMenu";
 import { Link } from "react-router-dom";
 import React from "react";
+import { Placeholder } from "@/components/Placeholder";
 
 export const MenuRecipesList = () => {
   const menu = useMenuPageState((s) => s.menu);
 
   return (
-    <ul className="flex flex-col gap-3">
-      {menu?.recipes.map((recipe) => (
-        <MenuRecipesListRow key={recipe.id} recipe={recipe} />
-      ))}
-    </ul>
+    menu && (
+      <ul className="flex flex-col gap-3">
+        {menu.recipes.length === 0 ? (
+          <Placeholder
+            label="Aucun résultat, sélectionnez d'autres filtres puis ré-essayez"
+            icon={RefreshCwIcon}
+          />
+        ) : (
+          menu.recipes.map((recipe) => (
+            <MenuRecipesListRow key={recipe.id} recipe={recipe} />
+          ))
+        )}
+      </ul>
+    )
   );
 };
 
@@ -64,7 +74,7 @@ export const MenuRecipesListRow = ({ recipe }: MenuRecipesListProps) => {
         className="flex flex-row gap-3"
       >
         <Image
-          className="size-24 bg-gray-100 rounded-xl shrink-0"
+          className="size-24 bg-stone-100 rounded-xl shrink-0"
           path={recipe.imagePath}
         />
         <div className="flex flex-col gap-3 py-2">

@@ -28,7 +28,7 @@ export const TagSelect = ({ value, onChange }: TagSelectProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button colorScheme="white" size="lg">
+        <Button colorScheme="white">
           <TagIcon />
         </Button>
       </DialogTrigger>

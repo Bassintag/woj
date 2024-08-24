@@ -5,10 +5,17 @@ import { useMenuPageState } from "@/features/menu/hooks/useMenuPageState";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { TagSelect } from "@/features/tag/components/TagSelect";
 import { MenuRecipesList } from "@/features/menu/components/MenuRecipesList";
+import { Placeholder } from "@/components/Placeholder";
+import {
+  CalendarDaysIcon,
+  CalendarPlusIcon,
+  RefreshCwIcon,
+} from "lucide-react";
 
 export const MenuPage = () => {
   const { quantity, tags, setMenu, setQuantity, setTags } = useMenuPageState();
   const { mutate, isPending } = useCreateMenu();
+  const menu = useMenuPageState((s) => s.menu);
 
   const handleClick = () => {
     mutate({ quantity, tags }, { onSuccess: setMenu });
@@ -30,7 +37,14 @@ export const MenuPage = () => {
           <TagSelect value={tags} onChange={setTags} />
         </div>
       </div>
-      <MenuRecipesList />
+      {menu == null ? (
+        <Placeholder
+          label="Créez un menu pour découvrir de nouvelles recettes"
+          icon={CalendarPlusIcon}
+        />
+      ) : (
+        <MenuRecipesList />
+      )}
     </div>
   );
 };

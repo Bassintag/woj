@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import { CartBanner } from "@/features/cart/components/CartBanner";
 
 export const CartPage = () => {
@@ -8,6 +8,7 @@ export const CartPage = () => {
         <Outlet />
       </div>
       <CartBanner />
+      <ScrollRestoration />
     </>
   );
 };

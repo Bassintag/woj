@@ -21,8 +21,9 @@ export class MenuService {
   }: GetRandomRecipesParam) {
     const where = {
       id: { notIn: excludeIds },
-      tags:
-        withTags.length > 0 ? { some: { id: { in: withTags } } } : undefined,
+      AND: withTags.map((tagId) => ({
+        tags: { some: { id: tagId } },
+      })),
     } satisfies Prisma.RecipeWhereInput;
     const count = await this.prisma.recipe.count({ where });
     quantity = Math.min(count, quantity);
