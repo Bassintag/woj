@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useShoppingListsState } from "@/features/shoppingList/hooks/useShoppingListsState";
 import { v4 } from "uuid";
 import { formatWithUnit } from "@/features/unit/utils/formatWithUnit";
+import { RecipeIngredient } from "@/features/recipe/domain/Recipe";
 
 export interface SubmitCartButtonProps {
   closeDrawer: () => void;
@@ -16,19 +17,32 @@ export const SubmitCartButton = ({ closeDrawer }: SubmitCartButtonProps) => {
 
   const handleClick = () => {
     const id = v4();
+    const ingredients: Record<string, Omit<RecipeIngredient, "id">> = {};
+    for (const item of items) {
+      for (const recipeIngredient of item.recipe.ingredients) {
+        const existing = ingredients[recipeIngredient.ingredient.id];
+        const quantity = item.quantity * recipeIngredient.quantity;
+        if (existing) {
+          existing.quantity += quantity;
+        } else {
+          ingredients[recipeIngredient.ingredient.id] = {
+            ingredient: recipeIngredient.ingredient,
+            quantity,
+          };
+        }
+      }
+    }
     createList({
       id,
       createdAt: new Date().toISOString(),
-      items: items
-        .map((item) =>
-          item.recipe.ingredients.map(({ ingredient, quantity }) => ({
-            id: v4(),
-            name: `${formatWithUnit(ingredient.unit, quantity * item.quantity)} ${ingredient.name}`,
-            purchased: false,
-            ingredient,
-          })),
-        )
-        .flat(),
+      items: Object.values(ingredients)
+        .sort((a, b) => a.ingredient.name.localeCompare(b.ingredient.name))
+        .map(({ ingredient, quantity }) => ({
+          id: v4(),
+          name: `${formatWithUnit(ingredient.unit, quantity)} ${ingredient.name}`,
+          purchased: false,
+          ingredient,
+        })),
       recipes: items.map((item) => item.recipe),
     });
     closeDrawer();
