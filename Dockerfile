@@ -33,7 +33,8 @@ FROM base AS runner
 WORKDIR /usr/src/app
 
 RUN \
-    apk add --update nginx && \
+    apt upgrade && \
+    apt install nginx && \
     npm i -g prisma@5.18.0
 
 COPY ./package.json ./yarn.lock ./prisma ./
