@@ -2,7 +2,7 @@
 
 prisma migrate deploy &&
 
-node api/main.js &
+node packages/api/dist/main.js &
 nginx -g "daemon off;" &
 
 wait
