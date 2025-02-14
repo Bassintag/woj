@@ -26,7 +26,7 @@ export const useShoppingListsState = create(
       shoppingLists: [],
       create: (data) => {
         set((state: ShoppingListsState) => {
-          state.shoppingLists.push(data);
+          state.shoppingLists.unshift(data);
         });
       },
       delete: (id) => {

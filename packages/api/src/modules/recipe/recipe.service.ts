@@ -12,7 +12,7 @@ export class RecipeService {
   getPage({ search, ...query }: GetRecipePageQueryDto) {
     const where = {
       OR: [
-        { name: search ? { contains: search } : undefined },
+        { name: { contains: search, mode: 'insensitive' } },
         {
           ingredients: {
             some: {
