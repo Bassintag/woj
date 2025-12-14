@@ -14,6 +14,18 @@ export interface JowRecipe extends JowEntity {
   seasons: string[];
   family: JowFamily;
   familyAncestors: JowFamily[];
+  nutritionalrating: JowNutritionalRating;
+  requiredTools: JowTool[];
+  tags: JowTag[];
+}
+
+export interface JowNutritionalRating {
+  etiquettable: JowEtiquettable;
+}
+
+export interface JowEtiquettable extends JowEntity {
+  calories: number;
+  caloriesPer100: number;
 }
 
 export interface JowFamily extends JowEntity {
@@ -30,7 +42,6 @@ export interface JowIngredient extends JowEntity {
   name: string;
   imageUrl: string;
   naturalUnit: JowUnit;
-  editorialData: JowEditorialData;
   alternativeUnits: JowAlternativeUnit[];
 }
 
@@ -69,4 +80,15 @@ export interface JowDirection extends JowEntity {
 
 export interface JowRecipesWithAdditionalIngredients {
   recipes: JowRecipe[];
+}
+
+export interface JowTool extends JowEntity {
+  name: string;
+  imageUrl: string;
+  isDefaultChecked: boolean;
+  isNotTrivial: boolean;
+}
+
+export interface JowTag extends JowEntity {
+  name: string;
 }

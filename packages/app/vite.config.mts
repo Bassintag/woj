@@ -1,12 +1,14 @@
 import { defineConfig, PluginOption } from "vite";
 import viteReact from "@vitejs/plugin-react";
 import viteChecker from "vite-plugin-checker";
+import viteTailwind from "@tailwindcss/vite";
 import * as path from "node:path";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig((env) => {
   const plugins: PluginOption[] = [
     viteReact(),
+    viteTailwind(),
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: [

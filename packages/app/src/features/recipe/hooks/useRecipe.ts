@@ -1,9 +1,9 @@
 import { fetchApi } from "@/utils/fetchApi";
 import { useQuery } from "@tanstack/react-query";
-import { Recipe } from "@/features/recipe/domain/Recipe";
+import { RecipeDto } from "@woj/common/dto";
 
 export const getRecipe = (id: number) => {
-  return fetchApi<Recipe>(`recipes/${id}`);
+  return fetchApi<RecipeDto>(`recipes/${id}`);
 };
 
 export const useRecipe = (id: number) => {

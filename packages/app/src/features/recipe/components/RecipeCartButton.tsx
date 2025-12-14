@@ -1,15 +1,18 @@
-import { Recipe } from "@/features/recipe/domain/Recipe";
 import { Button } from "@/components/Button";
 import { useCartState } from "@/features/cart/hook/useCartState";
 import { useMemo } from "react";
 import { useRecipePageState } from "@/features/recipe/hooks/useRecipePageState";
+import { RecipeDto } from "@woj/common/dto";
+import { useShallow } from "zustand/shallow";
 
 export interface RecipeCartButtonProps {
-  recipe: Recipe;
+  recipe: RecipeDto;
 }
 
 export const RecipeCartButton = ({ recipe }: RecipeCartButtonProps) => {
-  const [items, set, remove] = useCartState((s) => [s.items, s.set, s.remove]);
+  const [items, set, remove] = useCartState(
+    useShallow((s) => [s.items, s.set, s.remove]),
+  );
   const quantity = useRecipePageState((s) => s.quantity);
   const item = useMemo(
     () => items.find((item) => item.recipe.id === recipe.id),

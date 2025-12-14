@@ -1,6 +1,6 @@
-import { Recipe } from "@/features/recipe/domain/Recipe";
+import { RecipeDto } from "@woj/common/dto";
 
-export interface CartItem {
+export interface CartItemDto {
   quantity: number;
-  recipe: Recipe;
+  recipe: RecipeDto;
 }

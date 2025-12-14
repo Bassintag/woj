@@ -1,8 +1,8 @@
-import { ShoppingList } from "@/features/shoppingList/domain/ShoppingList";
+import { ShoppingListDto } from "@/features/shoppingList/domain/ShoppingList";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale/fr";
 
-export const getShoppingListName = ({ createdAt }: ShoppingList) => {
+export const getShoppingListName = ({ createdAt }: ShoppingListDto) => {
   const datePart = format(createdAt, "EEEE do MMMM yyyy", {
     locale: fr,
   });

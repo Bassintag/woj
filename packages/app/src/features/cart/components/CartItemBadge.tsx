@@ -1,8 +1,8 @@
-import { CartItem } from "@/features/cart/domain/Cart";
+import { CartItemDto } from "@/features/cart/domain/Cart";
 import { Image } from "@/components/Image";
 
 export interface CartItemBadgeProps {
-  carItem: CartItem;
+  carItem: CartItemDto;
 }
 
 export const CartItemBadge = ({ carItem }: CartItemBadgeProps) => {

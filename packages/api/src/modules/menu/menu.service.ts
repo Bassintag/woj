@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { selectRecipe } from '../recipe/recipe.const';
+import { Injectable } from '@nestjs/common';
 import { CreateMenuDto } from './menu.dto';
+import { recipeSelect } from '@woj/common/select';
 
 export interface GetRandomRecipesParam {
   quantity: number;
@@ -49,7 +49,7 @@ export class MenuService {
       ),
     );
     return this.prisma.recipe.findMany({
-      select: selectRecipe,
+      select: recipeSelect,
       where: { id: { in: ids.map((i) => i.id) } },
     });
   }

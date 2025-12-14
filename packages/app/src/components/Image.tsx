@@ -4,7 +4,7 @@ import { ImageOffIcon } from "lucide-react";
 
 export interface ImageProps {
   className?: string;
-  path?: string;
+  path?: string | null;
   alt?: string;
 }
 

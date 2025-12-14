@@ -11,9 +11,10 @@
   "scripts": {
     "prepare": "husky"
   },
-  "dependencies": {
+  "devDependencies": {
     "husky": "^9.1.4",
     "prettier": "^3.3.3",
-    "lint-staged": "^15.2.8"
+    "lint-staged": "^15.2.8",
+    "prisma": "7.0.1"
   }
 }

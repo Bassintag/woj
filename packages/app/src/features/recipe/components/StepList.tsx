@@ -1,7 +1,7 @@
-import { Step } from "@/features/recipe/domain/Recipe";
+import { StepDto } from "@woj/common/dto";
 
 export interface StepListProps {
-  steps: Step[];
+  steps: StepDto[];
 }
 
 export const StepList = ({ steps }: StepListProps) => {
@@ -15,7 +15,7 @@ export const StepList = ({ steps }: StepListProps) => {
 };
 
 export interface StepListRowProps {
-  step: Step;
+  step: StepDto;
   index: number;
 }
 

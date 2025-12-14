@@ -45,7 +45,7 @@ export const RecipePage = () => {
           <div className="container flex flex-col gap-6 mb-6">
             <div className="flex flex-col gap-3">
               <h2 className="text-center font-semibold text-xl">Ingredients</h2>
-              <IngredientList ingredients={recipe.ingredients} />
+              <IngredientList constituents={recipe.constituents} />
             </div>
             <div className="flex flex-col gap-3">
               <h2 className="text-center font-semibold text-xl">

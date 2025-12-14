@@ -1,10 +1,11 @@
-import { GetRecipePageQuery, Recipe } from "@/features/recipe/domain/Recipe";
+import { GetRecipePageQuery } from "@/features/recipe/domain/Recipe";
 import { fetchApi } from "@/utils/fetchApi";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Page } from "@/domain/Page";
+import { RecipeDto } from "@woj/common/dto";
 
 export const getRecipes = (query: GetRecipePageQuery) => {
-  return fetchApi<Page<Recipe>>("recipes", { query });
+  return fetchApi<Page<RecipeDto>>("recipes", { query });
 };
 
 export const useRecipes = (query?: Omit<GetRecipePageQuery, "page">) => {

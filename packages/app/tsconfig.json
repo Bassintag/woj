@@ -8,8 +8,8 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "lib": ["DOM", "ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {

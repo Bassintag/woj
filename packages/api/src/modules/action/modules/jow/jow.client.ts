@@ -1,27 +1,34 @@
+import { Injectable } from '@nestjs/common';
 import {
   JowIngredient,
   JowRecipe,
   JowRecipesWithAdditionalIngredients,
-} from "../domain/jow";
-import { Readable } from "node:stream";
+} from './jow.domain';
+import { Readable } from 'node:stream';
 
 interface JowFetchInit {
   method?: string;
   json?: unknown;
 }
 
+@Injectable()
 export class JowClient {
   async fetch<T>(
     path: string,
     { method, json }: JowFetchInit = {},
   ): Promise<T> {
-    const url = new URL(path, "https://api.jow.fr/");
+    const url = new URL(path, 'https://api.jow.fr/');
     const init: RequestInit = { method, keepalive: true };
+    const headers = {
+      Accept: 'application/json',
+      'Accept-Language': 'fr',
+    };
     if (json) {
       init.body = JSON.stringify(json);
-      init.headers = { "Content-Type": "application/json" };
+      headers['Content-Type'] = 'application/json';
     }
-    console.log(`[JOW API] ${method ?? "GET"} ${url.href}`);
+    init.headers = headers;
+    console.log(`[JOW API] ${method ?? 'GET'} ${url.href}`);
     const response = await fetch(url, init);
     const text = await response.text();
     if (!response.ok) {
@@ -39,16 +46,16 @@ export class JowClient {
 
   async fetchRecipesFromIngredientId(ingredientId: string) {
     return this.fetch<JowRecipesWithAdditionalIngredients[]>(
-      "public/recipes/recipesFromIngredientsId",
+      'public/recipes/recipesFromIngredientsId',
       {
-        method: "POST",
+        method: 'POST',
         json: [ingredientId],
       },
     );
   }
 
   async fetchIngredients() {
-    return this.fetch<JowIngredient[]>("public/ingredients");
+    return this.fetch<JowIngredient[]>('public/ingredients');
   }
 
   async fetchImage(path: string) {

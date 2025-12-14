@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "module": "esnext",
+    "moduleResolution": "node"
+  }
+}

@@ -1,5 +1,5 @@
-import { Recipe } from "@/features/recipe/domain/Recipe";
+import { RecipeDto } from "@woj/common/dto";
 
-export const getRecipeTime = (recipe: Recipe) => {
+export const getRecipeTime = (recipe: RecipeDto) => {
   return (recipe.preppingTime ?? 0) + (recipe.cookingTime ?? 0);
 };

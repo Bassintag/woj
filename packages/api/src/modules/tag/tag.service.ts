@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { selectTag } from './tag.const';
+import { tagSelect } from '@woj/common/select';
 
 @Injectable()
 export class TagService {
@@ -8,7 +8,7 @@ export class TagService {
 
   getAll() {
     return this.prisma.tag.findMany({
-      select: selectTag,
+      select: tagSelect,
       orderBy: { name: 'asc' },
     });
   }

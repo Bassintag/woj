@@ -1,9 +1,9 @@
-import { Recipe } from "@/features/recipe/domain/Recipe";
-import { ShoppingItem } from "@/features/shoppingList/domain/ShoppingItem";
+import { ShoppingItemDto } from "@/features/shoppingList/domain/ShoppingItem";
+import { RecipeDto } from "@woj/common/dto";
 
-export interface ShoppingList {
+export interface ShoppingListDto {
   id: string;
   createdAt: string;
-  recipes: Recipe[];
-  items: ShoppingItem[];
+  recipes: RecipeDto[];
+  items: ShoppingItemDto[];
 }

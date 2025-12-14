@@ -1,9 +1,9 @@
 import { fetchApi } from "@/utils/fetchApi";
-import { CreateMenu, Menu } from "@/features/menu/domain/Menu";
+import { CreateMenuDto, MenuDto } from "@/features/menu/domain/Menu";
 import { useMutation } from "@tanstack/react-query";
 
-export const createMenu = (body: CreateMenu) => {
-  return fetchApi<Menu>("menus", {
+export const createMenu = (body: CreateMenuDto) => {
+  return fetchApi<MenuDto>("menus", {
     method: "POST",
     json: body,
   });

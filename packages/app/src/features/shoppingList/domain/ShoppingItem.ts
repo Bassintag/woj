@@ -1,8 +1,8 @@
-import { Ingredient } from "@/features/recipe/domain/Recipe";
+import { IngredientDto } from "@woj/common/dto";
 
-export interface ShoppingItem {
+export interface ShoppingItemDto {
   id: string;
   name: string;
   purchased: boolean;
-  ingredient?: Ingredient;
+  ingredient?: IngredientDto;
 }

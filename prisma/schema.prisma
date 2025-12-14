@@ -3,69 +3,95 @@ generator js {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
 }
 
 model Recipe {
   id           Int     @id @default(autoincrement())
+  slug         String  @unique
   name         String
   preppingTime Int?
   cookingTime  Int?
+  energy       Int?
   imagePath    String?
 
-  ingredients RecipeIngredient[]
-  steps       Step[]
-  tags        Tag[]              @relation()
+  constituents Constituent[]
+  steps        Step[]
+  tags         Tag[]         @relation()
+  tools        Tool[]        @relation()
 }
 
 model Tag {
   id      Int      @id @default(autoincrement())
-  name    String   @unique
+  name    String
+  slug    String   @unique
   recipes Recipe[]
 }
 
 model Step {
   id          Int    @id @default(autoincrement())
   description String
-  recipeId    Int
   order       Int
+  recipeId    Int
 
   recipe Recipe @relation(fields: [recipeId], references: [id])
+
+  @@unique([order, recipeId])
 }
 
 model Ingredient {
-  id        Int     @id @default(autoincrement())
-  name      String
-  energy    Int?
-  imagePath String?
-  unitId    Int
+  id            Int     @id @default(autoincrement())
+  name          String
+  slug          String  @unique
+  imagePath     String?
+  defaultUnitId Int
 
-  unit              Unit               @relation(fields: [unitId], references: [id])
-  recipeIngredients RecipeIngredient[]
+  defaultUnit  Unit          @relation(fields: [defaultUnitId], references: [id])
+  constituents Constituent[]
+  conversions  Conversion[]
 }
 
-model RecipeIngredient {
+model Constituent {
   id           Int   @id @default(autoincrement())
   quantity     Float
   recipeId     Int
   ingredientId Int
+  unitId       Int
 
   recipe     Recipe     @relation(fields: [recipeId], references: [id])
   ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  unit       Unit       @relation(fields: [unitId], references: [id])
+
+  @@unique([recipeId, ingredientId])
+}
+
+model Conversion {
+  id           Int   @id @default(autoincrement())
+  factor       Float
+  ingredientId Int
+  unitId       Int
+
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  unit       Unit       @relation(fields: [unitId], references: [id])
+
+  @@unique([unitId, ingredientId])
 }
 
 model Unit {
   id   Int    @id @default(autoincrement())
   name String
+  slug String @unique
 
-  ingredients Ingredient[]
-  symbols     Symbol[]
+  constituents Constituent[]
+  symbols      Symbol[]
+  conversions  Conversion[]
+  ingredients  Ingredient[]
 }
 
 model Symbol {
   id     Int    @id @default(autoincrement())
   name   String
+  slug   String @unique
   unitId Int
   digits Int    @default(0)
   factor Float
@@ -73,4 +99,14 @@ model Symbol {
   max    Float?
 
   unit Unit @relation(fields: [unitId], references: [id])
+}
+
+model Tool {
+  id        Int     @id @default(autoincrement())
+  name      String
+  slug      String  @unique
+  trivial   Boolean
+  imagePath String?
+
+  recipes Recipe[]
 }

@@ -1,13 +1,13 @@
-import { Menu } from "@/features/menu/domain/Menu";
+import { MenuDto } from "@/features/menu/domain/Menu";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 export interface MenuPageState {
-  menu?: Menu;
+  menu?: MenuDto;
   quantity: number;
   tags: number[];
 
-  setMenu: (menu: Menu) => void;
+  setMenu: (menu: MenuDto) => void;
   setQuantity: (quantity: number) => void;
   setTags: (tags: number[]) => void;
 }

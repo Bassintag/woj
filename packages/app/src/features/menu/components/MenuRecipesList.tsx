@@ -1,5 +1,4 @@
 import { useMenuPageState } from "@/features/menu/hooks/useMenuPageState";
-import { Recipe } from "@/features/recipe/domain/Recipe";
 import { Image } from "@/components/Image";
 import { Button } from "@/components/Button";
 import { RefreshCwIcon, TrashIcon } from "lucide-react";
@@ -7,6 +6,8 @@ import { useCreateMenu } from "@/features/menu/hooks/useCreateMenu";
 import { Link } from "react-router-dom";
 import React from "react";
 import { Placeholder } from "@/components/Placeholder";
+import { RecipeDto } from "@woj/common/dto";
+import { useShallow } from "zustand/shallow";
 
 export const MenuRecipesList = () => {
   const menu = useMenuPageState((s) => s.menu);
@@ -30,15 +31,13 @@ export const MenuRecipesList = () => {
 };
 
 export interface MenuRecipesListProps {
-  recipe: Recipe;
+  recipe: RecipeDto;
 }
 
 export const MenuRecipesListRow = ({ recipe }: MenuRecipesListProps) => {
-  const [menu, setMenu, tags] = useMenuPageState((s) => [
-    s.menu,
-    s.setMenu,
-    s.tags,
-  ]);
+  const [menu, setMenu, tags] = useMenuPageState(
+    useShallow((s) => [s.menu, s.setMenu, s.tags]),
+  );
   const { mutate: createMenu, isPending } = useCreateMenu();
 
   const handleRefresh = (e: React.MouseEvent) => {

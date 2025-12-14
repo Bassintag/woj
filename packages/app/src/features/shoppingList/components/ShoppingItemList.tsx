@@ -1,4 +1,4 @@
-import { ShoppingItem } from "@/features/shoppingList/domain/ShoppingItem";
+import { ShoppingItemDto } from "@/features/shoppingList/domain/ShoppingItem";
 import { GripVerticalIcon, XIcon } from "lucide-react";
 import { Image } from "@/components/Image";
 import { useStringIdParam } from "@/hooks/useIdParam";
@@ -24,9 +24,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { Checkbox } from "@/components/Checkbox";
 import { useShoppingListsState } from "@/features/shoppingList/hooks/useShoppingListsState";
 import { useShoppingList } from "@/features/shoppingList/hooks/useShoppingList";
+import { useShallow } from "zustand/shallow";
 
 export interface ShoppingItemListProps {
-  items: ShoppingItem[];
+  items: ShoppingItemDto[];
 }
 
 export const ShoppingItemList = ({ items }: ShoppingItemListProps) => {
@@ -73,14 +74,13 @@ export const ShoppingItemList = ({ items }: ShoppingItemListProps) => {
 };
 
 export interface ShoppingItemListRowProps {
-  item: ShoppingItem;
+  item: ShoppingItemDto;
 }
 
 export const ShoppingListRow = ({ item }: ShoppingItemListRowProps) => {
-  const [setItem, deleteItem] = useShoppingListsState((s) => [
-    s.setItem,
-    s.deleteItem,
-  ]);
+  const [setItem, deleteItem] = useShoppingListsState(
+    useShallow((s) => [s.setItem, s.deleteItem]),
+  );
   const listId = useStringIdParam();
   const {
     setNodeRef,

@@ -1,31 +1,22 @@
-import { PrismaService } from '../prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
-import { selectRecipe } from './recipe.const';
-import { GetRecipePageQueryDto } from './recipe.dto';
+import { Inject, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { recipeSelect } from '@woj/common/select';
 import { pageableToPrisma } from '../../utils/page.utils';
+import { PrismaService } from '../prisma/prisma.service';
+import { GetRecipePageQueryDto } from './recipe.dto';
 
 @Injectable()
 export class RecipeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   getPage({ search, ...query }: GetRecipePageQueryDto) {
     const where = {
-      OR: [
-        { name: { contains: search, mode: 'insensitive' } },
-        {
-          ingredients: {
-            some: {
-              ingredient: { name: { contains: search, mode: 'insensitive' } },
-            },
-          },
-        },
-      ],
+      name: { contains: search },
     } satisfies Prisma.RecipeWhereInput;
     return this.prisma.$transaction([
       this.prisma.recipe.count({ where }),
       this.prisma.recipe.findMany({
-        select: selectRecipe,
+        select: recipeSelect,
         where,
         ...pageableToPrisma(query),
         orderBy: { name: 'asc' },
@@ -35,7 +26,7 @@ export class RecipeService {
 
   get(id: number) {
     return this.prisma.recipe.findUniqueOrThrow({
-      select: selectRecipe,
+      select: recipeSelect,
       where: { id },
     });
   }

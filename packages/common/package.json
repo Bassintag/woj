@@ -1,0 +1,9 @@
+{
+  "name": "@woj/common",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "optionalDependencies": {
+    "@prisma/client": "7.0.1"
+  }
+}

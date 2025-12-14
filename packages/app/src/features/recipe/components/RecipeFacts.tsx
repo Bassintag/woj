@@ -1,9 +1,9 @@
-import { Recipe } from "@/features/recipe/domain/Recipe";
-import { ChefHatIcon, CookingPotIcon, TimerIcon, ZapIcon } from "lucide-react";
 import { getRecipeEnergy } from "@/features/recipe/utils/getRecipeEnergy";
+import { RecipeDto } from "@woj/common/dto";
+import { ChefHatIcon, CookingPotIcon, ZapIcon } from "lucide-react";
 
 export interface RecipeFactsProps {
-  recipe: Recipe;
+  recipe: RecipeDto;
 }
 
 export const RecipeFacts = ({ recipe }: RecipeFactsProps) => {

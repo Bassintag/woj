@@ -1,10 +1,10 @@
-import { Recipe } from "@/features/recipe/domain/Recipe";
+import { RecipeDto } from "@woj/common/dto";
 
-export interface Menu {
-  recipes: Recipe[];
+export interface MenuDto {
+  recipes: RecipeDto[];
 }
 
-export interface CreateMenu {
+export interface CreateMenuDto {
   quantity: number;
   tags?: number[];
   exclude?: number[];

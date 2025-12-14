@@ -1,13 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @font-face {
-    font-family: 'Lobster';
-    src: local('Lobster'), url("./assets/Lobster-Regular.ttf") format("truetype");
+  font-family: "Lobster";
+  src:
+    local("Lobster"),
+    url("./assets/Lobster-Regular.ttf") format("truetype");
 }
 
 @font-face {
-    font-family: 'Poppins';
-    src: local('Poppins'), url("./assets/Poppins-Variable.otf") format("opentype");
+  font-family: "Poppins";
+  src:
+    local("Poppins"),
+    url("./assets/Poppins-Variable.otf") format("opentype");
+}
+
+@theme {
+  --font-lobster: "Lobster", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-sans: var(--font-poppins);
+  --font-display: var(--font-lobster);
+}
+
+.container {
+  @apply mx-auto px-3;
 }

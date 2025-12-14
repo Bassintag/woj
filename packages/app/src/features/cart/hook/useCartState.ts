@@ -1,62 +1,66 @@
 import { create } from "zustand";
-import { Recipe } from "@/features/recipe/domain/Recipe";
-import { CartItem } from "@/features/cart/domain/Cart";
+import { CartItemDto } from "@/features/cart/domain/Cart";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { RecipeDto } from "@woj/common/dto";
+import { produce } from "immer";
 
 export interface CartState {
-  items: CartItem[];
+  items: CartItemDto[];
 
-  add: (recipe: Recipe, quantity?: number) => void;
-  set: (recipe: Recipe, quantity?: number) => void;
-  remove: (recipe: Recipe, quantity?: number) => void;
+  add: (recipe: RecipeDto, quantity?: number) => void;
+  set: (recipe: RecipeDto, quantity?: number) => void;
+  remove: (recipe: RecipeDto, quantity?: number) => void;
   reset: () => void;
 }
 
 export const useCartState = create(
   persist<CartState>(
-    (set, get) => ({
+    (set) => ({
       items: [],
 
       add: (recipe, quantity = 1) => {
-        const { items } = get();
-        const index = items.findIndex((item) => item.recipe.id === recipe.id);
-        if (index >= 0) {
-          const copy = [...items];
-          copy[index] = {
-            ...copy[index],
-            quantity: copy[index].quantity + quantity,
-          };
-          set({ items: copy });
-        } else {
-          set({ items: [...items, { quantity, recipe }] });
-        }
+        return set(
+          produce((state: CartState) => {
+            const item = state.items.find(
+              (item) => item.recipe.id === recipe.id,
+            );
+            if (item) {
+              item.quantity += quantity;
+            } else {
+              state.items.push({ quantity, recipe });
+            }
+          }),
+        );
       },
       set: (recipe, quantity = 1) => {
-        const { items } = get();
-        const index = items.findIndex((item) => item.recipe.id === recipe.id);
-        if (index >= 0) {
-          const copy = [...items];
-          copy[index] = { ...copy[index], quantity };
-          set({ items: copy });
-        } else {
-          set({ items: [...items, { quantity, recipe }] });
-        }
+        return set(
+          produce((state: CartState) => {
+            const item = state.items.find(
+              (item) => item.recipe.id === recipe.id,
+            );
+            if (item) {
+              item.quantity = quantity;
+            } else {
+              state.items.push({ quantity, recipe });
+            }
+          }),
+        );
       },
       remove: (recipe, quantity) => {
-        const { items } = get();
-        const index = items.findIndex((item) => item.recipe.id === recipe.id);
-        if (index < 0) return;
-        const item = items[index];
-        const copy = [...items];
-        if (quantity == null || item.quantity - quantity <= 0) {
-          copy.splice(index, 1);
-        } else {
-          copy.splice(index, 1, {
-            ...item,
-            quantity: item.quantity - quantity,
-          });
-        }
-        set({ items: copy });
+        return set(
+          produce((state: CartState) => {
+            const index = state.items.findIndex(
+              (item) => item.recipe.id === recipe.id,
+            );
+            if (index < 0) return;
+            const item = state.items[index];
+            if (quantity == null || item.quantity - quantity <= 0) {
+              state.items.splice(index, 1);
+            } else {
+              item.quantity -= quantity;
+            }
+          }),
+        );
       },
       reset: () => set({ items: [] }),
     }),

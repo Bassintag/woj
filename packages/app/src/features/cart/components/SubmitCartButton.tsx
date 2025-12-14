@@ -4,29 +4,33 @@ import { useNavigate } from "react-router-dom";
 import { useShoppingListsState } from "@/features/shoppingList/hooks/useShoppingListsState";
 import { v4 } from "uuid";
 import { formatWithUnit } from "@/features/unit/utils/formatWithUnit";
-import { RecipeIngredient } from "@/features/recipe/domain/Recipe";
+import { ConstituentDto } from "@woj/common/dto";
+import { useShallow } from "zustand/shallow";
 
 export interface SubmitCartButtonProps {
   closeDrawer: () => void;
 }
 
 export const SubmitCartButton = ({ closeDrawer }: SubmitCartButtonProps) => {
-  const [items, resetCart] = useCartState((s) => [s.items, s.reset]);
+  const [items, resetCart] = useCartState(
+    useShallow((s) => [s.items, s.reset]),
+  );
   const createList = useShoppingListsState((s) => s.create);
   const navigate = useNavigate();
 
   const handleClick = () => {
     const id = v4();
-    const ingredients: Record<string, Omit<RecipeIngredient, "id">> = {};
+    const constituents: Record<string, Omit<ConstituentDto, "id">> = {};
     for (const item of items) {
-      for (const recipeIngredient of item.recipe.ingredients) {
-        const existing = ingredients[recipeIngredient.ingredient.id];
-        const quantity = item.quantity * recipeIngredient.quantity;
+      for (const constituent of item.recipe.constituents) {
+        const existing = constituents[constituent.ingredient.id];
+        const quantity = item.quantity * constituent.quantity;
         if (existing) {
           existing.quantity += quantity;
         } else {
-          ingredients[recipeIngredient.ingredient.id] = {
-            ingredient: recipeIngredient.ingredient,
+          constituents[constituent.id] = {
+            ingredient: constituent.ingredient,
+            unit: constituent.unit,
             quantity,
           };
         }
@@ -35,11 +39,11 @@ export const SubmitCartButton = ({ closeDrawer }: SubmitCartButtonProps) => {
     createList({
       id,
       createdAt: new Date().toISOString(),
-      items: Object.values(ingredients)
+      items: Object.values(constituents)
         .sort((a, b) => a.ingredient.name.localeCompare(b.ingredient.name))
-        .map(({ ingredient, quantity }) => ({
+        .map(({ ingredient, quantity, unit }) => ({
           id: v4(),
-          name: `${formatWithUnit(ingredient.unit, quantity)} ${ingredient.name}`,
+          name: `${formatWithUnit(unit, quantity)} ${ingredient.name}`,
           purchased: false,
           ingredient,
         })),

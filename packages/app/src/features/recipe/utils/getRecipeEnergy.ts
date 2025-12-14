@@ -1,9 +1,5 @@
-import { Recipe } from "@/features/recipe/domain/Recipe";
+import { RecipeDto } from "@woj/common/dto";
 
-export const getRecipeEnergy = (recipe: Recipe) => {
-  return Math.round(
-    recipe.ingredients.reduce((prev, { ingredient, quantity }) => {
-      return prev + (ingredient.energy ?? 0) * quantity;
-    }, 0),
-  );
+export const getRecipeEnergy = (recipe: RecipeDto) => {
+  return recipe.energy;
 };

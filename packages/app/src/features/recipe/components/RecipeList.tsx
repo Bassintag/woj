@@ -1,12 +1,12 @@
-import { Recipe } from "@/features/recipe/domain/Recipe";
 import { Link } from "react-router-dom";
 import { ClockIcon } from "lucide-react";
 import { getRecipeTime } from "@/features/recipe/utils/getRecipeTime";
 import { Image } from "@/components/Image";
+import { RecipeDto } from "@woj/common/dto";
 
 export interface RecipeListProps {
   backLink?: string;
-  recipes: Recipe[];
+  recipes: RecipeDto[];
 }
 
 export const RecipeList = ({ backLink, recipes }: RecipeListProps) => {
@@ -21,8 +21,7 @@ export const RecipeList = ({ backLink, recipes }: RecipeListProps) => {
 
 export interface RecipeListRowProps {
   backLink?: string;
-
-  recipe: Recipe;
+  recipe: RecipeDto;
 }
 
 export const RecipeListRow = ({ backLink, recipe }: RecipeListRowProps) => {

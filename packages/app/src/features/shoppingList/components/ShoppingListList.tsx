@@ -1,4 +1,4 @@
-import { ShoppingList } from "@/features/shoppingList/domain/ShoppingList";
+import { ShoppingListDto } from "@/features/shoppingList/domain/ShoppingList";
 import { getShoppingListName } from "@/features/recipe/utils/getShoppingListName";
 import { Image } from "@/components/Image";
 import { Link } from "react-router-dom";
@@ -6,7 +6,7 @@ import { XIcon } from "lucide-react";
 import { useShoppingListsState } from "@/features/shoppingList/hooks/useShoppingListsState";
 
 export interface ShoppingListListProps {
-  shoppingLists: ShoppingList[];
+  shoppingLists: ShoppingListDto[];
 }
 
 export const ShoppingListList = ({ shoppingLists }: ShoppingListListProps) => {
@@ -20,7 +20,7 @@ export const ShoppingListList = ({ shoppingLists }: ShoppingListListProps) => {
 };
 
 export interface ShoppingListListRowProps {
-  list: ShoppingList;
+  list: ShoppingListDto;
 }
 
 export const ShoppingListListRow = ({ list }: ShoppingListListRowProps) => {
