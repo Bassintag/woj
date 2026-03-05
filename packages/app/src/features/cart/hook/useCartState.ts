@@ -1,15 +1,15 @@
-import { create } from "zustand";
 import { CartItemDto } from "@/features/cart/domain/Cart";
-import { createJSONStorage, persist } from "zustand/middleware";
-import { RecipeDto } from "@woj/common/dto";
+import { RecipeDetailsDto } from "@woj/common/dto";
 import { produce } from "immer";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 export interface CartState {
   items: CartItemDto[];
 
-  add: (recipe: RecipeDto, quantity?: number) => void;
-  set: (recipe: RecipeDto, quantity?: number) => void;
-  remove: (recipe: RecipeDto, quantity?: number) => void;
+  add: (recipe: RecipeDetailsDto, quantity?: number) => void;
+  set: (recipe: RecipeDetailsDto, quantity?: number) => void;
+  remove: (recipe: RecipeDetailsDto, quantity?: number) => void;
   reset: () => void;
 }
 

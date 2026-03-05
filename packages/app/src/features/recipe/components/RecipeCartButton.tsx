@@ -1,12 +1,12 @@
 import { Button } from "@/components/Button";
 import { useCartState } from "@/features/cart/hook/useCartState";
-import { useMemo } from "react";
 import { useRecipePageState } from "@/features/recipe/hooks/useRecipePageState";
-import { RecipeDto } from "@woj/common/dto";
+import { RecipeDetailsDto } from "@woj/common/dto";
+import { useMemo } from "react";
 import { useShallow } from "zustand/shallow";
 
 export interface RecipeCartButtonProps {
-  recipe: RecipeDto;
+  recipe: RecipeDetailsDto;
 }
 
 export const RecipeCartButton = ({ recipe }: RecipeCartButtonProps) => {

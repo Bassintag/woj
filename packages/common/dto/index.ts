@@ -1,5 +1,6 @@
 export * from "./constituent";
 export * from "./ingredient";
+export * from "./menu";
 export * from "./recipe";
 export * from "./step";
 export * from "./tag";

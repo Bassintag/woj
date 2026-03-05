@@ -1,18 +1,4 @@
-import { IsArray, IsOptional, IsInt, Max, Min } from 'class-validator';
+import { createMenuSchema } from '@woj/common/schemas';
+import { createZodDto } from 'nestjs-zod';
 
-export class CreateMenuDto {
-  @IsInt()
-  @Min(1)
-  @Max(50)
-  quantity: number;
-
-  @IsOptional()
-  @IsArray()
-  @IsInt({ each: true })
-  tags?: number[];
-
-  @IsOptional()
-  @IsArray()
-  @IsInt({ each: true })
-  exclude?: number[];
-}
+export class CreateMenuDto extends createZodDto(createMenuSchema) {}

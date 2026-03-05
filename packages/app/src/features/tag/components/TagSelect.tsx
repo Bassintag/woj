@@ -1,10 +1,11 @@
-import { useTags } from "@/features/tag/hooks/useTags";
-import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
 import { Button } from "@/components/Button";
-import { TagIcon } from "lucide-react";
+import { Checkbox } from "@/components/Checkbox";
 import { Drawer, DrawerTitle } from "@/components/Drawer";
 import { TagLabel } from "@/features/tag/components/TagLabel";
-import { Checkbox } from "@/components/Checkbox";
+import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
+import { useQuery } from "@tanstack/react-query";
+import { TagIcon } from "lucide-react";
+import { tagsOptions } from "../queries";
 
 export interface TagSelectProps {
   value: number[];
@@ -12,7 +13,7 @@ export interface TagSelectProps {
 }
 
 export const TagSelect = ({ value, onChange }: TagSelectProps) => {
-  const { data: tags } = useTags();
+  const { data: tags } = useQuery(tagsOptions());
 
   const handleToggle = (id: number) => {
     const copy = [...value];

@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "optionalDependencies": {
-    "@prisma/client": "7.0.1"
+    "@prisma/client": "7.0.1",
+    "zod": "^4.3.6"
   }
 }

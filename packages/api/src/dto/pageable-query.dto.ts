@@ -1,14 +1,4 @@
-import { IsInt, IsOptional, Max, Min } from 'class-validator';
+import { pageableQuerySchema } from '@woj/common/schemas';
+import { createZodDto } from 'nestjs-zod';
 
-export class PageableQueryDto {
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  page: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(20)
-  size: number;
-}
+export class PageableQueryDto extends createZodDto(pageableQuerySchema) {}

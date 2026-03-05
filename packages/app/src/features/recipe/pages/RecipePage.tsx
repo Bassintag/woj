@@ -1,19 +1,20 @@
-import { useRecipe } from "@/features/recipe/hooks/useRecipe";
-import { IngredientList } from "@/features/recipe/components/IngredientList";
-import { StepList } from "@/features/recipe/components/StepList";
 import { Image } from "@/components/Image";
-import { useRecipePageState } from "@/features/recipe/hooks/useRecipePageState";
-import { RecipeFacts } from "@/features/recipe/components/RecipeFacts";
-import { RecipeCartButton } from "@/features/recipe/components/RecipeCartButton";
-import { useIdParam } from "@/hooks/useIdParam";
-import { PageTitle } from "@/features/recipe/components/PageTitle";
 import { QuantitySelector } from "@/components/QuantitySelector";
+import { IngredientList } from "@/features/recipe/components/IngredientList";
+import { PageTitle } from "@/features/recipe/components/PageTitle";
+import { RecipeCartButton } from "@/features/recipe/components/RecipeCartButton";
+import { RecipeFacts } from "@/features/recipe/components/RecipeFacts";
+import { StepList } from "@/features/recipe/components/StepList";
+import { useRecipePageState } from "@/features/recipe/hooks/useRecipePageState";
 import { TagLabel } from "@/features/tag/components/TagLabel";
+import { useIdParam } from "@/hooks/useIdParam";
+import { useQuery } from "@tanstack/react-query";
 import { TagIcon } from "lucide-react";
+import { recipeOptions } from "../queries";
 
 export const RecipePage = () => {
   const id = useIdParam();
-  const { data: recipe } = useRecipe(id);
+  const { data: recipe } = useQuery(recipeOptions(id));
   const { quantity, setQuantity } = useRecipePageState();
 
   return (

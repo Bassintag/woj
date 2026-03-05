@@ -14,14 +14,10 @@ export interface GetRandomRecipesParam {
 export class MenuService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getRandomRecipes({
-    withTags = [],
-    excludeIds,
-    quantity,
-  }: GetRandomRecipesParam) {
+  async getRandomRecipes({ tags = [], exclude = [], quantity }: CreateMenuDto) {
     const where = {
-      id: { notIn: excludeIds },
-      AND: withTags.map((tagId) => ({
+      id: { notIn: exclude },
+      AND: tags.map((tagId) => ({
         tags: { some: { id: tagId } },
       })),
     } satisfies Prisma.RecipeWhereInput;
@@ -54,12 +50,8 @@ export class MenuService {
     });
   }
 
-  async createMenu({ quantity, tags, exclude }: CreateMenuDto) {
-    const recipes = await this.getRandomRecipes({
-      quantity,
-      excludeIds: exclude,
-      withTags: tags,
-    });
+  async createMenu(data: CreateMenuDto) {
+    const recipes = await this.getRandomRecipes(data);
     return { recipes };
   }
 }

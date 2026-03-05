@@ -1,8 +1,4 @@
-import { PageableQueryDto } from '../../dto/pageable-query.dto';
-import { IsOptional, IsString } from 'class-validator';
+import { recipePageQuerySchema } from '@woj/common/schemas';
+import { createZodDto } from 'nestjs-zod';
 
-export class GetRecipePageQueryDto extends PageableQueryDto {
-  @IsOptional()
-  @IsString()
-  search?: string;
-}
+export class RecipePageQueryDto extends createZodDto(recipePageQuerySchema) {}

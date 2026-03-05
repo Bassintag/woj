@@ -1,22 +1,25 @@
-import { useRecipes } from "@/features/recipe/hooks/useRecipes";
-import { useInfiniteItems } from "@/hooks/useInfiniteItems";
-import { useSearchParams } from "react-router-dom";
-import { useInView } from "react-intersection-observer";
-import { RecipeList } from "@/features/recipe/components/RecipeList";
 import { Searchbar } from "@/components/Searchbar";
 import { PageTitle } from "@/features/recipe/components/PageTitle";
+import { RecipeList } from "@/features/recipe/components/RecipeList";
+import { useInfiniteItems } from "@/hooks/useInfiniteItems";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
+import { useSearchParams } from "react-router-dom";
+import { recipesOptions } from "../queries";
 
 export const RecipesPage = () => {
   const [searchParams] = useSearchParams();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useRecipes({
-    search: searchParams.get("search") ?? undefined,
-    size: 18,
-  });
-  const items = useInfiniteItems(data);
+  const query = useInfiniteQuery(
+    recipesOptions({
+      search: searchParams.get("search") ?? undefined,
+      size: 18,
+    }),
+  );
+  const items = useInfiniteItems(query.data);
   const { ref } = useInView({
-    skip: !hasNextPage || isFetchingNextPage,
+    skip: !query.hasNextPage || query.isFetchingNextPage,
     onChange: (inView) => {
-      if (inView) void fetchNextPage();
+      if (inView) void query.fetchNextPage();
     },
   });
 
@@ -25,8 +28,8 @@ export const RecipesPage = () => {
       <PageTitle>Recettes</PageTitle>
       <Searchbar placeholder="Rechercher" />
       {items && <RecipeList recipes={items} />}
-      {hasNextPage && (
-        <button ref={ref} disabled={isFetchingNextPage}>
+      {query.hasNextPage && (
+        <button ref={ref} disabled={query.isFetchingNextPage}>
           Charger plus
         </button>
       )}

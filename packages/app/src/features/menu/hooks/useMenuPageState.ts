@@ -1,4 +1,4 @@
-import { MenuDto } from "@/features/menu/domain/Menu";
+import { MenuDto } from "@woj/common/dto";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 

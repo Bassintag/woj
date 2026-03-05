@@ -1,6 +1,6 @@
-import { RecipeDto } from "@woj/common/dto";
+import { RecipeDetailsDto } from "@woj/common/dto";
 
 export interface CartItemDto {
   quantity: number;
-  recipe: RecipeDto;
+  recipe: RecipeDetailsDto;
 }

@@ -4,6 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { MenuModule } from './modules/menu/menu.module';
 import { TagModule } from './modules/tag/tag.module';
 import { ActionModule } from './modules/action/action.module';
+import { APP_PIPE } from '@nestjs/core';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 @Module({
   imports: [

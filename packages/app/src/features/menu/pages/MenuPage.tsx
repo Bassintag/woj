@@ -1,5 +1,4 @@
 import { PageTitle } from "@/features/recipe/components/PageTitle";
-import { useCreateMenu } from "@/features/menu/hooks/useCreateMenu";
 import { Button } from "@/components/Button";
 import { useMenuPageState } from "@/features/menu/hooks/useMenuPageState";
 import { QuantitySelector } from "@/components/QuantitySelector";
@@ -11,10 +10,12 @@ import {
   CalendarPlusIcon,
   RefreshCwIcon,
 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { createMenuOptions } from "../queries";
 
 export const MenuPage = () => {
   const { quantity, tags, setMenu, setQuantity, setTags } = useMenuPageState();
-  const { mutate, isPending } = useCreateMenu();
+  const { mutate, isPending } = useMutation(createMenuOptions());
   const menu = useMenuPageState((s) => s.menu);
 
   const handleClick = () => {

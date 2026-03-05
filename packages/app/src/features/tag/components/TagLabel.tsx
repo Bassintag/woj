@@ -1,9 +1,9 @@
-import { Tag } from "@/features/tag/domain/Tag";
 import { useMemo } from "react";
 import classNames from "classnames";
+import { TagDto } from "@woj/common/dto";
 
 export interface TagLabelProps {
-  tag: Tag;
+  tag: TagDto;
 }
 
 export const TagLabel = ({ tag }: TagLabelProps) => {

@@ -11,11 +11,15 @@ export const recipeSelect = {
   cookingTime: true,
   preppingTime: true,
   energy: true,
+  tags: { select: tagSelect, orderBy: { name: "asc" } },
+} satisfies Prisma.RecipeSelect;
+
+export const recipeDetailsSelect = {
+  ...recipeSelect,
   constituents: {
     select: constituentSelect,
     orderBy: { ingredient: { name: "asc" } },
   },
   steps: { select: stepSelect, orderBy: { order: "asc" } },
-  tags: { select: tagSelect, orderBy: { name: "asc" } },
   tools: { select: toolSelect, orderBy: { name: "asc" } },
 } satisfies Prisma.RecipeSelect;

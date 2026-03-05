@@ -1,13 +1,14 @@
-import { useMenuPageState } from "@/features/menu/hooks/useMenuPageState";
-import { Image } from "@/components/Image";
 import { Button } from "@/components/Button";
-import { RefreshCwIcon, TrashIcon } from "lucide-react";
-import { useCreateMenu } from "@/features/menu/hooks/useCreateMenu";
-import { Link } from "react-router-dom";
-import React from "react";
+import { Image } from "@/components/Image";
 import { Placeholder } from "@/components/Placeholder";
+import { useMenuPageState } from "@/features/menu/hooks/useMenuPageState";
+import { useMutation } from "@tanstack/react-query";
 import { RecipeDto } from "@woj/common/dto";
+import { RefreshCwIcon, TrashIcon } from "lucide-react";
+import React from "react";
+import { Link } from "react-router-dom";
 import { useShallow } from "zustand/shallow";
+import { createMenuOptions } from "../queries";
 
 export const MenuRecipesList = () => {
   const menu = useMenuPageState((s) => s.menu);
@@ -38,7 +39,7 @@ export const MenuRecipesListRow = ({ recipe }: MenuRecipesListProps) => {
   const [menu, setMenu, tags] = useMenuPageState(
     useShallow((s) => [s.menu, s.setMenu, s.tags]),
   );
-  const { mutate: createMenu, isPending } = useCreateMenu();
+  const { mutate: createMenu, isPending } = useMutation(createMenuOptions());
 
   const handleRefresh = (e: React.MouseEvent) => {
     e.preventDefault();
