@@ -1,6 +1,6 @@
 import { orpc } from "../lib/orpc";
 
-const list = orpc.recipes.list.handler(() => {
+const list = orpc.recipes.list.handler(({ context }) => {
   return [];
 });
 
