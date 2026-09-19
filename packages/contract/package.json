@@ -1,13 +1,17 @@
 {
-	"name": "@woj/contract",
-	"private": true,
-	"devDependencies": {
-		"@types/bun": "latest"
-	},
-	"peerDependencies": {
-		"typescript": "^7"
-	},
-	"dependencies": {
-		"@orpc/contract": "^2.0.0-beta.37"
-	}
+  "name": "@woj/contract",
+  "private": true,
+  "types": "./src/index.ts",
+  "main": "./src/index.ts",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^7"
+  },
+  "dependencies": {
+    "@orpc/contract": "^2.0.0-beta.37",
+    "@orpc/openapi": "^2.0.0-beta.37",
+    "zod": "^4.6.5"
+  }
 }
