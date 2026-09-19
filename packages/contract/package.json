@@ -1,0 +1,13 @@
+{
+	"name": "@woj/contract",
+	"private": true,
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^7"
+	},
+	"dependencies": {
+		"@orpc/contract": "^2.0.0-beta.37"
+	}
+}
