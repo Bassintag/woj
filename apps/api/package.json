@@ -2,7 +2,8 @@
   "name": "@woj/api",
   "private": true,
   "scripts": {
-    "dev": "bun --watch src/index.ts"
+    "dev": "bun --watch --env-file=../../.env src/index.ts",
+    "drizzle": "bun --env-file=../../.env --bun drizzle-kit"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
