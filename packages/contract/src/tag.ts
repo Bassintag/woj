@@ -1,6 +1,7 @@
 import { oc } from "@orpc/contract";
 import { openapi } from "@orpc/openapi";
 import { z } from "zod";
+import { auth } from "./lib/auth";
 
 // Schemas
 
@@ -25,15 +26,20 @@ const get = oc
 
 const create = oc
   .meta(openapi({ method: "POST", path: "/" }))
+  .meta(auth(true))
   .input(TagSchema.omit({ id: true }))
   .output(TagSchema);
 
 const update = oc
   .meta(openapi({ method: "PATCH", path: "/{id}" }))
+  .meta(auth(true))
   .input(TagSchema.omit({ id: true }))
   .output(TagSchema);
 
-const remove = oc.meta(openapi({ method: "DELETE", path: "/{id}" }));
+const remove = oc
+  .meta(openapi({ method: "DELETE", path: "/{id}" }))
+  .meta(auth(true))
+  .input(z.object({ id: z.int() }));
 
 export const tagsContract = oc.meta(openapi({ prefix: "/tags" })).router({
   list,

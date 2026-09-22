@@ -6,6 +6,10 @@ import { recipesContract } from "./recipe";
 import { tagsContract } from "./tag";
 import { unitsContract } from "./unit";
 
+export { getAuthMeta } from "./lib/auth";
+
+// Contract
+
 export * from "./ingredient";
 export * from "./menu";
 export * from "./recipe";

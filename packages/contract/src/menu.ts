@@ -1,6 +1,7 @@
 import { oc } from "@orpc/contract";
 import { openapi } from "@orpc/openapi";
 import { z } from "zod";
+import { auth } from "./lib/auth";
 import { RecipeSchema } from "./recipe";
 
 // Schemas
@@ -23,19 +24,25 @@ export type Menu = z.infer<typeof MenuSchema>;
 
 const list = oc
   .meta(openapi({ method: "GET", path: "/" }))
+  .meta(auth(true))
   .output(z.array(MenuSchema));
 
 const create = oc
   .meta(openapi({ method: "POST", path: "/" }))
+  .meta(auth(true))
   .input(MenuSchema.omit({ id: true }))
   .output(MenuSchema);
 
 const update = oc
   .meta(openapi({ method: "PATCH", path: "/{id}" }))
+  .meta(auth(true))
   .input(MenuSchema.omit({ id: true }))
   .output(MenuSchema);
 
-const remove = oc.meta(openapi({ method: "DELETE", path: "/{id}" }));
+const remove = oc
+  .meta(openapi({ method: "DELETE", path: "/{id}" }))
+  .meta(auth(true))
+  .input(z.object({ id: z.int() }));
 
 export const menusContract = oc.meta(openapi({ prefix: "/menus" })).router({
   list,

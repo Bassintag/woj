@@ -33,6 +33,9 @@
     "apps/web": {
       "name": "@woj/web",
       "dependencies": {
+        "@orpc/client": "^2.0.0-beta.38",
+        "@orpc/contract": "^2.0.0-beta.38",
+        "@orpc/openapi": "^2.0.0-beta.38",
         "@tailwindcss/vite": "^4.3.3",
         "@tanstack/react-router": "^1.170.38",
         "@tanstack/router-plugin": "^1.168.40",

@@ -1,6 +1,7 @@
 import { oc } from "@orpc/contract";
 import { openapi } from "@orpc/openapi";
 import { z } from "zod";
+import { auth } from "./lib/auth";
 import { UnitSchema } from "./unit";
 
 // Schemas
@@ -35,15 +36,20 @@ const get = oc
 
 const create = oc
   .meta(openapi({ method: "POST", path: "/" }))
+  .meta(auth(true))
   .input(IngredientSchema.omit({ id: true }))
   .output(IngredientSchema);
 
 const update = oc
   .meta(openapi({ method: "PATCH", path: "/{id}" }))
+  .meta(auth(true))
   .input(IngredientSchema.omit({ id: true }))
   .output(IngredientSchema);
 
-const remove = oc.meta(openapi({ method: "DELETE", path: "/{id}" }));
+const remove = oc
+  .meta(openapi({ method: "DELETE", path: "/{id}" }))
+  .meta(auth(true))
+  .input(z.object({ id: z.int() }));
 
 export const ingredientsContract = oc
   .meta(openapi({ prefix: "/ingredients" }))
