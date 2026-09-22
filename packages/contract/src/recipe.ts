@@ -1,38 +1,39 @@
 import { oc } from "@orpc/contract";
 import { openapi } from "@orpc/openapi";
 import { z } from "zod";
-import { IngredientSchema } from "./ingredients";
-import { TagSchema } from "./tags";
+import { IngredientSchema } from "./ingredient";
+import { TagSchema } from "./tag";
 
 // Schemas
+
+export const ConstituentSchema = z.object({
+  id: z.number(),
+  quantity: z.number(),
+  ingredient: IngredientSchema,
+});
+
+export type Constituent = z.infer<typeof ConstituentSchema>;
+
+export const StepSchema = z.object({
+  id: z.number(),
+  description: z.string(),
+});
 
 export const RecipeSchema = z.object({
   id: z.number(),
   title: z.string(),
   imageUrl: z.string().nullable(),
+  bakingTime: z.number().nullable(),
+  cookingTime: z.number().nullable(),
+  calories: z.number().nullable(),
   tags: z.array(TagSchema),
-  cookingTime: z.number(),
-  calories: z.number(),
 });
 
 export type Recipe = z.infer<typeof RecipeSchema>;
 
-export const RecipeDetailSchema = z.object({
-  id: z.number(),
-  title: z.string(),
-  imageUrl: z.string().nullable(),
-  tags: z.array(TagSchema),
-  cookingTime: z.number(),
-  bakingTime: z.number(),
-  calories: z.number(),
-  constituants: z.array(
-    z.object({
-      id: z.number(),
-      quantity: z.number(),
-      ingredient: IngredientSchema,
-    }),
-  ),
-  steps: z.array(z.string()),
+export const RecipeDetailSchema = RecipeSchema.extend({
+  constituents: z.array(ConstituentSchema),
+  steps: z.array(StepSchema),
 });
 
 export type RecipeDetail = z.infer<typeof RecipeDetailSchema>;

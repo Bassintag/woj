@@ -1,19 +1,26 @@
 import { oc } from "@orpc/contract";
 import { openapi } from "@orpc/openapi";
 import { z } from "zod";
-import { UnitSchema } from "./units";
+import { UnitSchema } from "./unit";
 
 // Schemas
 
-export const IngredientSchema = z.object({
+export const ConversionSchema = z.object({
   id: z.number(),
-  name: z.string(),
-  imageUrl: z.string().nullable(),
-  calories: z.number(),
-  units: z.array(UnitSchema),
+  factor: z.number(),
+  unit: UnitSchema,
 });
 
-export type Tag = z.infer<typeof IngredientSchema>;
+export const IngredientSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  imageUrl: z.string().nullable(),
+  calories: z.number(),
+  defaultUnit: UnitSchema,
+  conversions: z.array(ConversionSchema),
+});
+
+export type Ingredient = z.infer<typeof IngredientSchema>;
 
 // Contract
 
@@ -23,7 +30,8 @@ const list = oc
 
 const get = oc
   .meta(openapi({ method: "GET", path: "/{id}" }))
-  .output(z.array(IngredientSchema));
+  .input(z.object({ id: z.int() }))
+  .output(IngredientSchema);
 
 const create = oc
   .meta(openapi({ method: "POST", path: "/" }))

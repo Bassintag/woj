@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
-import type { BaseContext } from "../context";
-import { recipeOptions } from "./recipe.options";
+import type { BaseContext } from "../../context";
+import { recipeDetailsOptions, recipeOptions } from "./recipe.options";
 
 export function createRecipeContext(context: BaseContext) {
   return {
@@ -9,7 +9,10 @@ export function createRecipeContext(context: BaseContext) {
         .findMany({ ...recipeOptions, orderBy: { id: "desc" } })
         .prepare(),
       get: context.db.query.recipes
-        .findFirst({ ...recipeOptions, where: { id: sql.placeholder("id") } })
+        .findFirst({
+          ...recipeDetailsOptions,
+          where: { id: sql.placeholder("id") },
+        })
         .prepare(),
     },
   };

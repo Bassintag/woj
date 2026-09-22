@@ -1,14 +1,20 @@
 import { oc } from "@orpc/contract";
 import { openapi } from "@orpc/openapi";
 import { z } from "zod";
-import { RecipeSchema } from "./recipes";
+import { RecipeSchema } from "./recipe";
 
 // Schemas
+
+export const MealSchema = z.object({
+  id: z.number(),
+  quantity: z.number(),
+  recipe: RecipeSchema,
+});
 
 export const MenuSchema = z.object({
   id: z.number(),
   title: z.string(),
-  meals: z.array(z.object({ serving: z.number(), recipe: RecipeSchema })),
+  meals: z.array(MealSchema),
 });
 
 export type Menu = z.infer<typeof MenuSchema>;

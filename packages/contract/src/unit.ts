@@ -4,9 +4,21 @@ import { z } from "zod";
 
 // Schemas
 
+export const SymbolSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  digits: z.number(),
+  factor: z.number(),
+  min: z.number().nullable(),
+  max: z.number().nullable(),
+});
+
+export type Symbol = z.infer<typeof SymbolSchema>;
+
 export const UnitSchema = z.object({
   id: z.number(),
-  defaultUnit: z.string(),
+  title: z.string(),
+  symbols: z.array(SymbolSchema),
 });
 
 export type Unit = z.infer<typeof UnitSchema>;

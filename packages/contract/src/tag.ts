@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export const TagSchema = z.object({
   id: z.number(),
-  name: z.string(),
+  title: z.string(),
   color: z.string(),
 });
 
@@ -20,7 +20,8 @@ const list = oc
 
 const get = oc
   .meta(openapi({ method: "GET", path: "/{id}" }))
-  .output(z.array(TagSchema));
+  .input(z.object({ id: z.int() }))
+  .output(TagSchema);
 
 const create = oc
   .meta(openapi({ method: "POST", path: "/" }))

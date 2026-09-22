@@ -4,7 +4,7 @@ import { relations } from "../db/schema";
 import type { Env } from "./env";
 
 export function createDb(env: Env) {
-  return drizzle(env.DB_FILE_PATH, { relations, logger: true });
+  return drizzle(env.DB_FILE_PATH, { relations });
 }
 
 export type Db = ReturnType<typeof createDb>;
