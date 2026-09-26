@@ -1,6 +1,6 @@
 import { ORPCError } from "@orpc/server";
+import { relations } from "@woj/db";
 import { drizzle } from "drizzle-orm/libsql";
-import { relations } from "../db/schema";
 import type { Env } from "./env";
 
 export function createDb(env: Env) {

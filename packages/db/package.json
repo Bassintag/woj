@@ -1,0 +1,19 @@
+{
+  "name": "@woj/db",
+  "module": "index.ts",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "private": true,
+  "scripts": {
+    "drizzle": "bun --env-file=../../.env --bun drizzle-kit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "drizzle-kit": "^1.0.0-rc.4"
+  },
+  "peerDependencies": {
+    "drizzle-orm": "^1.0.0-rc.4",
+    "typescript": "^7"
+  }
+}

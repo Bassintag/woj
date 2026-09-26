@@ -3,7 +3,7 @@ import { units } from "./units";
 
 export const ingredients = snakeCase.table("ingredients", {
   id: int().primaryKey({ autoIncrement: true }),
-  title: text().notNull(),
+  title: text().notNull().unique(),
   imageUrl: text(),
   calories: int().notNull(),
   defaultUnitId: int()
