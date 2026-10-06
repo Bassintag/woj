@@ -1,7 +1,7 @@
 {
-	"recommendations": [
-		"biomejs.biome",
-		"bradlc.vscode-tailwindcss",
-		"typescriptteam.native-preview"
-	]
+  "recommendations": [
+    "biomejs.biome",
+    "bradlc.vscode-tailwindcss",
+    "typescriptteam.native-preview"
+  ]
 }

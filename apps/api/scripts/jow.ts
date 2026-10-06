@@ -10,16 +10,31 @@ const jow = new j.JowClient();
 
 const db = createDb(env);
 
+function withMap<ArgsT extends unknown[], ResultT extends { id?: string }>(
+  callback: (...args: ArgsT) => ResultT,
+) {
+  const map = new Map<string, ResultT>();
+
+  function all() {
+    return Array.from(map.values());
+  }
+
+  return Object.assign(
+    (...args: ArgsT) => {
+      const result = callback(...args);
+      if (result.id) {
+        map.set(result.id, result);
+      }
+      return result;
+    },
+    { map, all },
+  );
+}
+
 // parse
 
-type Unit = ReturnType<typeof parseUnit>;
-type Ingredient = ReturnType<typeof parseIngredient>;
-
-const unitMap = new Map<string, Unit>();
-const ingredientMap = new Map<string, Ingredient>();
-
-function parseUnit(unit: j.Unit) {
-  const parsed = {
+const parseUnit = withMap((unit: j.Unit) => {
+  return {
     id: unit.id,
     title: unit.name,
     abbreviations: unit.abbreviations.map((abbreviation) => ({
@@ -31,14 +46,21 @@ function parseUnit(unit: j.Unit) {
       max: abbreviation.maxAmount,
     })),
   };
+});
 
-  unitMap.set(parsed.id, parsed);
+const parseAlternativeUnit = withMap(
+  (ingredient: j.Ingredient, alternativeUnit: j.AlternativeUnit) => {
+    return {
+      id: alternativeUnit.id,
+      factor: alternativeUnit.quantity,
+      ingredient,
+      unit: parseUnit(alternativeUnit.unit),
+    };
+  },
+);
 
-  return parsed;
-}
-
-function parseIngredient(ingredient: j.Ingredient) {
-  const parsed = {
+const parseIngredient = withMap((ingredient: j.Ingredient) => {
+  return {
     id: ingredient.id,
     title: ingredient.name,
     imageUrl: ingredient.imageUrl,
@@ -46,31 +68,34 @@ function parseIngredient(ingredient: j.Ingredient) {
       (n) => n.id === "ENERC",
     )?.amount,
     defaultUnit: parseUnit(ingredient.naturalUnit),
-    units: ingredient.displayableUnits.map((u) => parseUnit(u.unit)),
+    conversions: ingredient.recipes
+      .flatMap((r) =>
+        r.constituents.filter((c) => c.ingredient.id === ingredient.id),
+      )
+      .flatMap((c) =>
+        c.ingredient.alternativeUnits
+          ?.map((a) => {
+            return parseAlternativeUnit(ingredient, a);
+          })
+          .filter((a) => a.id != null),
+      ),
   };
-
-  ingredientMap.set(parsed.id, parsed);
-
-  return parsed;
-}
+});
 
 // fetch
 
+const jowIngredients = await jow.fetchIngredients();
+
 await Promise.all(
-  (await jow.fetchIngredients()).map(async ({ id }) => {
-    const ingredient = await jow.fetchIngredient(id);
-    parseIngredient(ingredient);
+  jowIngredients.map(async ({ id }) => {
+    const joIingredient = await jow.fetchIngredient(id);
+    parseIngredient(joIingredient);
   }),
 );
 
-console.log({
-  units: unitMap.size,
-  ingredients: ingredientMap.size,
-});
-
 // Symbols
 
-const units = Array.from(unitMap.values());
+const units = parseUnit.all();
 
 const dbUnits = await db
   .insert(tables.units)
@@ -99,19 +124,17 @@ await db
   )
   .onConflictDoUpdate({
     set: {
-      title: sql`excluded."title"`,
       digits: sql`excluded."digits"`,
       factor: sql`excluded."factor"`,
       min: sql`excluded."min"`,
       max: sql`excluded."max"`,
-      unitId: sql`excluded."unit_id"`,
     },
     target: [tables.symbols.title, tables.symbols.unitId],
   });
 
 // Ingredients
 
-const ingredients = Array.from(ingredientMap.values());
+const ingredients = parseIngredient.all();
 
 const dbIngredients = await db
   .insert(tables.ingredients)
@@ -124,7 +147,6 @@ const dbIngredients = await db
   )
   .onConflictDoUpdate({
     set: {
-      title: sql`excluded."title"`,
       calories: sql`excluded."calories"`,
       defaultUnitId: sql`excluded."default_unit_id"`,
     },
@@ -132,4 +154,139 @@ const dbIngredients = await db
   })
   .returning({ id: tables.ingredients.id });
 
-const dbIngredientMap = new Map(dbUnits.map(({ id }, i) => [units[i]?.id, id]));
+const dbIngredientMap = new Map(
+  dbIngredients.map(({ id }, i) => [ingredients[i]?.id, id]),
+);
+
+// Conversions
+
+const alternativeUnits = parseAlternativeUnit.all();
+
+await db
+  .insert(tables.conversions)
+  .values(
+    alternativeUnits.map((a) => ({
+      factor: a.factor,
+      ingredientId: dbIngredientMap.get(a.ingredient.id) as number,
+      unitId: dbUnitMap.get(a.unit.id) as number,
+    })),
+  )
+  .onConflictDoUpdate({
+    set: {
+      factor: sql`excluded.factor`,
+    },
+    target: [tables.conversions.ingredientId, tables.conversions.unitId],
+  });
+
+for (const jowIngredient of jowIngredients) {
+  const parseRecipe = withMap((recipe: j.Recipe) => {
+    const constituents = recipe.constituents.map((c) => ({
+      quantity:
+        "quantityPerCover" in c
+          ? c.quantityPerCover
+          : c.ingredient.quantityPerCover,
+      ingredientId: c.ingredient.id,
+    }));
+
+    const calories = constituents.reduce((v, c) => {
+      const ingredient = parseIngredient.map.get(c.ingredientId);
+      if (ingredient?.calories == null) return v;
+      return v + ingredient.calories * c.quantity;
+    }, 0);
+
+    return {
+      id: recipe.id,
+      title: recipe.title,
+      imageUri: recipe.imageUrl,
+      bakingTime: recipe.cookingTime,
+      cookingTime: recipe.preparationTime,
+      calories,
+      constituents,
+      steps: recipe.directions.map((d, i) => ({
+        description: d.label,
+        order: i,
+      })),
+    };
+  });
+
+  const jowRecipeGroups = await jow.fetchRecipesFromIngredient(
+    jowIngredient.id,
+  );
+
+  const jowRecipes = await Promise.all(
+    jowRecipeGroups.flatMap((g) => g.recipes.map((r) => jow.fetchRecipe(r.id))),
+  );
+
+  for (const jowRecipe of jowRecipes) {
+    parseRecipe(jowRecipe);
+  }
+
+  const recipes = parseRecipe.all();
+
+  if (recipes.length === 0) continue;
+
+  const dbRecipes = await db
+    .insert(tables.recipes)
+    .values(
+      recipes.map((r) => ({
+        title: r.title,
+        imageUrl: r.imageUri,
+        bakingTime: r.bakingTime,
+        cookingTime: r.cookingTime,
+        calories: r.calories,
+      })),
+    )
+    .onConflictDoUpdate({
+      target: [tables.recipes.title],
+      set: {
+        imageUrl: sql`excluded."image_url"`,
+        bakingTime: sql`excluded."baking_time"`,
+        cookingTime: sql`excluded."cooking_time"`,
+        calories: sql`excluded."calories"`,
+      },
+    })
+    .returning({ id: tables.recipes.id });
+
+  const dbRecipeMap = new Map(
+    dbRecipes.map(({ id }, i) => [recipes[i]?.id, id]),
+  );
+
+  await db
+    .insert(tables.constituents)
+    .values(
+      recipes.flatMap((r) =>
+        r.constituents.map((c) => {
+          const ingredient = dbIngredientMap.get(c.ingredientId);
+          if (ingredient == null) {
+            console.log(`MISSING INGREDIENT:${c.ingredientId}`);
+          }
+          return {
+            quantity: c.quantity,
+            recipeId: dbRecipeMap.get(r.id) as number,
+            ingredientId: dbIngredientMap.get(c.ingredientId) as number,
+          };
+        }),
+      ),
+    )
+    .onConflictDoUpdate({
+      target: [tables.constituents.recipeId, tables.constituents.ingredientId],
+      set: {
+        quantity: sql`excluded."quantity"`,
+      },
+    });
+
+  await db
+    .insert(tables.steps)
+    .values(
+      recipes.flatMap((r) =>
+        r.steps.map((c) => {
+          return {
+            recipeId: dbRecipeMap.get(r.id) as number,
+            description: c.description,
+            order: c.order,
+          };
+        }),
+      ),
+    )
+    .onConflictDoNothing();
+}

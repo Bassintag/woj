@@ -10,11 +10,11 @@ export const constituents = snakeCase.table(
     recipeId: int()
       .notNull()
       .references(() => recipes.id),
-    indredientId: int()
+    ingredientId: int()
       .notNull()
       .references(() => ingredients.id),
   },
   (table) => [
-    uniqueIndex("recipe_ingredient_idx").on(table.recipeId, table.indredientId),
+    uniqueIndex("recipe_ingredient_idx").on(table.recipeId, table.ingredientId),
   ],
 );

@@ -27,11 +27,6 @@ export const IngredientSchema = z.object({
     whiteMeat: z.boolean(),
   }),
   naturalUnit: UnitSchema,
-  displayableUnits: z.array(
-    z.object({
-      unit: UnitSchema,
-    }),
-  ),
   recipes: z.array(RecipeSchema),
 });
 

@@ -46,7 +46,7 @@ export const relations = defineRelations(
       }),
       ingredient: t.one.ingredients({
         optional: false,
-        from: t.constituents.indredientId,
+        from: t.constituents.ingredientId,
         to: t.ingredients.id,
       }),
     },

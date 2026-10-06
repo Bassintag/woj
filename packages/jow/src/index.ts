@@ -2,9 +2,10 @@ import type { z } from "zod";
 import { IngredientSchema } from "./schemas/ingredient";
 import { IngredientsSchema } from "./schemas/ingredients";
 import { RecipeSchema } from "./schemas/recipe";
-import { RecipesSchema } from "./schemas/recipes";
+import { RecipeGroupsSchema } from "./schemas/recipeGroups";
 
 export * from "./schemas/abbreviation";
+export * from "./schemas/alternativeUnit";
 export * from "./schemas/ingredient";
 export * from "./schemas/ingredients";
 export * from "./schemas/recipe";
@@ -28,6 +29,7 @@ export class JowClient {
       init.body = JSON.stringify(init.json);
       init.headers.set("content-type", "application/json");
     }
+    console.log("JOW", url.href);
     const response = await fetch(url, init);
     if (!response.ok) {
       const text = await response.text();
@@ -66,7 +68,7 @@ export class JowClient {
   async fetchRecipesFromIngredient(ingredientId: string) {
     return this.fetchJson(
       `public/recipes/recipesFromIngredientsId`,
-      RecipesSchema,
+      RecipeGroupsSchema,
       { method: "POST", json: [ingredientId] },
     );
   }

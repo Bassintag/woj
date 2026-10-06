@@ -54,7 +54,7 @@ const list = oc
 
 const get = oc
   .meta(openapi({ method: "GET", path: "/{id}" }))
-  .input(z.object({ id: z.int() }))
+  .input(z.object({ id: z.coerce.number() }))
   .output(RecipeDetailSchema);
 
 const create = oc
