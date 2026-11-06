@@ -8,5 +8,9 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "tailwindCSS.classFunctions": ["cva", "cn"]
+  "tailwindCSS.classFunctions": ["cva", "cn"],
+
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "always"
+  }
 }
