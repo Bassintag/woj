@@ -24,7 +24,6 @@ export type Menu = z.infer<typeof MenuSchema>;
 
 const list = oc
   .meta(openapi({ method: "GET", path: "/" }))
-  .meta(auth(true))
   .output(z.array(MenuSchema));
 
 const create = oc

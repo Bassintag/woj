@@ -24,17 +24,18 @@ export const RecipeSchema = z.object({
   id: z.number(),
   title: z.string(),
   imageUrl: z.string().nullable(),
-  bakingTime: z.number().nullable(),
-  cookingTime: z.number().nullable(),
   calories: z.number().nullable(),
-  tags: z.array(TagSchema),
+  tags: z.array(TagSchema.pick({ id: true })),
 });
 
 export type Recipe = z.infer<typeof RecipeSchema>;
 
 export const RecipeDetailSchema = RecipeSchema.extend({
+  bakingTime: z.number().nullable(),
+  cookingTime: z.number().nullable(),
   constituents: z.array(ConstituentSchema),
   steps: z.array(StepSchema),
+  tags: z.array(TagSchema),
 });
 
 export type RecipeDetail = z.infer<typeof RecipeDetailSchema>;
