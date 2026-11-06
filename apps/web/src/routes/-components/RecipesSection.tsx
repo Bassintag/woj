@@ -8,6 +8,7 @@ import { RecipeCard } from "@/components/recipe/RecipeCard";
 import { Input } from "@/components/ui/Input";
 import { useRecipeSearch } from "@/hooks/useRecipeIndex";
 import { q } from "@/lib/orpc";
+import { filterByTags } from "@/lib/recipe";
 
 const Route = getRouteApi("/");
 
@@ -88,10 +89,7 @@ function RecipesSectionContent() {
   const tags = Route.useSearch({ select: (s) => s.tags });
   let results: { id: number }[] = q ? api.index.search(q) : api.recipes;
   if (tags) {
-    results = results.filter((match) => {
-      const recipe = api.get(match.id);
-      return tags.some((id) => recipe.tags.some((tag) => tag.id === id));
-    });
+    results = filterByTags(results, tags, api.get);
   }
 
   const virtualizer = useWindowVirtualizer({

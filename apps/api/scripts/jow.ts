@@ -6,6 +6,15 @@ import { sql } from "drizzle-orm";
 import pMap from "p-map";
 import { createDb } from "../src/lib/db";
 import { createEnv } from "../src/lib/env";
+import {
+  batch,
+  getCalories,
+  getConversions,
+  getQuantity,
+  getRecipeCalories,
+  getUnits,
+  idByTitle,
+} from "./lib/transform";
 
 const env = createEnv();
 const jow = new j.JowClient();
@@ -13,18 +22,6 @@ const db = createDb(env);
 
 function map<T, R>(items: T[], fn: (item: T) => Promise<R>) {
   return pMap(items, fn, { concurrency: 64 });
-}
-
-async function batch<T, R>(rows: T[], insert: (rows: T[]) => PromiseLike<R>) {
-  const results: R[] = [];
-  for (let i = 0; i < rows.length; i += 100) {
-    results.push(await insert(rows.slice(i, i + 100)));
-  }
-  return results;
-}
-
-function idByTitle(rows: { id: number; title: string }[]) {
-  return new Map(rows.map((r) => [r.title, r.id]));
 }
 
 async function writeImage(
@@ -68,29 +65,9 @@ const recipes = await map([...recipeIds], async (id) => {
   return { ...recipe, imagePath };
 });
 
-const conversions = [
-  ...new Map(
-    ingredients
-      .flatMap((ingredient) => {
-        return ingredient.recipes
-          .flatMap((r) => r.constituents)
-          .filter((c) => c.ingredient.id === ingredient.id)
-          .flatMap((c) => c.ingredient.alternativeUnits ?? [])
-          .filter((a) => a.id != null)
-          .map((a) => ({ ingredient, ...a }));
-      })
-      .map((c) => [`${c.ingredient.id}:${c.unit.name}`, c]),
-  ).values(),
-];
+const conversions = getConversions(ingredients);
 
-const units = [
-  ...new Map(
-    [
-      ...ingredients.map((i) => i.naturalUnit),
-      ...conversions.map((c) => c.unit),
-    ].map((u) => [u.name, u]),
-  ).values(),
-];
+const units = getUnits(ingredients, conversions);
 
 const unitIds = idByTitle(
   (
@@ -139,14 +116,7 @@ await batch(
   },
 );
 
-const calories = new Map(
-  ingredients.map((i) => {
-    const energy = i.editorialData.nutritionalFacts.find(
-      (n) => n.id === "ENERC",
-    );
-    return [i.id, energy?.amount ?? 0];
-  }),
-);
+const calories = new Map(ingredients.map((i) => [i.id, getCalories(i)]));
 
 const ingredientTitleIds = idByTitle(
   (
@@ -211,11 +181,7 @@ const recipeRows = recipes.map((recipe) => {
   const constituents = recipe.constituents.flatMap((c) => {
     const ingredientId = ingredientIds.get(c.ingredient.id);
     if (ingredientId == null) return [];
-    const quantity =
-      "quantityPerCover" in c
-        ? c.quantityPerCover
-        : c.ingredient.quantityPerCover;
-    return [{ ingredientId, quantity }];
+    return [{ ingredientId, quantity: getQuantity(c) }];
   });
 
   return {
@@ -223,10 +189,7 @@ const recipeRows = recipes.map((recipe) => {
     imageUrl: recipe.imagePath,
     bakingTime: recipe.cookingTime,
     cookingTime: recipe.preparationTime,
-    calories: constituents.reduce(
-      (sum, c) => sum + (caloriesById.get(c.ingredientId) ?? 0) * c.quantity,
-      0,
-    ),
+    calories: getRecipeCalories(constituents, caloriesById),
     constituents,
     steps: recipe.directions.map((d, order) => {
       return { order, description: d.label };
