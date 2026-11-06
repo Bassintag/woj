@@ -5,18 +5,57 @@ beforeEach(() => {
   useListStore.setState({ items: [] });
 });
 
-test("add, toggle, update and remove", () => {
-  const { add, toggle, update } = useListStore.getState();
+function items() {
+  return useListStore.getState().items;
+}
+
+test("add creates an unchecked item with a unique id", () => {
+  const { add } = useListStore.getState();
   add("Café");
-  const [item] = useListStore.getState().items;
-  expect(item).toMatchObject({ label: "Café", checked: false });
+  add("Thé");
+  expect(items()).toHaveLength(2);
+  expect(items()[0]).toMatchObject({ label: "Café", checked: false });
+  expect(items()[0].id).not.toBe(items()[1].id);
+});
 
-  toggle(item.id);
-  expect(useListStore.getState().items[0].checked).toBe(true);
+test("toggle flips only the targeted item", () => {
+  const { add, toggle } = useListStore.getState();
+  add("Café");
+  add("Thé");
+  toggle(items()[0].id);
+  expect(items().map((i) => i.checked)).toEqual([true, false]);
+  toggle(items()[0].id);
+  expect(items()[0].checked).toBe(false);
+});
 
-  update(item.id, "Thé");
-  expect(useListStore.getState().items[0].label).toBe("Thé");
+test("update changes the label", () => {
+  const { add, update } = useListStore.getState();
+  add("Café");
+  update(items()[0].id, "Thé");
+  expect(items()[0].label).toBe("Thé");
+});
 
-  update(item.id, "");
-  expect(useListStore.getState().items).toHaveLength(0);
+test("update with an empty label removes the item", () => {
+  const { add, update } = useListStore.getState();
+  add("Café");
+  update(items()[0].id, "");
+  expect(items()).toHaveLength(0);
+});
+
+test("remove deletes only the targeted item", () => {
+  const { add, remove } = useListStore.getState();
+  add("Café");
+  add("Thé");
+  remove(items()[0].id);
+  expect(items().map((i) => i.label)).toEqual(["Thé"]);
+});
+
+test("unknown ids are ignored", () => {
+  const { add, toggle, update, remove } = useListStore.getState();
+  add("Café");
+  toggle("nope");
+  update("nope", "Thé");
+  remove("nope");
+  expect(items()).toHaveLength(1);
+  expect(items()[0]).toMatchObject({ label: "Café", checked: false });
 });
