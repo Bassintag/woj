@@ -5,14 +5,23 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import checker from "vite-plugin-checker";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
     react(),
     tailwindcss(),
-    checker({ typescript: true }),
+    mode === "development" && checker({ typescript: true }),
   ],
-  server: { host: true },
+  server: {
+    host: true,
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+      "/images": "http://localhost:9000",
+    },
+  },
   envDir: "../..",
   envPrefix: "PUBLIC_",
   resolve: {
@@ -20,4 +29,4 @@ export default defineConfig({
       "@": path.join(import.meta.dirname, "src"),
     },
   },
-});
+}));

@@ -8,7 +8,7 @@ import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { contract, getAuthMeta } from "@woj/contract";
 
 const link = new OpenAPILink(contract, {
-  origin: import.meta.env.PUBLIC_API_URL,
+  origin: `${window.location.origin}/api`,
   headers(_, path) {
     const procedure = getProcedureContractOrThrow(contract, path);
     const auth = getAuthMeta(procedure);
