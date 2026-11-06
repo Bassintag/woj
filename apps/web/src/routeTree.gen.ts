@@ -9,27 +9,123 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as IdIndexRouteImport } from './routes/$id/index'
+import { Route as FavoritesIndexRouteImport } from './routes/favorites/index'
+import { Route as ListIndexRouteImport } from './routes/list/index'
+import { Route as MenuIdIndexRouteImport } from './routes/menu/$id/index'
 
-export interface FileRoutesByFullPath {}
-export interface FileRoutesByTo {}
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IdIndexRoute = IdIndexRouteImport.update({
+  id: '/$id/',
+  path: '/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesIndexRoute = FavoritesIndexRouteImport.update({
+  id: '/favorites/',
+  path: '/favorites/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListIndexRoute = ListIndexRouteImport.update({
+  id: '/list/',
+  path: '/list/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MenuIdIndexRoute = MenuIdIndexRouteImport.update({
+  id: '/menu/$id/',
+  path: '/menu/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/$id/': typeof IdIndexRoute
+  '/favorites/': typeof FavoritesIndexRoute
+  '/list/': typeof ListIndexRoute
+  '/menu/$id/': typeof MenuIdIndexRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/$id': typeof IdIndexRoute
+  '/favorites': typeof FavoritesIndexRoute
+  '/list': typeof ListIndexRoute
+  '/menu/$id': typeof MenuIdIndexRoute
+}
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/$id/': typeof IdIndexRoute
+  '/favorites/': typeof FavoritesIndexRoute
+  '/list/': typeof ListIndexRoute
+  '/menu/$id/': typeof MenuIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: never
+  fullPaths: '/' | '/$id/' | '/favorites/' | '/list/' | '/menu/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: never
-  id: '__root__'
+  to: '/' | '/$id' | '/favorites' | '/list' | '/menu/$id'
+  id: '__root__' | '/' | '/$id/' | '/favorites/' | '/list/' | '/menu/$id/'
   fileRoutesById: FileRoutesById
 }
-export interface RootRouteChildren {}
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  IdIndexRoute: typeof IdIndexRoute
+  FavoritesIndexRoute: typeof FavoritesIndexRoute
+  ListIndexRoute: typeof ListIndexRoute
+  MenuIdIndexRoute: typeof MenuIdIndexRoute
 }
 
-const rootRouteChildren: RootRouteChildren = {}
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$id/': {
+      id: '/$id/'
+      path: '/$id'
+      fullPath: '/$id/'
+      preLoaderRoute: typeof IdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites/': {
+      id: '/favorites/'
+      path: '/favorites'
+      fullPath: '/favorites/'
+      preLoaderRoute: typeof FavoritesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/list/': {
+      id: '/list/'
+      path: '/list'
+      fullPath: '/list/'
+      preLoaderRoute: typeof ListIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/menu/$id/': {
+      id: '/menu/$id/'
+      path: '/menu/$id'
+      fullPath: '/menu/$id/'
+      preLoaderRoute: typeof MenuIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  IdIndexRoute: IdIndexRoute,
+  FavoritesIndexRoute: FavoritesIndexRoute,
+  ListIndexRoute: ListIndexRoute,
+  MenuIdIndexRoute: MenuIdIndexRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
