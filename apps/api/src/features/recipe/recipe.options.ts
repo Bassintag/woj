@@ -7,19 +7,21 @@ export const recipeOptions = {
     id: true,
     title: true,
     imageUrl: true,
-    bakingTime: true,
-    cookingTime: true,
     calories: true,
   },
   with: {
-    tags: tagOptions,
+    tags: { columns: { id: true } },
   },
 } satisfies QueryOptions<"recipes">;
 
 export const recipeDetailsOptions = {
-  ...recipeOptions,
+  columns: {
+    ...recipeOptions.columns,
+    bakingTime: true,
+    cookingTime: true,
+  },
   with: {
-    ...recipeOptions.with,
+    tags: tagOptions,
     constituents: {
       columns: {
         id: true,

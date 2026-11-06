@@ -1,14 +1,16 @@
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { PinoHandlerPlugin } from "@orpc/pino";
+import { CORSHandlerPlugin } from "@orpc/server/plugins";
 import { createContext } from "./context";
 import { router } from "./router";
 
 const context = createContext();
 
 const pinoPlugin = new PinoHandlerPlugin({ logger: context.log });
+const corsPlugin = new CORSHandlerPlugin({});
 
 const handler = new OpenAPIHandler(router, {
-  plugins: [pinoPlugin],
+  plugins: [pinoPlugin, corsPlugin],
 });
 
 const server = Bun.serve({

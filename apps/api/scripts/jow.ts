@@ -1,292 +1,284 @@
+import { mkdir } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import * as tables from "@woj/db";
 import * as j from "@woj/jow";
 import { sql } from "drizzle-orm";
+import pMap from "p-map";
 import { createDb } from "../src/lib/db";
 import { createEnv } from "../src/lib/env";
 
 const env = createEnv();
-
 const jow = new j.JowClient();
-
 const db = createDb(env);
 
-function withMap<ArgsT extends unknown[], ResultT extends { id?: string }>(
-  callback: (...args: ArgsT) => ResultT,
-) {
-  const map = new Map<string, ResultT>();
-
-  function all() {
-    return Array.from(map.values());
-  }
-
-  return Object.assign(
-    (...args: ArgsT) => {
-      const result = callback(...args);
-      if (result.id) {
-        map.set(result.id, result);
-      }
-      return result;
-    },
-    { map, all },
-  );
+function map<T, R>(items: T[], fn: (item: T) => Promise<R>) {
+  return pMap(items, fn, { concurrency: 64 });
 }
 
-// parse
+async function batch<T, R>(rows: T[], insert: (rows: T[]) => PromiseLike<R>) {
+  const results: R[] = [];
+  for (let i = 0; i < rows.length; i += 100) {
+    results.push(await insert(rows.slice(i, i + 100)));
+  }
+  return results;
+}
 
-const parseUnit = withMap((unit: j.Unit) => {
-  return {
-    id: unit.id,
-    title: unit.name,
-    abbreviations: unit.abbreviations.map((abbreviation) => ({
-      id: abbreviation.id,
-      title: abbreviation.label,
-      digits: abbreviation.digits,
-      factor: 1 / abbreviation.divisor,
-      min: abbreviation.minAmount,
-      max: abbreviation.maxAmount,
-    })),
-  };
+function idByTitle(rows: { id: number; title: string }[]) {
+  return new Map(rows.map((r) => [r.title, r.id]));
+}
+
+async function writeImage(
+  kind: "ingredients" | "recipes",
+  id: string,
+  url: string | null | undefined,
+) {
+  if (!url) return null;
+  const relativePath = `${kind}/${id}.webp`;
+  const path = join(env.IMAGES_DIRECTORY, relativePath);
+  if (!(await Bun.file(path).exists())) {
+    const res = await fetch(new URL(url, "https://static.jow.fr/"));
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    await mkdir(dirname(path), { recursive: true });
+    await new Bun.Image(await res.arrayBuffer())
+      .webp({ quality: 80 })
+      .write(path);
+  }
+  return relativePath;
+}
+
+const ingredients = await map(await jow.fetchIngredients(), async ({ id }) => {
+  const ingredient = await jow.fetchIngredient(id);
+  const imagePath = await writeImage(
+    "ingredients",
+    ingredient.id,
+    ingredient.imageUrl,
+  );
+  return { ...ingredient, imagePath };
 });
 
-const parseAlternativeUnit = withMap(
-  (ingredient: j.Ingredient, alternativeUnit: j.AlternativeUnit) => {
-    return {
-      id: alternativeUnit.id,
-      factor: alternativeUnit.quantity,
-      ingredient,
-      unit: parseUnit(alternativeUnit.unit),
-    };
+const recipeIds = new Set(
+  (await map(ingredients, (i) => jow.fetchRecipesFromIngredient(i.id)))
+    .flat()
+    .flatMap((group) => group.recipes.map((r) => r.id)),
+);
+
+const recipes = await map([...recipeIds], async (id) => {
+  const recipe = await jow.fetchRecipe(id);
+  const imagePath = await writeImage("recipes", recipe.id, recipe.imageUrl);
+  return { ...recipe, imagePath };
+});
+
+const conversions = [
+  ...new Map(
+    ingredients
+      .flatMap((ingredient) => {
+        return ingredient.recipes
+          .flatMap((r) => r.constituents)
+          .filter((c) => c.ingredient.id === ingredient.id)
+          .flatMap((c) => c.ingredient.alternativeUnits ?? [])
+          .filter((a) => a.id != null)
+          .map((a) => ({ ingredient, ...a }));
+      })
+      .map((c) => [`${c.ingredient.id}:${c.unit.name}`, c]),
+  ).values(),
+];
+
+const units = [
+  ...new Map(
+    [
+      ...ingredients.map((i) => i.naturalUnit),
+      ...conversions.map((c) => c.unit),
+    ].map((u) => [u.name, u]),
+  ).values(),
+];
+
+const unitIds = idByTitle(
+  (
+    await batch(
+      units.map((u) => ({ title: u.name })),
+      (rows) => {
+        return db
+          .insert(tables.units)
+          .values(rows)
+          .onConflictDoUpdate({
+            target: [tables.units.title],
+            set: { title: sql`excluded."title"` },
+          })
+          .returning({ id: tables.units.id, title: tables.units.title });
+      },
+    )
+  ).flat(),
+);
+
+await batch(
+  units.flatMap((u) => {
+    return u.abbreviations.map((a) => {
+      return {
+        title: a.label,
+        digits: a.digits,
+        factor: 1 / a.divisor,
+        min: a.minAmount,
+        max: a.maxAmount,
+        unitId: unitIds.get(u.name) as number,
+      };
+    });
+  }),
+  (rows) => {
+    return db
+      .insert(tables.symbols)
+      .values(rows)
+      .onConflictDoUpdate({
+        target: [tables.symbols.title, tables.symbols.unitId],
+        set: {
+          digits: sql`excluded."digits"`,
+          factor: sql`excluded."factor"`,
+          min: sql`excluded."min"`,
+          max: sql`excluded."max"`,
+        },
+      });
   },
 );
 
-const parseIngredient = withMap((ingredient: j.Ingredient) => {
-  return {
-    id: ingredient.id,
-    title: ingredient.name,
-    imageUrl: ingredient.imageUrl,
-    calories: ingredient.editorialData.nutritionalFacts.find(
+const calories = new Map(
+  ingredients.map((i) => {
+    const energy = i.editorialData.nutritionalFacts.find(
       (n) => n.id === "ENERC",
-    )?.amount,
-    defaultUnit: parseUnit(ingredient.naturalUnit),
-    conversions: ingredient.recipes
-      .flatMap((r) =>
-        r.constituents.filter((c) => c.ingredient.id === ingredient.id),
-      )
-      .flatMap((c) =>
-        c.ingredient.alternativeUnits
-          ?.map((a) => {
-            return parseAlternativeUnit(ingredient, a);
-          })
-          .filter((a) => a.id != null),
-      ),
-  };
-});
-
-// fetch
-
-const jowIngredients = await jow.fetchIngredients();
-
-await Promise.all(
-  jowIngredients.map(async ({ id }) => {
-    const joIingredient = await jow.fetchIngredient(id);
-    parseIngredient(joIingredient);
+    );
+    return [i.id, energy?.amount ?? 0];
   }),
 );
 
-// Symbols
-
-const units = parseUnit.all();
-
-const dbUnits = await db
-  .insert(tables.units)
-  .values(units.map((u) => ({ title: u.title })))
-  .onConflictDoUpdate({
-    set: { title: sql`excluded."title"` },
-    target: [tables.units.title],
-  })
-  .returning({ id: tables.units.id });
-
-const dbUnitMap = new Map(dbUnits.map(({ id }, i) => [units[i]?.id, id]));
-
-await db
-  .insert(tables.symbols)
-  .values(
-    units.flatMap((u) =>
-      u.abbreviations.map((a) => ({
-        title: a.title,
-        digits: a.digits,
-        factor: a.factor,
-        min: a.min,
-        max: a.max,
-        unitId: dbUnitMap.get(u.id) as number,
-      })),
-    ),
-  )
-  .onConflictDoUpdate({
-    set: {
-      digits: sql`excluded."digits"`,
-      factor: sql`excluded."factor"`,
-      min: sql`excluded."min"`,
-      max: sql`excluded."max"`,
-    },
-    target: [tables.symbols.title, tables.symbols.unitId],
-  });
-
-// Ingredients
-
-const ingredients = parseIngredient.all();
-
-const dbIngredients = await db
-  .insert(tables.ingredients)
-  .values(
-    ingredients.map((i) => ({
-      title: i.title,
-      calories: i.calories ?? 0,
-      defaultUnitId: dbUnitMap.get(i.defaultUnit.id) as number,
-    })),
-  )
-  .onConflictDoUpdate({
-    set: {
-      calories: sql`excluded."calories"`,
-      defaultUnitId: sql`excluded."default_unit_id"`,
-    },
-    target: [tables.ingredients.title],
-  })
-  .returning({ id: tables.ingredients.id });
-
-const dbIngredientMap = new Map(
-  dbIngredients.map(({ id }, i) => [ingredients[i]?.id, id]),
+const ingredientTitleIds = idByTitle(
+  (
+    await batch(
+      ingredients.map((i) => {
+        return {
+          title: i.name,
+          imageUrl: i.imagePath,
+          calories: calories.get(i.id) as number,
+          defaultUnitId: unitIds.get(i.naturalUnit.name) as number,
+        };
+      }),
+      (rows) => {
+        return db
+          .insert(tables.ingredients)
+          .values(rows)
+          .onConflictDoUpdate({
+            target: [tables.ingredients.title],
+            set: {
+              imageUrl: sql`excluded."image_url"`,
+              calories: sql`excluded."calories"`,
+              defaultUnitId: sql`excluded."default_unit_id"`,
+            },
+          })
+          .returning({
+            id: tables.ingredients.id,
+            title: tables.ingredients.title,
+          });
+      },
+    )
+  ).flat(),
 );
 
-// Conversions
+const ingredientIds = new Map(
+  ingredients.map((i) => [i.id, ingredientTitleIds.get(i.name) as number]),
+);
 
-const alternativeUnits = parseAlternativeUnit.all();
-
-await db
-  .insert(tables.conversions)
-  .values(
-    alternativeUnits.map((a) => ({
-      factor: a.factor,
-      ingredientId: dbIngredientMap.get(a.ingredient.id) as number,
-      unitId: dbUnitMap.get(a.unit.id) as number,
-    })),
-  )
-  .onConflictDoUpdate({
-    set: {
-      factor: sql`excluded.factor`,
-    },
-    target: [tables.conversions.ingredientId, tables.conversions.unitId],
-  });
-
-for (const jowIngredient of jowIngredients) {
-  const parseRecipe = withMap((recipe: j.Recipe) => {
-    const constituents = recipe.constituents.map((c) => ({
-      quantity:
-        "quantityPerCover" in c
-          ? c.quantityPerCover
-          : c.ingredient.quantityPerCover,
-      ingredientId: c.ingredient.id,
-    }));
-
-    const calories = constituents.reduce((v, c) => {
-      const ingredient = parseIngredient.map.get(c.ingredientId);
-      if (ingredient?.calories == null) return v;
-      return v + ingredient.calories * c.quantity;
-    }, 0);
-
+await batch(
+  conversions.map((c) => {
     return {
-      id: recipe.id,
-      title: recipe.title,
-      imageUri: recipe.imageUrl,
-      bakingTime: recipe.cookingTime,
-      cookingTime: recipe.preparationTime,
-      calories,
-      constituents,
-      steps: recipe.directions.map((d, i) => ({
-        description: d.label,
-        order: i,
-      })),
+      factor: c.quantity,
+      ingredientId: ingredientIds.get(c.ingredient.id) as number,
+      unitId: unitIds.get(c.unit.name) as number,
     };
+  }),
+  (rows) => {
+    return db
+      .insert(tables.conversions)
+      .values(rows)
+      .onConflictDoUpdate({
+        target: [tables.conversions.ingredientId, tables.conversions.unitId],
+        set: { factor: sql`excluded."factor"` },
+      });
+  },
+);
+
+const caloriesById = new Map(
+  ingredients.map((i) => [ingredientIds.get(i.id), calories.get(i.id)]),
+);
+
+const recipeRows = recipes.map((recipe) => {
+  const constituents = recipe.constituents.flatMap((c) => {
+    const ingredientId = ingredientIds.get(c.ingredient.id);
+    if (ingredientId == null) return [];
+    const quantity =
+      "quantityPerCover" in c
+        ? c.quantityPerCover
+        : c.ingredient.quantityPerCover;
+    return [{ ingredientId, quantity }];
   });
 
-  const jowRecipeGroups = await jow.fetchRecipesFromIngredient(
-    jowIngredient.id,
-  );
+  return {
+    title: recipe.title,
+    imageUrl: recipe.imagePath,
+    bakingTime: recipe.cookingTime,
+    cookingTime: recipe.preparationTime,
+    calories: constituents.reduce(
+      (sum, c) => sum + (caloriesById.get(c.ingredientId) ?? 0) * c.quantity,
+      0,
+    ),
+    constituents,
+    steps: recipe.directions.map((d, order) => {
+      return { order, description: d.label };
+    }),
+  };
+});
 
-  const jowRecipes = await Promise.all(
-    jowRecipeGroups.flatMap((g) => g.recipes.map((r) => jow.fetchRecipe(r.id))),
-  );
-
-  for (const jowRecipe of jowRecipes) {
-    parseRecipe(jowRecipe);
-  }
-
-  const recipes = parseRecipe.all();
-
-  if (recipes.length === 0) continue;
-
-  const dbRecipes = await db
-    .insert(tables.recipes)
-    .values(
-      recipes.map((r) => ({
-        title: r.title,
-        imageUrl: r.imageUri,
-        bakingTime: r.bakingTime,
-        cookingTime: r.cookingTime,
-        calories: r.calories,
-      })),
-    )
-    .onConflictDoUpdate({
-      target: [tables.recipes.title],
-      set: {
-        imageUrl: sql`excluded."image_url"`,
-        bakingTime: sql`excluded."baking_time"`,
-        cookingTime: sql`excluded."cooking_time"`,
-        calories: sql`excluded."calories"`,
-      },
+const recipeIdByTitle = idByTitle(
+  (
+    await batch(recipeRows, (rows) => {
+      return db
+        .insert(tables.recipes)
+        .values(rows)
+        .onConflictDoUpdate({
+          target: [tables.recipes.title],
+          set: {
+            imageUrl: sql`excluded."image_url"`,
+            bakingTime: sql`excluded."baking_time"`,
+            cookingTime: sql`excluded."cooking_time"`,
+            calories: sql`excluded."calories"`,
+          },
+        })
+        .returning({ id: tables.recipes.id, title: tables.recipes.title });
     })
-    .returning({ id: tables.recipes.id });
+  ).flat(),
+);
 
-  const dbRecipeMap = new Map(
-    dbRecipes.map(({ id }, i) => [recipes[i]?.id, id]),
-  );
-
-  await db
-    .insert(tables.constituents)
-    .values(
-      recipes.flatMap((r) =>
-        r.constituents.map((c) => {
-          const ingredient = dbIngredientMap.get(c.ingredientId);
-          if (ingredient == null) {
-            console.log(`MISSING INGREDIENT:${c.ingredientId}`);
-          }
-          return {
-            quantity: c.quantity,
-            recipeId: dbRecipeMap.get(r.id) as number,
-            ingredientId: dbIngredientMap.get(c.ingredientId) as number,
-          };
-        }),
-      ),
-    )
-    .onConflictDoUpdate({
-      target: [tables.constituents.recipeId, tables.constituents.ingredientId],
-      set: {
-        quantity: sql`excluded."quantity"`,
-      },
+await batch(
+  recipeRows.flatMap((r) => {
+    return r.constituents.map((c) => {
+      return { ...c, recipeId: recipeIdByTitle.get(r.title) as number };
     });
+  }),
+  (rows) => {
+    return db
+      .insert(tables.constituents)
+      .values(rows)
+      .onConflictDoUpdate({
+        target: [
+          tables.constituents.recipeId,
+          tables.constituents.ingredientId,
+        ],
+        set: { quantity: sql`excluded."quantity"` },
+      });
+  },
+);
 
-  await db
-    .insert(tables.steps)
-    .values(
-      recipes.flatMap((r) =>
-        r.steps.map((c) => {
-          return {
-            recipeId: dbRecipeMap.get(r.id) as number,
-            description: c.description,
-            order: c.order,
-          };
-        }),
-      ),
-    )
-    .onConflictDoNothing();
-}
+await batch(
+  recipeRows.flatMap((r) => {
+    return r.steps.map((s) => {
+      return { ...s, recipeId: recipeIdByTitle.get(r.title) as number };
+    });
+  }),
+  (rows) => db.insert(tables.steps).values(rows).onConflictDoNothing(),
+);
