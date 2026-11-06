@@ -1,1 +1,60 @@
 @import "tailwindcss";
+
+@theme {
+  --color-*: initial;
+
+  --color-bg: #fbfaf9;
+  --color-fg: #1d1816;
+
+  --color-muted-bg: #e8e4e3;
+  --color-muted-fg: #7c6d67;
+
+  --color-elevated-bg: #fbfaf9;
+  --color-elevated-fg: #0c0a09;
+
+  --color-brand: #ffb900;
+
+  --text-*: initial;
+
+  --text-h1: 32px;
+  --text-h1--font-weight: 700;
+  --text-h1--line-height: 35px;
+
+  --text-h2: 24px;
+  --text-h2--font-weight: 700;
+  --text-h2--line-height: 26px;
+
+  --text-md: 16px;
+  --text-md--font-weight: 400;
+  --text-md--line-height: 21px;
+
+  --text-sm: 14px;
+  --text-sm--font-weight: 400;
+  --text-sm--line-height: 18px;
+
+  --text-xs: 12px;
+  --text-xs--font-weight: 400;
+  --text-xs--line-height: 16px;
+
+  --shadow-*: initial;
+
+  --shadow-base: 0 0 8px rgba(12, 10, 9, 10%);
+
+  --layout-gutter: --spacing(8);
+}
+
+@utility px-layout {
+  padding-inline: var(--layout-gutter);
+}
+
+@utility mx-layout {
+  margin-inline: var(--layout-gutter);
+}
+
+:root {
+  overscroll-behavior: none;
+}
+
+*:focus-visible {
+  @apply outline-2 outline-offset-4 outline-fg;
+}

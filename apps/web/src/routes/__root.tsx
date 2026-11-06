@@ -1,7 +1,5 @@
-import { BasketIcon, NotepadIcon } from "@phosphor-icons/react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { Fragment } from "react";
-import { Button } from "@/components/ui/Button";
+import { Navbar } from "../components/layout/Navbar";
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -9,16 +7,9 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <Fragment>
-      <div className="flex flex-row justify-end gap-4">
-        <Button aria-label="Panier">
-          <BasketIcon />
-        </Button>
-        <Button variant="ghost">
-          <NotepadIcon />
-        </Button>
-      </div>
+    <div className="flex min-h-dvh flex-col gap-8 bg-bg pt-8">
       <Outlet />
-    </Fragment>
+      <Navbar />
+    </div>
   );
 }

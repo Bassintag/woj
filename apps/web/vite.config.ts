@@ -12,6 +12,7 @@ export default defineConfig({
     tailwindcss(),
     checker({ typescript: true }),
   ],
+  server: { host: true },
   envDir: "../..",
   envPrefix: "PUBLIC_",
   resolve: {

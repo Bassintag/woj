@@ -4,10 +4,11 @@ import {
   type RouterContractClient,
 } from "@orpc/contract";
 import { OpenAPILink } from "@orpc/openapi/fetch";
+import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { contract, getAuthMeta } from "@woj/contract";
 
 const link = new OpenAPILink(contract, {
-  origin: "http://localhost:3000",
+  origin: import.meta.env.PUBLIC_API_URL,
   headers(_, path) {
     const procedure = getProcedureContractOrThrow(contract, path);
     const auth = getAuthMeta(procedure);
@@ -21,3 +22,5 @@ const link = new OpenAPILink(contract, {
 
 export const orpc: RouterContractClient<typeof contract> =
   createORPCClient(link);
+
+export const q = createTanstackQueryUtils(orpc);

@@ -1,30 +1,37 @@
+import { mergeProps, useRender } from "@base-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
-import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
 
-const buttonVariants = cva(
-  "inline-flex size-9 items-center justify-center rounded-lg outline-taupe-400 outline-offset-2 hover:bg-taupe-800 focus-visible:outline-2 active:bg-taupe-950 *:[svg]:size-6",
-  {
-    variants: {
-      variant: {
-        ghost: "bg-transparent text-taupe-900",
-        solid: "bg-taupe-900 text-taupe-50",
-      },
+const buttonVariants = cva("flex flex-row items-center justify-center", {
+  variants: {
+    variant: {
+      solid: "bg-muted-bg text-fg",
+      brand: "bg-brand text-fg",
     },
-    defaultVariants: { variant: "solid" },
+    size: {
+      sm: "h-8 gap-2.5 rounded-lg px-3.5 text-sm *:[svg]:-mx-1.5 *:[svg]:size-4",
+      md: "h-10 gap-3 rounded-xl px-4 text-md *:[svg]:-mx-1.5 *:[svg]:size-5",
+    },
   },
-);
+  defaultVariants: {
+    variant: "solid",
+    size: "md",
+  },
+});
 
 export function Button({
+  render,
   className,
   variant,
+  size,
   ...props
-}: ComponentProps<"button"> & VariantProps<typeof buttonVariants>) {
-  return (
-    <button
-      type="button"
-      className={cn(buttonVariants({ variant }), className)}
-      {...props}
-    />
-  );
+}: useRender.ComponentProps<"button"> & VariantProps<typeof buttonVariants>) {
+  return useRender({
+    defaultTagName: "button",
+    render,
+    props: mergeProps(props, {
+      type: "button",
+      className: cn(buttonVariants({ variant, size }), className),
+    }),
+  });
 }
