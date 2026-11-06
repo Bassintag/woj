@@ -1,10 +1,15 @@
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { PinoHandlerPlugin } from "@orpc/pino";
 import { CORSHandlerPlugin } from "@orpc/server/plugins";
+import { migrate } from "drizzle-orm/libsql/migrator";
 import { createContext } from "./context";
 import { router } from "./router";
 
 const context = createContext();
+
+await migrate(context.db, {
+  migrationsFolder: context.env.MIGRATIONS_DIRECTORY,
+});
 
 const pinoPlugin = new PinoHandlerPlugin({ logger: context.log });
 const corsPlugin = new CORSHandlerPlugin({});

@@ -6,7 +6,8 @@
   "types": "src/index.ts",
   "private": true,
   "scripts": {
-    "drizzle": "bun --env-file=../../.env --bun drizzle-kit"
+    "drizzle": "bun --env-file=../../.env --bun drizzle-kit",
+    "generate": "bun --env-file=../../.env --bun drizzle-kit generate"
   },
   "devDependencies": {
     "@types/bun": "latest",
