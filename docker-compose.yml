@@ -1,0 +1,9 @@
+services:
+  images:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "9000:80"
+    volumes:
+      - ./.docker/data/woj/images:/usr/share/nginx/html:ro
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
