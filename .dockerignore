@@ -1,12 +1,12 @@
+.git
 .docker/data
 .idea/
 
-node_modules/
-packages/*/node_modules
-
-packages/*/dist
+**/node_modules
+**/dist
 
 *.log
+*.db
 
 .env
 .env.*

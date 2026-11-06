@@ -1,0 +1,4 @@
+#!/command/with-contenv sh
+cd /app
+export PORT=3000
+exec s6-setuidgid abc bun api.js

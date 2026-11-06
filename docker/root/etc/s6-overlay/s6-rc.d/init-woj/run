@@ -1,0 +1,8 @@
+#!/command/with-contenv sh
+set -e
+
+groupmod -o -g "$PGID" abc
+usermod -o -u "$PUID" abc
+
+mkdir -p /config/images
+chown abc:abc /config /config/images
