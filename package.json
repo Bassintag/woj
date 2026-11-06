@@ -6,13 +6,14 @@
     "packages/*"
   ],
   "engines": {
-    "bun": ">=1.3"
+    "bun": ">=1.4.4"
   },
   "packageManager": "bun",
   "scripts": {
     "dev": "bun run --parallel dev:api dev:web",
     "dev:api": "FORCE_COLOR=3 bun run --cwd apps/api dev",
     "dev:web": "FORCE_COLOR=3 bun run --cwd apps/web dev",
+    "test": "bun run --parallel --filter=* test",
     "prepare": "lefthook install"
   },
   "devDependencies": {

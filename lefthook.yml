@@ -1,10 +1,15 @@
 pre-commit:
   commands:
-    check:
-      run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+    biome:
+      run: bun biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
       stage_fixed: true
+
+pre-push:
+  commands:
+    test:
+      run: bun run test
 
 commit-msg:
   commands:
     commitlint:
-      run: npx commitlint --edit {1}
+      run: bun commitlint --edit {1}
