@@ -19,7 +19,10 @@ export default defineConfig(({ mode }) => ({
         target: "http://localhost:3000",
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
-      "/images": "http://localhost:9000",
+      "/images": {
+        target: "http://localhost:9000",
+        rewrite: (path) => path.replace(/^\/images/, ""),
+      },
     },
   },
   envDir: "../..",
