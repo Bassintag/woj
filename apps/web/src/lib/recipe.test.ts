@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { filterByTags } from "./recipe";
+import { createRecipeIndex, filterByTags } from "./recipe";
 
 const recipes = new Map([
   [1, { tags: [{ id: 10 }] }],
@@ -26,4 +26,28 @@ test("keeps the order of the results", () => {
     { id: 2 },
     { id: 1 },
   ]);
+});
+
+function item(id: number, title: string, ingredients: string[]) {
+  return {
+    id,
+    title,
+    imageUrl: null,
+    calories: null,
+    tags: [],
+    constituents: ingredients.map((title) => ({ ingredient: { title } })),
+  };
+}
+
+const index = createRecipeIndex([
+  item(1, "Salade", ["poulet", "tomate"]),
+  item(2, "Poulet rôti", ["thym"]),
+]);
+
+test("finds recipes by ingredient", () => {
+  expect(index.search("tomate").map((r) => r.id)).toEqual([1]);
+});
+
+test("ranks title matches before ingredient matches", () => {
+  expect(index.search("poulet").map((r) => r.id)).toEqual([2, 1]);
 });

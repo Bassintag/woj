@@ -1,19 +1,14 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import type { Recipe } from "@woj/contract";
-import MiniSearch from "minisearch";
+import type { RecipeListItem } from "@woj/contract";
 import { useMemo } from "react";
 import { q } from "@/lib/orpc";
+import { createRecipeIndex } from "@/lib/recipe";
 
 export function useRecipeSearch() {
   const recipes = useSuspenseQuery(q.recipes.list.queryOptions());
 
   const { index, map } = useMemo(() => {
-    const index = new MiniSearch({
-      idField: "id",
-      fields: ["title"],
-      searchOptions: { fuzzy: 2 },
-    });
-    index.addAll(recipes.data);
+    const index = createRecipeIndex(recipes.data);
     const map = new Map(recipes.data.map((recipe) => [recipe.id, recipe]));
     return { index, map };
   }, [recipes.data]);
@@ -22,7 +17,7 @@ export function useRecipeSearch() {
     index,
     recipes: recipes.data,
     get(id: number) {
-      return map.get(id) as Recipe;
+      return map.get(id) as RecipeListItem;
     },
   };
 }
