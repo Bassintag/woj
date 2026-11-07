@@ -39,7 +39,7 @@ function RecipeSectionFilters() {
   return (
     tags.data.length > 0 && (
       <TagGroup
-        className="flex scrollbar-none flex-row gap-3 overflow-x-auto px-layout"
+        className="-my-2 flex scrollbar-none flex-row gap-3 overflow-x-auto px-layout py-2"
         value={selected?.map(String) ?? []}
         onValueChange={(value) =>
           navigate({
