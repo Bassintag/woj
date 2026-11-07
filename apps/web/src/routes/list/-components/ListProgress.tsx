@@ -1,6 +1,6 @@
 export function ListProgress({ done, total }: { done: number; total: number }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 px-layout">
       <p className="text-xs text-fg">
         {done} sur {total} dans le panier
       </p>

@@ -1,3 +1,4 @@
+import { arrayMove } from "@dnd-kit/sortable";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -14,6 +15,7 @@ interface ListState {
   update(id: string, label: string): void;
   toggle(id: string): void;
   remove(id: string): void;
+  move(activeId: string, overId: string): void;
 }
 
 export const useListStore = create<ListState>()(
@@ -48,6 +50,14 @@ export const useListStore = create<ListState>()(
         set((state) => ({
           items: state.items.filter((item) => item.id !== id),
         }));
+      },
+      move(activeId, overId) {
+        set((state) => {
+          const from = state.items.findIndex((item) => item.id === activeId);
+          const to = state.items.findIndex((item) => item.id === overId);
+          if (from === -1 || to === -1) return state;
+          return { items: arrayMove(state.items, from, to) };
+        });
       },
     }),
     { name: "woj-list" },

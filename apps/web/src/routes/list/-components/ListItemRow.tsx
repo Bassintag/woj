@@ -1,3 +1,5 @@
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { type ListItem, useListStore } from "@/hooks/useListStore";
 import { cn } from "@/lib/cn";
@@ -14,8 +16,24 @@ export function ListItemRow({
   const update = useListStore((state) => state.update);
   const add = useListStore((state) => state.add);
 
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id, disabled: item.checked });
+
   return (
-    <div className="flex h-10 flex-row items-center gap-4">
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      data-dragging={isDragging || undefined}
+      className="relative flex h-10 touch-pan-y flex-row items-center gap-4 px-layout select-none data-dragging:z-10 data-dragging:bg-muted-bg data-dragging:**:cursor-grabbing"
+    >
       <Checkbox
         aria-label={item.label}
         checked={item.checked}
