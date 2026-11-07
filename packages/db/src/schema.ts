@@ -49,6 +49,11 @@ export const relations = defineRelations(
         from: t.constituents.ingredientId,
         to: t.ingredients.id,
       }),
+      unit: t.one.units({
+        optional: false,
+        from: t.constituents.unitId,
+        to: t.units.id,
+      }),
     },
     ingredients: {
       constituents: t.many.constituents(),

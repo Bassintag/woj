@@ -4,14 +4,16 @@ import * as tables from "@woj/db";
 import * as j from "@woj/jow";
 import { sql } from "drizzle-orm";
 import pMap from "p-map";
+import { getRecipeCalories } from "../src/features/recipe/recipe.lib";
 import { createDb } from "../src/lib/db";
 import { createEnv } from "../src/lib/env";
 import {
   batch,
   getCalories,
   getConversions,
+  getJowCalories,
   getQuantity,
-  getRecipeCalories,
+  getUnit,
   getUnits,
   idByTitle,
 } from "./lib/transform";
@@ -67,7 +69,16 @@ const recipes = await map([...recipeIds], async (id) => {
 
 const conversions = getConversions(ingredients);
 
-const units = getUnits(ingredients, conversions);
+const ingredientsByJowId = new Map(ingredients.map((i) => [i.id, i]));
+
+const constituentUnits = recipes.flatMap((recipe) => {
+  return recipe.constituents.flatMap((c) => {
+    const ingredient = ingredientsByJowId.get(c.ingredient.id);
+    return ingredient ? [getUnit(c, ingredient)] : [];
+  });
+});
+
+const units = getUnits(ingredients, conversions, constituentUnits);
 
 const unitIds = idByTitle(
   (
@@ -173,15 +184,37 @@ await batch(
   },
 );
 
-const caloriesById = new Map(
-  ingredients.map((i) => [ingredientIds.get(i.id), calories.get(i.id)]),
+const calorieIngredients = new Map(
+  ingredients.map((i) => [
+    i.id,
+    {
+      calories: calories.get(i.id) as number,
+      defaultUnit: { title: i.naturalUnit.name },
+      conversions: conversions
+        .filter((c) => c.ingredient.id === i.id)
+        .map((c) => ({ factor: c.quantity, unit: { title: c.unit.name } })),
+    },
+  ]),
 );
 
 const recipeRows = recipes.map((recipe) => {
   const constituents = recipe.constituents.flatMap((c) => {
+    const ingredient = ingredientsByJowId.get(c.ingredient.id);
     const ingredientId = ingredientIds.get(c.ingredient.id);
-    if (ingredientId == null) return [];
-    return [{ ingredientId, quantity: getQuantity(c) }];
+    if (ingredient == null || ingredientId == null) return [];
+    const unit = getUnit(c, ingredient).name;
+    return [
+      {
+        ingredientId,
+        quantity: getQuantity(c),
+        unitId: unitIds.get(unit) as number,
+        calorie: {
+          quantity: getQuantity(c),
+          unit: { title: unit },
+          ingredient: calorieIngredients.get(ingredient.id) as never,
+        },
+      },
+    ];
   });
 
   return {
@@ -189,7 +222,9 @@ const recipeRows = recipes.map((recipe) => {
     imageUrl: recipe.imagePath,
     bakingTime: recipe.cookingTime,
     cookingTime: recipe.preparationTime,
-    calories: getRecipeCalories(constituents, caloriesById),
+    calories:
+      getJowCalories(recipe) ??
+      getRecipeCalories(constituents.map((c) => c.calorie)),
     constituents,
     steps: recipe.directions.map((d, order) => {
       return { order, description: d.label };
@@ -220,7 +255,8 @@ const recipeIdByTitle = idByTitle(
 await batch(
   recipeRows.flatMap((r) => {
     return r.constituents.map((c) => {
-      return { ...c, recipeId: recipeIdByTitle.get(r.title) as number };
+      const { calorie: _, ...row } = c;
+      return { ...row, recipeId: recipeIdByTitle.get(r.title) as number };
     });
   }),
   (rows) => {
@@ -232,7 +268,10 @@ await batch(
           tables.constituents.recipeId,
           tables.constituents.ingredientId,
         ],
-        set: { quantity: sql`excluded."quantity"` },
+        set: {
+          quantity: sql`excluded."quantity"`,
+          unitId: sql`excluded."unit_id"`,
+        },
       });
   },
 );

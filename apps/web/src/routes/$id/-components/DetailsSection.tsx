@@ -45,7 +45,7 @@ export function DetailsSectionContent() {
           <DetailsCard
             icon={<TimerIcon />}
             title={`${recipe.data.cookingTime} min`}
-            description="prépartion"
+            description="préparation"
           />
         )}
         {recipe.data.bakingTime != null && (
