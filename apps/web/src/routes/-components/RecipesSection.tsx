@@ -125,7 +125,7 @@ function RecipesSectionContent() {
                 key={result.id}
                 to="/$id"
                 params={{ id: result.id }}
-                className="rounded-2xl"
+                className="block rounded-2xl"
               >
                 <RecipeCard recipe={api.get(result.id)} />
               </Link>
