@@ -1,6 +1,7 @@
 import type { QueryOptions } from "../../lib/db";
 import { ingredientOptions } from "../ingredient/ingredient.options";
 import { tagOptions } from "../tag/tag.options";
+import { unitOptions } from "../unit/unit.options";
 
 export const recipeOptions = {
   columns: {
@@ -39,6 +40,7 @@ export const recipeDetailsOptions = {
         quantity: true,
       },
       with: {
+        unit: unitOptions,
         ingredient: ingredientOptions,
       },
     },

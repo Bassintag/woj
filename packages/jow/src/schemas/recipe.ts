@@ -14,6 +14,9 @@ export const RecipeSchema = z.object({
   imageUrl: z.string(),
   preparationTime: z.int().nullish(),
   cookingTime: z.int().nullish(),
+  nutritionalFacts: z
+    .array(z.object({ id: z.string(), amount: z.number() }))
+    .nullish(),
   directions: z.array(
     z.object({
       id: z.string(),
@@ -24,9 +27,11 @@ export const RecipeSchema = z.object({
     z.union([
       z.object({
         quantityPerCover: z.number(),
+        unit: UnitSchema.nullish().catch(undefined),
         ingredient: RecipeIngredientSchema,
       }),
       z.object({
+        unit: UnitSchema.nullish().catch(undefined),
         ingredient: RecipeIngredientSchema.extend({
           quantityPerCover: z.number(),
         }),

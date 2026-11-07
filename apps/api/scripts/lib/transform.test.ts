@@ -4,8 +4,9 @@ import {
   batch,
   getCalories,
   getConversions,
+  getJowCalories,
   getQuantity,
-  getRecipeCalories,
+  getUnit,
   getUnits,
   idByTitle,
 } from "./transform";
@@ -74,21 +75,33 @@ test("getQuantity handles both constituent shapes", () => {
   expect(getQuantity(b as Recipe["constituents"][number])).toBe(3);
 });
 
-test("getRecipeCalories sums calories times quantity", () => {
-  const calories = new Map([
-    [1, 100],
-    [2, 50],
-  ]);
+test("getUnit prefers the constituent unit over the natural unit", () => {
+  const i = ingredient("i", {});
+  const tranche = unit("Tranche");
+  const withUnit = {
+    unit: tranche,
+  } as unknown as Recipe["constituents"][number];
+  const without = {} as unknown as Recipe["constituents"][number];
+  expect(getUnit(withUnit, i)).toBe(tranche);
+  expect(getUnit(without, i)).toBe(i.naturalUnit);
+});
+
+test("getJowCalories reads the recipe ENERC fact", () => {
+  const recipe = (nutritionalFacts?: { id: string; amount: number }[]) =>
+    ({ nutritionalFacts }) as unknown as Recipe;
   expect(
-    getRecipeCalories(
-      [
-        { ingredientId: 1, quantity: 2 },
-        { ingredientId: 2, quantity: 1 },
-        { ingredientId: 3, quantity: 10 },
-      ],
-      calories,
+    getJowCalories(
+      recipe([
+        { id: "FAT", amount: 15 },
+        { id: "ENERC", amount: 422 },
+      ]),
     ),
-  ).toBe(250);
+  ).toBe(422);
+  expect(
+    getJowCalories(recipe([{ id: "ENERC", amount: 200217 }])),
+  ).toBeUndefined();
+  expect(getJowCalories(recipe([]))).toBeUndefined();
+  expect(getJowCalories(recipe())).toBeUndefined();
 });
 
 function withConversions(id: string, units: string[]) {

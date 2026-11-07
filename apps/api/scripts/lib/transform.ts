@@ -1,4 +1,4 @@
-import type { Ingredient, Recipe } from "@woj/jow";
+import type { Ingredient, Recipe, Unit } from "@woj/jow";
 
 export async function batch<T, R>(
   rows: T[],
@@ -29,14 +29,22 @@ export function getQuantity(constituent: Recipe["constituents"][number]) {
     : constituent.ingredient.quantityPerCover;
 }
 
-export function getRecipeCalories(
-  constituents: { ingredientId: number; quantity: number }[],
-  caloriesById: Map<number | undefined, number | undefined>,
+const MAX_PLAUSIBLE_CALORIES = 2000;
+
+export function getJowCalories(recipe: Recipe) {
+  const calories = recipe.nutritionalFacts?.find(
+    (n) => n.id === "ENERC",
+  )?.amount;
+  return calories != null && calories <= MAX_PLAUSIBLE_CALORIES
+    ? calories
+    : undefined;
+}
+
+export function getUnit(
+  constituent: Recipe["constituents"][number],
+  ingredient: Ingredient,
 ) {
-  return constituents.reduce(
-    (sum, c) => sum + (caloriesById.get(c.ingredientId) ?? 0) * c.quantity,
-    0,
-  );
+  return constituent.unit ?? ingredient.naturalUnit;
 }
 
 export function getConversions(ingredients: Ingredient[]) {
@@ -59,12 +67,14 @@ export function getConversions(ingredients: Ingredient[]) {
 export function getUnits(
   ingredients: Ingredient[],
   conversions: ReturnType<typeof getConversions>,
+  extra: Unit[] = [],
 ) {
   return [
     ...new Map(
       [
         ...ingredients.map((i) => i.naturalUnit),
         ...conversions.map((c) => c.unit),
+        ...extra,
       ].map((u) => [u.name, u]),
     ).values(),
   ];

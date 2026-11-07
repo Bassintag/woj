@@ -6,8 +6,11 @@
   --color-bg: #fbfaf9;
   --color-fg: #1d1816;
 
-  --color-muted-bg: #e8e4e3;
+  --color-muted-bg: #f3f1f1;
   --color-muted-fg: #7c6d67;
+
+  --color-input-bg: #e8e4e3;
+  --color-input-fg: #1d1816;
 
   --color-elevated-bg: #fbfaf9;
   --color-elevated-fg: #0c0a09;

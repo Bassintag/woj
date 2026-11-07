@@ -4,12 +4,14 @@ import { z } from "zod";
 import { IngredientSchema } from "./ingredient";
 import { auth } from "./lib/auth";
 import { TagSchema } from "./tag";
+import { UnitSchema } from "./unit";
 
 // Schemas
 
 export const ConstituentSchema = z.object({
   id: z.number(),
   quantity: z.number(),
+  unit: UnitSchema,
   ingredient: IngredientSchema,
 });
 
