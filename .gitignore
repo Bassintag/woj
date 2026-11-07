@@ -1,5 +1,7 @@
 .docker/data
 
+.playwright-mcp
+
 **/node_modules/
 **/dist/
 
