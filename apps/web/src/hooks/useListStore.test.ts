@@ -50,6 +50,29 @@ test("remove deletes only the targeted item", () => {
   expect(items().map((i) => i.label)).toEqual(["Thé"]);
 });
 
+test("move reorders items and keeps checked ones in place", () => {
+  const { add, toggle, move } = useListStore.getState();
+  add("A");
+  add("B");
+  add("C");
+  add("D");
+  toggle(items()[1].id);
+  move(items()[0].id, items()[2].id);
+  expect(items().map((i) => i.label)).toEqual(["B", "C", "A", "D"]);
+  expect(items()[0].checked).toBe(true);
+  move(items()[3].id, items()[1].id);
+  expect(items().map((i) => i.label)).toEqual(["B", "D", "C", "A"]);
+});
+
+test("move ignores unknown ids", () => {
+  const { add, move } = useListStore.getState();
+  add("A");
+  add("B");
+  move("nope", items()[0].id);
+  move(items()[0].id, "nope");
+  expect(items().map((i) => i.label)).toEqual(["A", "B"]);
+});
+
 test("unknown ids are ignored", () => {
   const { add, toggle, update, remove } = useListStore.getState();
   add("Café");
