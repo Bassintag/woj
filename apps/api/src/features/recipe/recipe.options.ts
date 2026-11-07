@@ -14,6 +14,17 @@ export const recipeOptions = {
   },
 } satisfies QueryOptions<"recipes">;
 
+export const recipeListOptions = {
+  columns: recipeOptions.columns,
+  with: {
+    ...recipeOptions.with,
+    constituents: {
+      columns: { id: true },
+      with: { ingredient: { columns: { title: true } } },
+    },
+  },
+} satisfies QueryOptions<"recipes">;
+
 export const recipeDetailsOptions = {
   columns: {
     ...recipeOptions.columns,

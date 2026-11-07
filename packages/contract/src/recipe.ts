@@ -30,6 +30,14 @@ export const RecipeSchema = z.object({
 
 export type Recipe = z.infer<typeof RecipeSchema>;
 
+export const RecipeListItemSchema = RecipeSchema.extend({
+  constituents: z.array(
+    z.object({ ingredient: IngredientSchema.pick({ title: true }) }),
+  ),
+});
+
+export type RecipeListItem = z.infer<typeof RecipeListItemSchema>;
+
 export const RecipeDetailSchema = RecipeSchema.extend({
   bakingTime: z.number().nullable(),
   cookingTime: z.number().nullable(),
@@ -51,7 +59,7 @@ export type CreateRecipe = z.infer<typeof CreateRecipeSchema>;
 
 const list = oc
   .meta(openapi({ method: "GET", path: "/" }))
-  .output(z.array(RecipeSchema));
+  .output(z.array(RecipeListItemSchema));
 
 const get = oc
   .meta(openapi({ method: "GET", path: "/{id}" }))

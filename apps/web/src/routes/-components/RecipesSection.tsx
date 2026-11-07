@@ -101,6 +101,14 @@ function RecipesSectionContent() {
     directDomUpdates: true,
   });
 
+  if (results.length === 0) {
+    return (
+      <div className="mx-layout flex h-36 items-center justify-center">
+        <p className="text-center text-md text-muted-fg">Aucun résultat</p>
+      </div>
+    );
+  }
+
   return (
     <ol className="relative mx-layout" ref={virtualizer.containerRef}>
       {virtualizer.getVirtualItems().map((row) => {
