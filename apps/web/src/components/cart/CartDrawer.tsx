@@ -68,7 +68,7 @@ function CartLines() {
         const recipe = get(item.recipeId);
         return (
           <li className="flex flex-row items-center gap-4" key={item.recipeId}>
-            <div className="size-16 shrink-0 overflow-hidden rounded-2xl bg-muted-bg">
+            <div className="size-18 shrink-0 overflow-hidden rounded-2xl bg-muted-bg">
               {recipe.imageUrl && (
                 <img
                   className="size-full object-cover"
@@ -77,8 +77,8 @@ function CartLines() {
                 />
               )}
             </div>
-            <div className="flex min-w-0 flex-1 flex-col gap-4">
-              <h3 className="line-clamp-2 text-md text-fg">{recipe.title}</h3>
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
+              <h3 className="truncate text-md text-fg">{recipe.title}</h3>
               <div className="flex flex-row items-end justify-between">
                 <Stepper>
                   <StepperButton
