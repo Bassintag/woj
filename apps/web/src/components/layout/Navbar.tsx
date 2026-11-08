@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn";
 
 export function Navbar() {
   return (
-    <nav className="sticky bottom-0 mt-auto flex h-20 flex-row items-center gap-4 rounded-2xl bg-bg px-layout shadow-base">
+    <nav className="sticky bottom-0 mt-auto flex flex-row items-center gap-4 rounded-2xl bg-bg px-layout py-6 shadow-base">
       <NavbarLink to="/">
         <CompassIcon />
         Explorer

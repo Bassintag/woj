@@ -1,8 +1,10 @@
 import { MinusIcon, PlusIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { Stepper, StepperButton, StepperValue } from "@/components/ui/Stepper";
+import { useCartStore } from "@/hooks/useCartStore";
+import { useServingsStore } from "@/hooks/useServingsStore";
 import { image } from "@/lib/image";
 import { q } from "@/lib/orpc";
 import { formatQuantity } from "@/lib/quantity";
@@ -10,28 +12,36 @@ import { formatQuantity } from "@/lib/quantity";
 const Route = getRouteApi("/$id/");
 
 export function IngredientsSections() {
-  const [servings, setServings] = useState(2);
+  const id = Route.useParams({ select: (p) => p.id });
+  const defaultServings = useServingsStore((state) => state.servings);
+  const setServings = useServingsStore((state) => state.set);
+  const cartQuantity = useCartStore(
+    (state) => state.items.find((item) => item.recipeId === id)?.quantity,
+  );
+  const servings = cartQuantity ?? defaultServings;
 
   return (
     <section className="flex flex-col gap-6 px-layout">
-      <div className="flex flex-row items-center justify-between">
+      <div className="flex min-h-10 flex-row items-center justify-between">
         <h2 className="text-h2 text-fg">Ingrédients</h2>
-        <Stepper>
-          <StepperButton
-            aria-label="Diminuer"
-            disabled={servings <= 1}
-            onClick={() => setServings(servings - 1)}
-          >
-            <MinusIcon />
-          </StepperButton>
-          <StepperValue>{servings} pers.</StepperValue>
-          <StepperButton
-            aria-label="Augmenter"
-            onClick={() => setServings(servings + 1)}
-          >
-            <PlusIcon />
-          </StepperButton>
-        </Stepper>
+        {cartQuantity === undefined && (
+          <Stepper>
+            <StepperButton
+              aria-label="Diminuer"
+              disabled={servings <= 1}
+              onClick={() => setServings(servings - 1)}
+            >
+              <MinusIcon />
+            </StepperButton>
+            <StepperValue>{servings} pers.</StepperValue>
+            <StepperButton
+              aria-label="Augmenter"
+              onClick={() => setServings(servings + 1)}
+            >
+              <PlusIcon />
+            </StepperButton>
+          </Stepper>
+        )}
       </div>
       <Suspense>
         <IngredientsSectionsContent servings={servings} />
@@ -50,7 +60,7 @@ function IngredientsSectionsContent({ servings }: { servings: number }) {
   );
 
   return (
-    <ul className="grid grid-cols-3 gap-4">
+    <ul className="grid grid-cols-3 items-stretch gap-4">
       {constituents.data.map((constituent) => (
         <li className="flex flex-col gap-2" key={constituent.id}>
           <div className="aspect-square rounded-2xl bg-muted-bg p-4">
@@ -62,11 +72,11 @@ function IngredientsSectionsContent({ servings }: { servings: number }) {
               />
             )}
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex grow flex-col gap-1">
             <h3 className="line-clamp-2 text-xs text-muted-fg">
               {constituent.ingredient.title}
             </h3>
-            <p className="text-md text-fg">
+            <p className="mt-auto text-md text-fg">
               {formatQuantity(
                 constituent.quantity * servings,
                 constituent.unit,
