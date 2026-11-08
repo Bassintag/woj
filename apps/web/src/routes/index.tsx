@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Fragment } from "react/jsx-runtime";
 import { z } from "zod";
+import { CartButton } from "../components/cart/CartButton";
 import { Header } from "../components/layout/Header";
 import { MenusSection } from "./-components/MenusSection";
 import { RecipesSection } from "./-components/RecipesSection";
@@ -16,7 +17,10 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   return (
     <Fragment>
-      <Header>Woj</Header>
+      <Header>
+        Woj
+        <CartButton />
+      </Header>
       <MenusSection />
       <RecipesSection />
     </Fragment>

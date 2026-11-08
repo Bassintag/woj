@@ -8,6 +8,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         solid: "bg-muted-bg text-fg",
+        ghost: "bg-bg text-fg",
         brand: "bg-brand text-fg",
       },
       size: {
