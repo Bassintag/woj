@@ -82,3 +82,17 @@ test("unknown ids are ignored", () => {
   expect(items()).toHaveLength(1);
   expect(items()[0]).toMatchObject({ label: "Café", checked: false });
 });
+
+test("replace swaps all items with unchecked ones", () => {
+  const { add, toggle, replace } = useListStore.getState();
+  add("Café");
+  toggle(items()[0].id);
+  replace([{ label: "A", image: "a.png" }, { label: "B" }]);
+  expect(items()).toHaveLength(2);
+  expect(items()[0]).toMatchObject({
+    label: "A",
+    image: "a.png",
+    checked: false,
+  });
+  expect(items()[0].id).not.toBe(items()[1].id);
+});

@@ -5,6 +5,8 @@ import {
   TrashIcon,
   XIcon,
 } from "@phosphor-icons/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/Button";
 import {
@@ -15,8 +17,11 @@ import {
 } from "@/components/ui/Drawer";
 import { Stepper, StepperButton, StepperValue } from "@/components/ui/Stepper";
 import { useCartStore } from "@/hooks/useCartStore";
+import { useListStore } from "@/hooks/useListStore";
 import { useRecipeSearch } from "@/hooks/useRecipeIndex";
 import { image } from "@/lib/image";
+import { q } from "@/lib/orpc";
+import { buildShoppingList } from "@/lib/shoppingList";
 
 function plural(count: number, word: string) {
   return `${count} ${word}${count > 1 ? "s" : ""}`;
@@ -25,6 +30,23 @@ function plural(count: number, word: string) {
 export function CartDrawer() {
   const items = useCartStore((state) => state.items);
   const portions = items.reduce((sum, item) => sum + item.quantity, 0);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const submit = useMutation({
+    async mutationFn() {
+      const entries = await Promise.all(
+        items.map(async (item) => ({
+          recipe: await queryClient.query(
+            q.recipes.get.queryOptions({ input: { id: item.recipeId } }),
+          ),
+          servings: item.quantity,
+        })),
+      );
+      useListStore.getState().replace(buildShoppingList(entries));
+      useCartStore.getState().clear();
+      await navigate({ to: "/list" });
+    },
+  });
 
   return (
     <DrawerContent>
@@ -48,10 +70,18 @@ export function CartDrawer() {
           <p className="text-md text-muted-fg">Le panier est vide.</p>
         )}
       </div>
-      <Button variant="brand" disabled={!items.length}>
+      <DrawerClose
+        render={
+          <Button
+            variant="brand"
+            disabled={!items.length || submit.isPending}
+            onClick={() => submit.mutate()}
+          />
+        }
+      >
         <NotepadIcon />
         Créer la liste de courses
-      </Button>
+      </DrawerClose>
     </DrawerContent>
   );
 }
