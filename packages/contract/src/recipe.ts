@@ -3,6 +3,12 @@ import { openapi } from "@orpc/openapi";
 import { z } from "zod";
 import { IngredientSchema } from "./ingredient";
 import { auth } from "./lib/auth";
+import {
+  IdParamsSchema,
+  IdSchema,
+  PatchSchema,
+  TextSchema,
+} from "./lib/shared";
 import { TagSchema } from "./tag";
 import { UnitSchema } from "./unit";
 
@@ -50,40 +56,53 @@ export const RecipeDetailSchema = RecipeSchema.extend({
 
 export type RecipeDetail = z.infer<typeof RecipeDetailSchema>;
 
-export const CreateRecipeSchema = RecipeDetailSchema.omit({
-  id: true,
-  calories: true,
+export const CreateRecipeSchema = z.object({
+  title: TextSchema(128),
+  bakingTime: z.number().int().nonnegative().nullish(),
+  cookingTime: z.number().int().nonnegative().nullish(),
+  constituents: z.array(
+    z.object({
+      ingredientId: IdSchema,
+      unitId: IdSchema,
+      quantity: z.number().positive(),
+    }),
+  ),
+  steps: z.array(z.object({ description: TextSchema(2048) })),
+  tagIds: z.array(IdSchema),
 });
 
 export type CreateRecipe = z.infer<typeof CreateRecipeSchema>;
+
+export const UpdateRecipeSchema = PatchSchema(CreateRecipeSchema.shape);
+
+export type UpdateRecipe = z.infer<typeof UpdateRecipeSchema>;
 
 // Contract
 
 const list = oc
   .meta(openapi({ method: "GET", path: "/" }))
+  .meta(auth(false))
   .output(z.array(RecipeListItemSchema));
 
 const get = oc
   .meta(openapi({ method: "GET", path: "/{id}" }))
-  .input(z.object({ id: z.coerce.number() }))
+  .meta(auth(false))
+  .input(IdParamsSchema)
   .output(RecipeDetailSchema);
 
 const create = oc
   .meta(openapi({ method: "POST", path: "/" }))
-  .meta(auth(true))
   .input(CreateRecipeSchema)
   .output(RecipeDetailSchema);
 
 const update = oc
   .meta(openapi({ method: "PATCH", path: "/{id}" }))
-  .meta(auth(true))
-  .input(CreateRecipeSchema)
+  .input(UpdateRecipeSchema)
   .output(RecipeDetailSchema);
 
 const remove = oc
   .meta(openapi({ method: "DELETE", path: "/{id}" }))
-  .meta(auth(true))
-  .input(z.object({ id: z.int() }));
+  .input(IdParamsSchema);
 
 export const recipesContract = oc.meta(openapi({ prefix: "/recipes" })).router({
   list,
