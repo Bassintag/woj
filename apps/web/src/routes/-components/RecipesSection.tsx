@@ -1,12 +1,13 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useRouter, useSearch } from "@tanstack/react-router";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { debounce } from "es-toolkit";
+import { debounce, range } from "es-toolkit";
 import { type ChangeEvent, Suspense, useCallback, useMemo } from "react";
 import { z } from "zod";
 import { Tag, TagGroup } from "@/components/layout/Tag";
-import { RecipeCard } from "@/components/recipe/RecipeCard";
+import { RecipeCard, RecipeCardSkeleton } from "@/components/recipe/RecipeCard";
 import { Input } from "@/components/ui/Input";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useRecipeSearch } from "@/hooks/useRecipeIndex";
 import { q } from "@/lib/orpc";
 import { filterByTags } from "@/lib/recipe";
@@ -44,11 +45,11 @@ export function RecipesSection({
       {title && <h2 className="px-layout text-h2 text-fg">{title}</h2>}
       <div className="flex flex-col gap-4">
         <RecipeSectionInput />
-        <Suspense>
+        <Suspense fallback={<RecipeSectionFiltersSkeleton />}>
           <RecipeSectionFilters ids={ids} />
         </Suspense>
       </div>
-      <Suspense>
+      <Suspense fallback={<RecipesSectionContentSkeleton />}>
         <RecipesSectionContent ids={ids} />
       </Suspense>
     </section>
@@ -87,6 +88,16 @@ function RecipeSectionFilters({ ids }: { ids?: number[] }) {
   );
 }
 
+function RecipeSectionFiltersSkeleton() {
+  return (
+    <div className="-my-2 flex flex-row gap-3 overflow-hidden px-layout py-2">
+      {range(4).map((i) => (
+        <Skeleton key={i} className="h-8 w-20 shrink-0 rounded-full" />
+      ))}
+    </div>
+  );
+}
+
 function RecipeSectionInput() {
   const update = useUpdateSearch();
   const search = useSearch({ strict: false, select: (s) => s.q });
@@ -105,6 +116,16 @@ function RecipeSectionInput() {
       defaultValue={search ?? ""}
       onChange={onChange}
     />
+  );
+}
+
+function RecipesSectionContentSkeleton() {
+  return (
+    <div className="mx-layout grid grid-cols-2 gap-4">
+      {range(6).map((i) => (
+        <RecipeCardSkeleton key={i} />
+      ))}
+    </div>
   );
 }
 

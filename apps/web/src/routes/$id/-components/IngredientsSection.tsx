@@ -1,7 +1,9 @@
 import { MinusIcon, PlusIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
+import { range } from "es-toolkit";
 import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { Stepper, StepperButton, StepperValue } from "@/components/ui/Stepper";
 import { useCartStore } from "@/hooks/useCartStore";
 import { useServingsStore } from "@/hooks/useServingsStore";
@@ -43,10 +45,24 @@ export function IngredientsSections() {
           </Stepper>
         )}
       </div>
-      <Suspense>
+      <Suspense fallback={<IngredientsSectionsContentSkeleton />}>
         <IngredientsSectionsContent servings={servings} />
       </Suspense>
     </section>
+  );
+}
+
+function IngredientsSectionsContentSkeleton() {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      {range(6).map((i) => (
+        <div key={i} className="flex flex-col gap-2">
+          <Skeleton className="aspect-square rounded-2xl" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-5 w-1/2" />
+        </div>
+      ))}
+    </div>
   );
 }
 

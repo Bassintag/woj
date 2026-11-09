@@ -7,6 +7,7 @@ import {
 } from "@phosphor-icons/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { range } from "es-toolkit";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/Button";
 import {
@@ -15,6 +16,7 @@ import {
   DrawerDescription,
   DrawerTitle,
 } from "@/components/ui/Drawer";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { Stepper, StepperButton, StepperValue } from "@/components/ui/Stepper";
 import { useCartStore } from "@/hooks/useCartStore";
 import { useListStore } from "@/hooks/useListStore";
@@ -63,7 +65,7 @@ export function CartDrawer() {
       </div>
       <div className="-mx-8 min-h-0 flex-1 overflow-y-auto px-8">
         {items.length ? (
-          <Suspense>
+          <Suspense fallback={<CartLinesSkeleton count={items.length} />}>
             <CartLines />
           </Suspense>
         ) : (
@@ -84,6 +86,22 @@ export function CartDrawer() {
         Créer la liste de courses
       </DrawerClose>
     </DrawerContent>
+  );
+}
+
+function CartLinesSkeleton({ count }: { count: number }) {
+  return (
+    <ul className="flex flex-col gap-4">
+      {range(count).map((i) => (
+        <li className="flex flex-row items-center gap-4" key={i}>
+          <Skeleton className="size-18 shrink-0 rounded-2xl" />
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-8 w-1/2" />
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
 
