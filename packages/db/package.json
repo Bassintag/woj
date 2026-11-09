@@ -6,6 +6,7 @@
   "types": "src/index.ts",
   "private": true,
   "scripts": {
+    "typecheck": "bun check",
     "drizzle": "bun --env-file=../../.env --bun drizzle-kit",
     "generate": "bun --env-file=../../.env --bun drizzle-kit generate"
   },

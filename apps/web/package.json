@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "typecheck": "bun check",
     "dev": "vite",
     "test": "bun test"
   },
