@@ -42,6 +42,10 @@ function RouteComponent() {
   const todo = items.filter((item) => !item.checked);
   const done = items.filter((item) => item.checked);
 
+  function onDragStart() {
+    navigator.vibrate?.(10);
+  }
+
   function onDragEnd({ active, over }: DragEndEvent) {
     if (over) move(String(active.id), String(over.id));
   }
@@ -55,6 +59,7 @@ function RouteComponent() {
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
+            onDragStart={onDragStart}
             onDragEnd={onDragEnd}
           >
             <SortableContext
