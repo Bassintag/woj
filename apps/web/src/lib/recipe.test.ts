@@ -13,8 +13,13 @@ function get(id: number) {
 
 const results = [{ id: 1 }, { id: 2 }, { id: 3 }];
 
-test("keeps recipes matching any selected tag", () => {
-  expect(filterByTags(results, [10, 30], get)).toEqual([{ id: 1 }, { id: 2 }]);
+test("keeps recipes matching every selected tag", () => {
+  expect(filterByTags(results, [20, 30], get)).toEqual([{ id: 2 }]);
+  expect(filterByTags(results, [10, 30], get)).toEqual([]);
+});
+
+test("keeps every recipe without selected tags", () => {
+  expect(filterByTags(results, [], get)).toEqual(results);
 });
 
 test("returns nothing when no tag matches", () => {
@@ -22,7 +27,8 @@ test("returns nothing when no tag matches", () => {
 });
 
 test("keeps the order of the results", () => {
-  expect(filterByTags([{ id: 2 }, { id: 1 }], [10, 20], get)).toEqual([
+  expect(filterByTags([{ id: 3 }, { id: 2 }, { id: 1 }], [], get)).toEqual([
+    { id: 3 },
     { id: 2 },
     { id: 1 },
   ]);
