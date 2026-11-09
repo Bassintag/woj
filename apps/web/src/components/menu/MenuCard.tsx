@@ -1,5 +1,18 @@
 import type { Menu } from "@woj/contract";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { image } from "@/lib/image";
+
+export function MenuCardSkeleton() {
+  return (
+    <div className="flex w-40 flex-col gap-2">
+      <Skeleton className="aspect-square w-full rounded-2xl" />
+      <div className="flex flex-col gap-1">
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+    </div>
+  );
+}
 
 export function MenuCard({ menu }: { menu: Menu }) {
   return (

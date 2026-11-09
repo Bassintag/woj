@@ -2,11 +2,13 @@ import { CaretLeftIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import type { Menu } from "@woj/contract";
+import { range } from "es-toolkit";
 import { Fragment, Suspense, useState } from "react";
 import { z } from "zod";
 import { CartButton } from "@/components/cart/CartButton";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { q } from "@/lib/orpc";
 import { MenuActions } from "./-components/MenuActions";
 import { MenuAttributes } from "./-components/MenuAttributes";
@@ -32,10 +34,24 @@ function RouteComponent() {
         </Button>
         <CartButton open={cartOpen} onOpenChange={setCartOpen} />
       </Header>
-      <Suspense>
+      <Suspense fallback={<MenuContentSkeleton />}>
         <MenuContent onAdded={() => setCartOpen(true)} />
       </Suspense>
     </Fragment>
+  );
+}
+
+function MenuContentSkeleton() {
+  return (
+    <div className="flex flex-col gap-8 px-layout">
+      <Skeleton className="aspect-square w-full rounded-4xl" />
+      <Skeleton className="h-8 w-3/4" />
+      <div className="flex flex-col gap-4">
+        {range(3).map((i) => (
+          <Skeleton key={i} className="h-24 rounded-2xl" />
+        ))}
+      </div>
+    </div>
   );
 }
 

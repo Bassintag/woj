@@ -1,7 +1,9 @@
 import { FireIcon, OvenIcon, TimerIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
+import { range } from "es-toolkit";
 import { type ReactNode, Suspense } from "react";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { image } from "@/lib/image";
 import { q } from "@/lib/orpc";
 
@@ -9,9 +11,23 @@ const Route = getRouteApi("/$id/");
 
 export function DetailsSection() {
   return (
-    <Suspense>
+    <Suspense fallback={<DetailsSectionSkeleton />}>
       <DetailsSectionContent />
     </Suspense>
+  );
+}
+
+function DetailsSectionSkeleton() {
+  return (
+    <section className="flex flex-col gap-6 px-layout">
+      <Skeleton className="aspect-square w-full rounded-4xl" />
+      <Skeleton className="h-8 w-3/4" />
+      <div className="grid grid-cols-3 gap-4">
+        {range(3).map((i) => (
+          <Skeleton key={i} className="h-24 rounded-2xl" />
+        ))}
+      </div>
+    </section>
   );
 }
 

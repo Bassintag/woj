@@ -1,6 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
+import { range } from "es-toolkit";
 import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { q } from "@/lib/orpc";
 
 const Route = getRouteApi("/$id/");
@@ -9,10 +11,20 @@ export function StepsSection() {
   return (
     <section className="flex flex-col gap-6 px-layout">
       <h2 className="text-h2 text-fg">Préparation</h2>
-      <Suspense>
+      <Suspense fallback={<StepSectionContentSkeleton />}>
         <StepSectionContent />
       </Suspense>
     </section>
+  );
+}
+
+function StepSectionContentSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      {range(3).map((i) => (
+        <Skeleton key={i} className="h-24 rounded-2xl" />
+      ))}
+    </div>
   );
 }
 
