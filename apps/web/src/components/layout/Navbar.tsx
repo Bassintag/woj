@@ -26,7 +26,7 @@ function NavbarLink({ className, ...props }: ComponentProps<typeof Link>) {
   return (
     <Link
       className={cn(
-        "flex flex-1 flex-col items-center gap-2 text-sm text-fg *:[svg]:size-6",
+        "flex flex-1 flex-col items-center text-sm text-fg *:[svg]:size-8 *:[svg]:rounded-full *:[svg]:p-1.5 data-[status=active]:*:[svg]:bg-brand",
       )}
       {...props}
     />
