@@ -14,7 +14,7 @@ export function DrawerContent({ className, ...props }: BaseDrawer.Popup.Props) {
       <BaseDrawer.Viewport className="fixed inset-0 flex items-end justify-center">
         <BaseDrawer.Popup
           className={cn(
-            "flex max-h-128 w-full translate-y-(--drawer-swipe-movement-y) flex-col gap-8 overflow-hidden rounded-t-4xl bg-elevated-bg p-8 text-elevated-fg transition-transform duration-300 data-ending-style:translate-y-full data-starting-style:translate-y-full motion-reduce:transition-none",
+            "flex max-h-[80dvh] w-full translate-y-(--drawer-swipe-movement-y) flex-col gap-8 overflow-hidden rounded-t-4xl bg-elevated-bg p-8 text-elevated-fg transition-transform duration-300 data-ending-style:translate-y-full data-starting-style:translate-y-full motion-reduce:transition-none",
             className,
           )}
           {...props}

@@ -74,6 +74,7 @@ export function CartDrawer() {
         render={
           <Button
             variant="brand"
+            className="shrink-0"
             disabled={!items.length || submit.isPending}
             onClick={() => submit.mutate()}
           />
