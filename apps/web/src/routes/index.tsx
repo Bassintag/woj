@@ -1,17 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Fragment } from "react/jsx-runtime";
-import { z } from "zod";
 import { CartButton } from "../components/cart/CartButton";
 import { Header } from "../components/layout/Header";
 import { MenusSection } from "./-components/MenusSection";
-import { RecipesSection } from "./-components/RecipesSection";
+import {
+  RecipesSection,
+  recipeSearchSchema,
+} from "./-components/RecipesSection";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
-  validateSearch: z.object({
-    q: z.string().nullish(),
-    tags: z.array(z.number()).optional(),
-  }),
+  validateSearch: recipeSearchSchema,
 });
 
 function RouteComponent() {
@@ -22,7 +21,7 @@ function RouteComponent() {
         <CartButton />
       </Header>
       <MenusSection />
-      <RecipesSection />
+      <RecipesSection title="Recettes" />
     </Fragment>
   );
 }

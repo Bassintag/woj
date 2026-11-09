@@ -9,6 +9,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Button } from "@/components/ui/Button";
 import { Stepper, StepperButton, StepperValue } from "@/components/ui/Stepper";
 import { useCartStore } from "@/hooks/useCartStore";
+import { useFavoritesStore } from "@/hooks/useFavoritesStore";
 import { useServingsStore } from "@/hooks/useServingsStore";
 
 const Route = getRouteApi("/$id/");
@@ -23,9 +24,15 @@ export function RecipeActions() {
   const setQuantity = useCartStore((state) => state.setQuantity);
   const remove = useCartStore((state) => state.remove);
 
+  const isFavorite = useFavoritesStore((state) => state.ids.includes(id));
+  const toggleFavorite = useFavoritesStore((state) => state.toggle);
+
   const favorite = (
-    <Button aria-label="Ajouter aux favoris">
-      <HeartIcon />
+    <Button
+      aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+      onClick={() => toggleFavorite(id)}
+    >
+      <HeartIcon weight={isFavorite ? "fill" : "regular"} />
     </Button>
   );
 
