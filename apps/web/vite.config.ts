@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => ({
           "Application de recettes self-hosted : recettes, menus, favoris, panier et liste de courses.",
         lang: "fr",
         display: "standalone",
-        theme_color: "#ffb900",
+        theme_color: "#f3f1f1",
         background_color: "#fbfaf9",
         icons: [
           { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
