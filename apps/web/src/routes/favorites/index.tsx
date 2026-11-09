@@ -3,6 +3,7 @@ import { Fragment } from "react";
 import { CartButton } from "@/components/cart/CartButton";
 import { Header } from "@/components/layout/Header";
 import { useFavoritesStore } from "@/hooks/useFavoritesStore";
+import { pageTitle } from "@/lib/pageTitle";
 import {
   RecipesSection,
   recipeSearchSchema,
@@ -18,7 +19,7 @@ function RouteComponent() {
 
   return (
     <Fragment>
-      <title>Favoris · WOJ</title>
+      <title>{pageTitle("Favoris")}</title>
       <Header>
         Favoris
         <CartButton />

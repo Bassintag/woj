@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Fragment } from "react/jsx-runtime";
 import { CartButton } from "../components/cart/CartButton";
 import { Header } from "../components/layout/Header";
+import { pageTitle } from "../lib/pageTitle";
 import { MenusSection } from "./-components/MenusSection";
 import {
   RecipesSection,
@@ -16,7 +17,7 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   return (
     <Fragment>
-      <title>WOJ</title>
+      <title>{pageTitle()}</title>
       <Header>
         Woj
         <CartButton />

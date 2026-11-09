@@ -17,6 +17,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Fragment } from "react";
 import { Header } from "@/components/layout/Header";
 import { useListStore } from "@/hooks/useListStore";
+import { pageTitle } from "@/lib/pageTitle";
 import { AddItemRow } from "./-components/AddItemRow";
 import { ListItemRow } from "./-components/ListItemRow";
 import { ListProgress } from "./-components/ListProgress";
@@ -52,7 +53,7 @@ function RouteComponent() {
 
   return (
     <Fragment>
-      <title>Courses · WOJ</title>
+      <title>{pageTitle("Courses")}</title>
       <Header>Courses</Header>
       <div className="flex flex-col gap-8">
         <ListProgress done={done.length} total={items.length} />

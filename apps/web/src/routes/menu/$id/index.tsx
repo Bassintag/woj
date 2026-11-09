@@ -10,6 +10,7 @@ import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { q } from "@/lib/orpc";
+import { pageTitle } from "@/lib/pageTitle";
 import { MenuActions } from "./-components/MenuActions";
 import { MenuAttributes } from "./-components/MenuAttributes";
 import { MenuHero } from "./-components/MenuHero";
@@ -77,7 +78,7 @@ function MenuBody({ menu, onAdded }: { menu: Menu; onAdded: () => void }) {
 
   return (
     <Fragment>
-      <title>{`${menu.title} · WOJ`}</title>
+      <title>{pageTitle(menu.title)}</title>
       <div className="flex flex-col gap-8 px-layout">
         <MenuHero menu={menu} />
         <MenuAttributes menu={menu} quantities={quantities} />
