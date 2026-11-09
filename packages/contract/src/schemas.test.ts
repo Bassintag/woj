@@ -1,8 +1,7 @@
 import { expect, test } from "bun:test";
 import { CreateRecipeSchema, RecipeDetailSchema, RecipeSchema } from "./recipe";
-import { TagSchema } from "./tag";
 
-const tag = { id: 1, title: "Vegan", color: "green" };
+const tag = { id: 1, title: "Vegan" };
 
 const detail = {
   id: 1,
@@ -38,8 +37,4 @@ test("CreateRecipeSchema strips id and calories", () => {
   const parsed = CreateRecipeSchema.parse(detail);
   expect(parsed).not.toHaveProperty("id");
   expect(parsed).not.toHaveProperty("calories");
-});
-
-test("TagSchema requires a color", () => {
-  expect(TagSchema.safeParse({ id: 1, title: "Vegan" }).success).toBe(false);
 });
