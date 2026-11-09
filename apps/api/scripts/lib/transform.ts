@@ -46,9 +46,13 @@ const DIETS = [
   ["porkless", "Sans porc"],
 ] as const;
 
+const EXCLUDED_FAMILIES = new Set(["Protéines Animales", "Fait maison"]);
+
 export function getTags(recipe: Recipe) {
   const ancestors = (recipe.familyAncestors ?? []).map((a) => a.name);
-  const families = ancestors.length > 1 ? ancestors.slice(1) : ancestors;
+  const families = (
+    ancestors.length > 1 ? ancestors.slice(1) : ancestors
+  ).filter((name) => !EXCLUDED_FAMILIES.has(name));
   const diets = DIETS.filter(
     ([key]) => recipe.eatingHabitsCompatibility?.[key],
   ).map(([, title]) => title);
