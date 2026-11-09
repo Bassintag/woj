@@ -13,6 +13,7 @@ import {
   getConversions,
   getJowCalories,
   getQuantity,
+  getTags,
   getUnit,
   getUnits,
   idByTitle,
@@ -226,6 +227,7 @@ const recipeRows = recipes.map((recipe) => {
       getJowCalories(recipe) ??
       getRecipeCalories(constituents.map((c) => c.calorie)),
     constituents,
+    tags: getTags(recipe),
     steps: recipe.directions.map((d, order) => {
       return { order, description: d.label };
     }),
@@ -283,4 +285,34 @@ await batch(
     });
   }),
   (rows) => db.insert(tables.steps).values(rows).onConflictDoNothing(),
+);
+
+const tagIds = idByTitle(
+  (
+    await batch(
+      [...new Set(recipeRows.flatMap((r) => r.tags))].map((title) => ({
+        title,
+      })),
+      (rows) => {
+        return db
+          .insert(tables.tags)
+          .values(rows)
+          .onConflictDoUpdate({
+            target: [tables.tags.title],
+            set: { title: sql`excluded."title"` },
+          })
+          .returning({ id: tables.tags.id, title: tables.tags.title });
+      },
+    )
+  ).flat(),
+);
+
+await batch(
+  recipeRows.flatMap((r) => {
+    return r.tags.map((title) => ({
+      recipeId: recipeIdByTitle.get(r.title) as number,
+      tagId: tagIds.get(title) as number,
+    }));
+  }),
+  (rows) => db.insert(tables.recipesToTags).values(rows).onConflictDoNothing(),
 );

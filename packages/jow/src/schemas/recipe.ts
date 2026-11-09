@@ -17,6 +17,14 @@ export const RecipeSchema = z.object({
   nutritionalFacts: z
     .array(z.object({ id: z.string(), amount: z.number() }))
     .nullish(),
+  familyAncestors: z.array(z.object({ name: z.string() })).nullish(),
+  eatingHabitsCompatibility: z
+    .object({
+      porkless: z.boolean(),
+      vegetarian: z.boolean(),
+      vegan: z.boolean(),
+    })
+    .nullish(),
   directions: z.array(
     z.object({
       id: z.string(),
