@@ -6,6 +6,7 @@ import { type ReactNode, Suspense } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { image } from "@/lib/image";
 import { q } from "@/lib/orpc";
+import { pageTitle } from "@/lib/pageTitle";
 
 const Route = getRouteApi("/$id/");
 
@@ -39,7 +40,7 @@ export function DetailsSectionContent() {
 
   return (
     <section className="flex flex-col gap-6 px-layout">
-      <title>{`${recipe.data.title} · WOJ`}</title>
+      <title>{pageTitle(recipe.data.title)}</title>
       <div className="rounded-4xl bg-muted-bg">
         {recipe.data.imageUrl && (
           <img
