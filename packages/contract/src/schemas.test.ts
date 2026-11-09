@@ -1,5 +1,11 @@
 import { expect, test } from "bun:test";
-import { CreateRecipeSchema, RecipeDetailSchema, RecipeSchema } from "./recipe";
+import {
+  CreateRecipeSchema,
+  RecipeDetailSchema,
+  RecipeSchema,
+  UpdateRecipeSchema,
+} from "./recipe";
+import { CreateUnitSchema, UpdateUnitSchema } from "./unit";
 
 const tag = { id: 1, title: "Vegan" };
 
@@ -33,8 +39,42 @@ test("RecipeDetailSchema requires full tags", () => {
   ).toBe(false);
 });
 
-test("CreateRecipeSchema strips id and calories", () => {
-  const parsed = CreateRecipeSchema.parse(detail);
-  expect(parsed).not.toHaveProperty("id");
-  expect(parsed).not.toHaveProperty("calories");
+test("CreateRecipeSchema makes times optional", () => {
+  const parsed = CreateRecipeSchema.parse({
+    title: "Soupe",
+    constituents: [{ ingredientId: 1, unitId: 1, quantity: 2 }],
+    steps: [{ description: "Mélanger" }],
+    tagIds: [],
+  });
+  expect(parsed.bakingTime).toBeUndefined();
+});
+
+test("CreateRecipeSchema rejects references to full objects", () => {
+  expect(CreateRecipeSchema.safeParse(detail).success).toBe(false);
+});
+
+test("UpdateRecipeSchema requires at least one field", () => {
+  expect(UpdateRecipeSchema.safeParse({ id: 1 }).success).toBe(false);
+  expect(UpdateRecipeSchema.safeParse({ id: 1, tagIds: [] }).success).toBe(
+    true,
+  );
+});
+
+test("CreateUnitSchema requires symbols and positive factors", () => {
+  const symbol = { title: "g", digits: 0, factor: 1 };
+  expect(CreateUnitSchema.safeParse({ title: "Gramme" }).success).toBe(false);
+  expect(
+    CreateUnitSchema.safeParse({ title: "Gramme", symbols: [symbol] }).success,
+  ).toBe(true);
+  expect(
+    CreateUnitSchema.safeParse({
+      title: "Gramme",
+      symbols: [{ ...symbol, factor: 0 }],
+    }).success,
+  ).toBe(false);
+});
+
+test("UpdateUnitSchema requires at least one field", () => {
+  expect(UpdateUnitSchema.safeParse({ id: 1 }).success).toBe(false);
+  expect(UpdateUnitSchema.safeParse({ id: 1, symbols: [] }).success).toBe(true);
 });
