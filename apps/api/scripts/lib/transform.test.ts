@@ -179,3 +179,14 @@ test("getTags keeps a root family and handles missing data", () => {
   ]);
   expect(getTags({} as Recipe)).toEqual([]);
 });
+
+test("getTags excludes internal families", () => {
+  const recipe = {
+    familyAncestors: [
+      { name: "Protéines Animales + Féculent + Veg" },
+      { name: "Protéines Animales" },
+      { name: "Plat" },
+    ],
+  } as Recipe;
+  expect(getTags(recipe)).toEqual(["Plat"]);
+});
