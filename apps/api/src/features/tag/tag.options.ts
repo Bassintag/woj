@@ -4,6 +4,5 @@ export const tagOptions = {
   columns: {
     id: true,
     title: true,
-    color: true,
   },
 } satisfies QueryOptions<"tags">;

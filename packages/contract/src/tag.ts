@@ -8,7 +8,6 @@ import { auth } from "./lib/auth";
 export const TagSchema = z.object({
   id: z.number(),
   title: z.string(),
-  color: z.string(),
 });
 
 export type Tag = z.infer<typeof TagSchema>;
