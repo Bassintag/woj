@@ -1,5 +1,6 @@
 import "./index.css";
 
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
@@ -14,6 +15,7 @@ createRoot(document.getElementById("root") as HTMLElement).render(
       client={queryClient}
     >
       <RouterProvider router={router} />
+      <ReactQueryDevtools />
     </PersistQueryClientProvider>
   </StrictMode>,
 );
