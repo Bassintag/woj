@@ -6,6 +6,7 @@ import {
   getConversions,
   getJowCalories,
   getQuantity,
+  getTags,
   getUnit,
   getUnits,
   idByTitle,
@@ -154,4 +155,27 @@ test("getUnits merges natural and conversion units without duplicates", () => {
   const a = withConversions("a", ["cl", "g"]);
   const units = getUnits([a], getConversions([a]));
   expect(units.map((u) => u.name)).toEqual(["g", "cl"]);
+});
+
+test("getTags keeps parent families and enabled diets without duplicates", () => {
+  const recipe = {
+    familyAncestors: [
+      { name: "Veggie - grain" },
+      { name: "Végétarien" },
+      { name: "Plat" },
+    ],
+    eatingHabitsCompatibility: {
+      porkless: true,
+      vegetarian: true,
+      vegan: false,
+    },
+  } as Recipe;
+  expect(getTags(recipe)).toEqual(["Végétarien", "Plat", "Sans porc"]);
+});
+
+test("getTags keeps a root family and handles missing data", () => {
+  expect(getTags({ familyAncestors: [{ name: "Soupe" }] } as Recipe)).toEqual([
+    "Soupe",
+  ]);
+  expect(getTags({} as Recipe)).toEqual([]);
 });

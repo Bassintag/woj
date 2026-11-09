@@ -46,3 +46,19 @@ test("times are optional and nullable but must be integers", () => {
     false,
   );
 });
+
+test("family ancestors and eating habits are optional", () => {
+  expect(RecipeSchema.safeParse(base).success).toBe(true);
+  const recipe = RecipeSchema.parse({
+    ...base,
+    familyAncestors: [{ name: "Gratin" }, { name: "Plat" }],
+    eatingHabitsCompatibility: {
+      porkless: true,
+      vegetarian: false,
+      vegan: false,
+      glutenFree: true,
+    },
+  });
+  expect(recipe.familyAncestors).toHaveLength(2);
+  expect(recipe.eatingHabitsCompatibility?.porkless).toBe(true);
+});

@@ -40,6 +40,21 @@ export function getJowCalories(recipe: Recipe) {
     : undefined;
 }
 
+const DIETS = [
+  ["vegan", "Végan"],
+  ["vegetarian", "Végétarien"],
+  ["porkless", "Sans porc"],
+] as const;
+
+export function getTags(recipe: Recipe) {
+  const ancestors = (recipe.familyAncestors ?? []).map((a) => a.name);
+  const families = ancestors.length > 1 ? ancestors.slice(1) : ancestors;
+  const diets = DIETS.filter(
+    ([key]) => recipe.eatingHabitsCompatibility?.[key],
+  ).map(([, title]) => title);
+  return [...new Set([...families, ...diets])];
+}
+
 export function getUnit(
   constituent: Recipe["constituents"][number],
   ingredient: Ingredient,
