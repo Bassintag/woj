@@ -1,8 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi, Link } from "@tanstack/react-router";
+import { Link, useRouter, useSearch } from "@tanstack/react-router";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { debounce } from "es-toolkit";
-import { type ChangeEvent, Suspense, useCallback } from "react";
+import { type ChangeEvent, Suspense, useCallback, useMemo } from "react";
+import { z } from "zod";
 import { Tag, TagGroup } from "@/components/layout/Tag";
 import { RecipeCard } from "@/components/recipe/RecipeCard";
 import { Input } from "@/components/ui/Input";
@@ -10,31 +11,62 @@ import { useRecipeSearch } from "@/hooks/useRecipeIndex";
 import { q } from "@/lib/orpc";
 import { filterByTags } from "@/lib/recipe";
 
-const Route = getRouteApi("/");
-
 const COLUMNS = 2;
 
-export function RecipesSection() {
+export const recipeSearchSchema = z.object({
+  q: z.string().nullish(),
+  tags: z.array(z.number()).optional(),
+});
+
+function useUpdateSearch() {
+  const router = useRouter();
+  return useCallback(
+    (patch: z.infer<typeof recipeSearchSchema>) => {
+      router.navigate({
+        to: ".",
+        search: { ...router.state.location.search, ...patch },
+        replace: true,
+      });
+    },
+    [router],
+  );
+}
+
+export function RecipesSection({
+  title,
+  ids,
+}: {
+  title?: string;
+  ids?: number[];
+}) {
   return (
     <section className="flex flex-col gap-6">
-      <h2 className="px-layout text-h2 text-fg">Recettes</h2>
+      {title && <h2 className="px-layout text-h2 text-fg">{title}</h2>}
       <div className="flex flex-col gap-4">
         <RecipeSectionInput />
         <Suspense>
-          <RecipeSectionFilters />
+          <RecipeSectionFilters ids={ids} />
         </Suspense>
       </div>
       <Suspense>
-        <RecipesSectionContent />
+        <RecipesSectionContent ids={ids} />
       </Suspense>
     </section>
   );
 }
 
-function RecipeSectionFilters() {
-  const tags = useSuspenseQuery(q.tags.list.queryOptions());
-  const navigate = Route.useNavigate();
-  const selected = Route.useSearch({ select: (s) => s.tags });
+function RecipeSectionFilters({ ids }: { ids?: number[] }) {
+  const allTags = useSuspenseQuery(q.tags.list.queryOptions());
+  const api = useRecipeSearch();
+  const tags = {
+    data: ids
+      ? allTags.data.filter((tag) =>
+          ids.some((id) => api.get(id)?.tags.some((t) => t.id === tag.id)),
+        )
+      : allTags.data,
+  };
+  const update = useUpdateSearch();
+  const selected = useSearch({ strict: false, select: (s) => s.tags });
 
   return (
     tags.data.length > 0 && (
@@ -42,13 +74,7 @@ function RecipeSectionFilters() {
         className="-my-2 flex scrollbar-none flex-row gap-3 overflow-x-auto px-layout py-2"
         value={selected?.map(String) ?? []}
         onValueChange={(value) =>
-          navigate({
-            search: (prev) => ({
-              ...prev,
-              tags: value.length > 0 ? value.map(Number) : undefined,
-            }),
-            replace: true,
-          })
+          update({ tags: value.length > 0 ? value.map(Number) : undefined })
         }
       >
         {tags.data.map((tag) => (
@@ -62,32 +88,34 @@ function RecipeSectionFilters() {
 }
 
 function RecipeSectionInput() {
-  const navigate = Route.useNavigate();
-  const search = Route.useSearch({ select: (s) => s.q });
+  const update = useUpdateSearch();
+  const search = useSearch({ strict: false, select: (s) => s.q });
+  const onChange = useMemo(
+    () =>
+      debounce((e: ChangeEvent<HTMLInputElement>) => {
+        update({ q: e.target.value });
+      }, 500),
+    [update],
+  );
 
   return (
     <Input
       placeholder="Search"
       className="mx-layout"
       defaultValue={search ?? ""}
-      onChange={useCallback(
-        debounce((e: ChangeEvent<HTMLInputElement>) => {
-          navigate({
-            search: (prev) => ({ ...prev, q: e.target.value }),
-            replace: true,
-          });
-        }, 500),
-        [],
-      )}
+      onChange={onChange}
     />
   );
 }
 
-function RecipesSectionContent() {
+function RecipesSectionContent({ ids }: { ids?: number[] }) {
   const api = useRecipeSearch();
-  const q = Route.useSearch({ select: (s) => s.q });
-  const tags = Route.useSearch({ select: (s) => s.tags });
+  const q = useSearch({ strict: false, select: (s) => s.q });
+  const tags = useSearch({ strict: false, select: (s) => s.tags });
   let results: { id: number }[] = q ? api.index.search(q) : api.recipes;
+  if (ids) {
+    results = results.filter((result) => ids.includes(result.id));
+  }
   if (tags) {
     results = filterByTags(results, tags, api.get);
   }
