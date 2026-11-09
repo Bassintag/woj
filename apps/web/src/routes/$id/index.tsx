@@ -1,5 +1,5 @@
 import { CaretLeftIcon } from "@phosphor-icons/react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { Fragment } from "react";
 import { z } from "zod";
 import { CartButton } from "@/components/cart/CartButton";
@@ -13,16 +13,22 @@ import { StepsSection } from "./-components/StepsSection";
 export const Route = createFileRoute("/$id/")({
   component: RouteComponent,
   staticData: { hideNavbar: true },
+  validateSearch: z.object({ from: z.enum(["favorites"]).optional() }),
   params: z.object({
     id: z.coerce.number(),
   }),
 });
 
 function RouteComponent() {
+  const from = useSearch({ from: "/$id/", select: (s) => s.from });
+
   return (
     <Fragment>
       <Header>
-        <Button size="md" render={<Link to="/" />}>
+        <Button
+          size="md"
+          render={<Link to={from === "favorites" ? "/favorites" : "/"} />}
+        >
           <CaretLeftIcon />
         </Button>
         <CartButton />
