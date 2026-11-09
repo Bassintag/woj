@@ -15,6 +15,7 @@
     "zod": "^4.6.7"
   },
   "scripts": {
+    "typecheck": "bun check",
     "test": "bun test"
   }
 }

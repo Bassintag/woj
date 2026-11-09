@@ -18,7 +18,7 @@ afterEach(() => {
 test("fetch sets headers and resolves the url against the base", async () => {
   fetchMock.mockResolvedValue(new Response("{}"));
   await new JowClient("https://example.com/").fetch("public/x");
-  const [url, init] = fetchMock.mock.calls[0];
+  const [url, init] = fetchMock.mock.calls[0] ?? [];
   expect(url.href).toBe("https://example.com/public/x");
   expect(init.headers.get("accept")).toBe("application/json");
   expect(init.headers.get("accept-language")).toBe("fr");
@@ -28,7 +28,7 @@ test("fetch sets headers and resolves the url against the base", async () => {
 test("fetch serializes json bodies", async () => {
   fetchMock.mockResolvedValue(new Response("{}"));
   await new JowClient().fetch("x", { method: "POST", json: ["a"] });
-  const [, init] = fetchMock.mock.calls[0];
+  const [, init] = fetchMock.mock.calls[0] ?? [];
   expect(init.body).toBe('["a"]');
   expect(init.headers.get("content-type")).toBe("application/json");
 });

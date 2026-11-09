@@ -2,6 +2,7 @@
   "name": "@woj/api",
   "private": true,
   "scripts": {
+    "typecheck": "bun check",
     "dev": "bun --watch --env-file=../../.env src/index.ts | pino-pretty",
     "script:jow": "bun --env-file=../../.env scripts/jow",
     "script:seed": "bun --env-file=../../.env scripts/seed",
