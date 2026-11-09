@@ -39,6 +39,7 @@ export function DetailsSectionContent() {
 
   return (
     <section className="flex flex-col gap-6 px-layout">
+      <title>{`${recipe.data.title} · WOJ`}</title>
       <div className="rounded-4xl bg-muted-bg">
         {recipe.data.imageUrl && (
           <img

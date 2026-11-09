@@ -18,6 +18,7 @@ function RouteComponent() {
 
   return (
     <Fragment>
+      <title>Favoris · WOJ</title>
       <Header>
         Favoris
         <CartButton />

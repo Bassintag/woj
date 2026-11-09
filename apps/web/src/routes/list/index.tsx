@@ -52,6 +52,7 @@ function RouteComponent() {
 
   return (
     <Fragment>
+      <title>Courses · WOJ</title>
       <Header>Courses</Header>
       <div className="flex flex-col gap-8">
         <ListProgress done={done.length} total={items.length} />
