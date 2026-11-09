@@ -32,7 +32,7 @@ export function ListItemRow({
       {...listeners}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       data-dragging={isDragging || undefined}
-      className="relative flex h-10 touch-pan-y flex-row items-center gap-4 px-layout select-none data-dragging:z-10 data-dragging:bg-muted-bg data-dragging:**:cursor-grabbing"
+      className="relative flex min-h-10 touch-pan-y flex-row items-center gap-4 px-layout select-none data-dragging:z-10 data-dragging:bg-muted-bg data-dragging:**:cursor-grabbing"
     >
       <Checkbox
         aria-label={item.label}
@@ -46,8 +46,9 @@ export function ListItemRow({
           className="size-10 shrink-0 rounded-sm bg-muted-bg object-cover"
         />
       )}
-      <input
+      <textarea
         key={item.label}
+        rows={1}
         defaultValue={item.label}
         ref={(node) => {
           if (!item.label) node?.focus();
@@ -58,12 +59,13 @@ export function ListItemRow({
             event.currentTarget.blur();
           }
           if (event.key !== "Enter") return;
+          event.preventDefault();
           const filled = event.currentTarget.value.trim() !== "";
           event.currentTarget.blur();
           if (last && filled) add("");
         }}
         className={cn(
-          "min-w-0 flex-1 bg-transparent text-md text-fg focus-visible:outline-none",
+          "field-sizing-content min-w-0 flex-1 resize-none bg-transparent py-2 text-md text-fg focus-visible:outline-none",
           item.checked && "text-muted-fg line-through",
         )}
       />
