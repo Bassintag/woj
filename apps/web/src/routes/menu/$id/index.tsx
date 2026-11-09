@@ -77,6 +77,7 @@ function MenuBody({ menu, onAdded }: { menu: Menu; onAdded: () => void }) {
 
   return (
     <Fragment>
+      <title>{`${menu.title} · WOJ`}</title>
       <div className="flex flex-col gap-8 px-layout">
         <MenuHero menu={menu} />
         <MenuAttributes menu={menu} quantities={quantities} />

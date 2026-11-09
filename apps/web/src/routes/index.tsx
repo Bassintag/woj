@@ -16,6 +16,7 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   return (
     <Fragment>
+      <title>WOJ</title>
       <Header>
         Woj
         <CartButton />
