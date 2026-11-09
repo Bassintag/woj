@@ -1,5 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { XIcon } from "@phosphor-icons/react";
+import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { type ListItem, useListStore } from "@/hooks/useListStore";
 import { cn } from "@/lib/cn";
@@ -15,6 +17,7 @@ export function ListItemRow({
   const toggle = useListStore((state) => state.toggle);
   const update = useListStore((state) => state.update);
   const add = useListStore((state) => state.add);
+  const remove = useListStore((state) => state.remove);
 
   const {
     setNodeRef,
@@ -69,6 +72,16 @@ export function ListItemRow({
           item.checked && "text-muted-fg line-through",
         )}
       />
+      <Button
+        variant="ghost"
+        size="sm"
+        aria-label="Supprimer"
+        className="shrink-0 px-2"
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={() => remove(item.id)}
+      >
+        <XIcon />
+      </Button>
     </div>
   );
 }
