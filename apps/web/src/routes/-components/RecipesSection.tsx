@@ -1,8 +1,14 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useRouter, useSearch } from "@tanstack/react-router";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { debounce, range } from "es-toolkit";
-import { type ChangeEvent, Suspense, useCallback, useMemo } from "react";
+import { debounce, range, sortBy } from "es-toolkit";
+import {
+  type ChangeEvent,
+  Suspense,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { z } from "zod";
 import { Tag, TagGroup } from "@/components/layout/Tag";
 import { RecipeCard, RecipeCardSkeleton } from "@/components/recipe/RecipeCard";
@@ -68,17 +74,21 @@ function RecipeSectionFilters({ ids }: { ids?: number[] }) {
   };
   const update = useUpdateSearch();
   const selected = useSearch({ strict: false, select: (s) => s.tags });
+  const ref = useRef<HTMLDivElement>(null);
+  const sorted = sortBy(tags.data, [(tag) => !selected?.includes(tag.id)]);
 
   return (
     tags.data.length > 0 && (
       <TagGroup
+        ref={ref}
         className="-my-2 flex scrollbar-none flex-row gap-3 overflow-x-auto px-layout py-2"
         value={selected?.map(String) ?? []}
-        onValueChange={(value) =>
-          update({ tags: value.length > 0 ? value.map(Number) : undefined })
-        }
+        onValueChange={(value) => {
+          update({ tags: value.length > 0 ? value.map(Number) : undefined });
+          ref.current?.scrollTo({ left: 0, behavior: "smooth" });
+        }}
       >
-        {tags.data.map((tag) => (
+        {sorted.map((tag) => (
           <Tag key={tag.id} value={tag.id.toFixed(0)}>
             {tag.title}
           </Tag>
