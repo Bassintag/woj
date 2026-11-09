@@ -16,6 +16,7 @@ interface ListState {
   toggle(id: string): void;
   remove(id: string): void;
   move(activeId: string, overId: string): void;
+  replace(items: Pick<ListItem, "label" | "image">[]): void;
 }
 
 export const useListStore = create<ListState>()(
@@ -57,6 +58,15 @@ export const useListStore = create<ListState>()(
           const to = state.items.findIndex((item) => item.id === overId);
           if (from === -1 || to === -1) return state;
           return { items: arrayMove(state.items, from, to) };
+        });
+      },
+      replace(items) {
+        set({
+          items: items.map((item) => ({
+            ...item,
+            id: crypto.randomUUID(),
+            checked: false,
+          })),
         });
       },
     }),
