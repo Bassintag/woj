@@ -5,7 +5,6 @@ import { range } from "es-toolkit";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Stepper, StepperButton, StepperValue } from "@/components/ui/Stepper";
-import { useCartStore } from "@/hooks/useCartStore";
 import { useServingsStore } from "@/hooks/useServingsStore";
 import { image } from "@/lib/image";
 import { q } from "@/lib/orpc";
@@ -14,39 +13,31 @@ import { formatQuantity } from "@/lib/quantity";
 const Route = getRouteApi("/$id/");
 
 export function IngredientsSections() {
-  const id = Route.useParams({ select: (p) => p.id });
-  const defaultServings = useServingsStore((state) => state.servings);
-  const setServings = useServingsStore((state) => state.set);
-  const cartQuantity = useCartStore(
-    (state) => state.items.find((item) => item.recipeId === id)?.quantity,
-  );
-  const servings = cartQuantity ?? defaultServings;
+  const store = useServingsStore();
 
   return (
     <section className="flex flex-col gap-6 px-layout">
       <div className="flex min-h-10 flex-row items-center justify-between">
         <h2 className="text-h2 text-fg">Ingrédients</h2>
-        {cartQuantity === undefined && (
-          <Stepper>
-            <StepperButton
-              aria-label="Diminuer"
-              disabled={servings <= 1}
-              onClick={() => setServings(servings - 1)}
-            >
-              <MinusIcon />
-            </StepperButton>
-            <StepperValue>{servings} pers.</StepperValue>
-            <StepperButton
-              aria-label="Augmenter"
-              onClick={() => setServings(servings + 1)}
-            >
-              <PlusIcon />
-            </StepperButton>
-          </Stepper>
-        )}
+        <Stepper>
+          <StepperButton
+            aria-label="Diminuer"
+            disabled={store.servings <= 1}
+            onClick={() => store.set(store.servings - 1)}
+          >
+            <MinusIcon />
+          </StepperButton>
+          <StepperValue>{store.servings} pers.</StepperValue>
+          <StepperButton
+            aria-label="Augmenter"
+            onClick={() => store.set(store.servings + 1)}
+          >
+            <PlusIcon />
+          </StepperButton>
+        </Stepper>
       </div>
       <Suspense fallback={<IngredientsSectionsContentSkeleton />}>
-        <IngredientsSectionsContent servings={servings} />
+        <IngredientsSectionsContent />
       </Suspense>
     </section>
   );
@@ -66,7 +57,8 @@ function IngredientsSectionsContentSkeleton() {
   );
 }
 
-function IngredientsSectionsContent({ servings }: { servings: number }) {
+function IngredientsSectionsContent() {
+  const servings = useServingsStore((store) => store.servings);
   const id = Route.useParams({ select: (p) => p.id });
   const constituents = useSuspenseQuery(
     q.recipes.get.queryOptions({
