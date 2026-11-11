@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useRouter, useSearch } from "@tanstack/react-router";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { debounce, range, sortBy } from "es-toolkit";
+import { debounce, range, shuffle, sortBy } from "es-toolkit";
 import {
   type ChangeEvent,
   Suspense,
@@ -143,7 +143,8 @@ function RecipesSectionContent({ ids }: { ids?: number[] }) {
   const api = useRecipeSearch();
   const q = useSearch({ strict: false, select: (s) => s.q });
   const tags = useSearch({ strict: false, select: (s) => s.tags });
-  let results: { id: number }[] = q ? api.index.search(q) : api.recipes;
+  const shuffled = useMemo(() => shuffle(api.recipes), [api.recipes]);
+  let results: { id: number }[] = q ? api.index.search(q) : shuffled;
   if (ids) {
     results = results.filter((result) => ids.includes(result.id));
   }
