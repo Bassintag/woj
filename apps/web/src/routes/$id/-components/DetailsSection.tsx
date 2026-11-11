@@ -1,9 +1,16 @@
-import { FireIcon, OvenIcon, TimerIcon } from "@phosphor-icons/react";
+import {
+  FireIcon,
+  HeartIcon,
+  OvenIcon,
+  TimerIcon,
+} from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { range } from "es-toolkit";
 import { type ReactNode, Suspense } from "react";
+import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useFavoritesStore } from "@/hooks/useFavoritesStore";
 import { image } from "@/lib/image";
 import { q } from "@/lib/orpc";
 import { pageTitle } from "@/lib/pageTitle";
@@ -37,11 +44,13 @@ export function DetailsSectionContent() {
   const recipe = useSuspenseQuery(
     q.recipes.get.queryOptions({ input: { id } }),
   );
+  const isFavorite = useFavoritesStore((state) => state.ids.includes(id));
+  const toggleFavorite = useFavoritesStore((state) => state.toggle);
 
   return (
     <section className="flex flex-col gap-6 px-layout">
       <title>{pageTitle(recipe.data.title)}</title>
-      <div className="rounded-4xl bg-muted-bg">
+      <div className="relative rounded-4xl bg-muted-bg">
         {recipe.data.imageUrl && (
           <img
             className="aspect-square w-full object-cover object-center"
@@ -49,6 +58,15 @@ export function DetailsSectionContent() {
             src={image(recipe.data.imageUrl)}
           />
         )}
+        <Button
+          aria-label={
+            isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"
+          }
+          className="absolute top-4 right-4"
+          onClick={() => toggleFavorite(id)}
+        >
+          <HeartIcon weight={isFavorite ? "fill" : "regular"} />
+        </Button>
       </div>
       <h1 className="text-h2 text-fg">{recipe.data.title}</h1>
       <div className="grid grid-cols-3 gap-4">
