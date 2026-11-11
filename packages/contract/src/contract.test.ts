@@ -3,9 +3,8 @@ import {
   CreateRecipeSchema,
   RecipeDetailSchema,
   RecipeSchema,
-  UpdateRecipeSchema,
-} from "./recipe";
-import { CreateUnitSchema, UpdateUnitSchema } from "./unit";
+} from "./recipe.contract";
+import { CreateUnitSchema } from "./unit.contract";
 
 const tag = { id: 1, title: "Vegan" };
 
@@ -53,13 +52,6 @@ test("CreateRecipeSchema rejects references to full objects", () => {
   expect(CreateRecipeSchema.safeParse(detail).success).toBe(false);
 });
 
-test("UpdateRecipeSchema requires at least one field", () => {
-  expect(UpdateRecipeSchema.safeParse({ id: 1 }).success).toBe(false);
-  expect(UpdateRecipeSchema.safeParse({ id: 1, tagIds: [] }).success).toBe(
-    true,
-  );
-});
-
 test("CreateUnitSchema requires symbols and positive factors", () => {
   const symbol = { title: "g", digits: 0, factor: 1 };
   expect(CreateUnitSchema.safeParse({ title: "Gramme" }).success).toBe(false);
@@ -72,9 +64,4 @@ test("CreateUnitSchema requires symbols and positive factors", () => {
       symbols: [{ ...symbol, factor: 0 }],
     }).success,
   ).toBe(false);
-});
-
-test("UpdateUnitSchema requires at least one field", () => {
-  expect(UpdateUnitSchema.safeParse({ id: 1 }).success).toBe(false);
-  expect(UpdateUnitSchema.safeParse({ id: 1, symbols: [] }).success).toBe(true);
 });

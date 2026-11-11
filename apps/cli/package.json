@@ -1,0 +1,29 @@
+{
+  "name": "@woj/cli",
+  "private": true,
+  "bin": {
+    "woj": "src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "bun check",
+    "start": "bun src/index.ts",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@bomb.sh/router": "^0.8.0",
+    "@orpc/client": "^2.0.0-beta.48",
+    "@orpc/contract": "^2.0.0-beta.48",
+    "@orpc/openapi": "^2.0.0-beta.48",
+    "@woj/contract": "workspace:*",
+    "@woj/jow": "workspace:*",
+    "minisearch": "^7.2.0",
+    "p-map": "^7.1.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^7.0.2"
+  }
+}

@@ -8,7 +8,7 @@ import {
   PatchSchema,
   TextSchema,
 } from "./lib/shared";
-import { UnitSchema } from "./unit";
+import { UnitSchema } from "./unit.contract";
 
 // Schemas
 
@@ -40,7 +40,7 @@ export const CreateIngredientSchema = z.object({
 
 export type CreateIngredient = z.infer<typeof CreateIngredientSchema>;
 
-export const UpdateIngredientSchema = PatchSchema(CreateIngredientSchema.shape);
+export const UpdateIngredientSchema = CreateIngredientSchema.partial();
 
 export type UpdateIngredient = z.infer<typeof UpdateIngredientSchema>;
 
@@ -64,7 +64,7 @@ const create = oc
 
 const update = oc
   .meta(openapi({ method: "PATCH", path: "/{id}" }))
-  .input(UpdateIngredientSchema)
+  .input(PatchSchema(UpdateIngredientSchema))
   .output(IngredientSchema);
 
 const remove = oc

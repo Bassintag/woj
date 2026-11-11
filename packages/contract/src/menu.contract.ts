@@ -8,7 +8,7 @@ import {
   PatchSchema,
   TextSchema,
 } from "./lib/shared";
-import { RecipeSchema } from "./recipe";
+import { RecipeSchema } from "./recipe.contract";
 
 // Schemas
 
@@ -35,7 +35,7 @@ export const CreateMenuSchema = z.object({
 
 export type CreateMenu = z.infer<typeof CreateMenuSchema>;
 
-export const UpdateMenuSchema = PatchSchema(CreateMenuSchema.shape);
+export const UpdateMenuSchema = CreateMenuSchema.partial();
 
 export type UpdateMenu = z.infer<typeof UpdateMenuSchema>;
 
@@ -59,7 +59,7 @@ const create = oc
 
 const update = oc
   .meta(openapi({ method: "PATCH", path: "/{id}" }))
-  .input(UpdateMenuSchema)
+  .input(PatchSchema(UpdateMenuSchema))
   .output(MenuSchema);
 
 const remove = oc

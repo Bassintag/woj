@@ -62,6 +62,7 @@ export async function replaceRecipeRelations(
   tx: Tx,
   recipeId: number,
   input: Partial<Pick<CreateRecipe, "constituents" | "steps" | "tagIds">>,
+  { recompute = true } = {},
 ) {
   if (input.constituents) {
     await tx.delete(constituents).where(eq(constituents.recipeId, recipeId));
@@ -70,7 +71,7 @@ export async function replaceRecipeRelations(
         .insert(constituents)
         .values(input.constituents.map((c) => ({ ...c, recipeId })));
     }
-    await recomputeRecipeCalories(tx, recipeId);
+    if (recompute) await recomputeRecipeCalories(tx, recipeId);
   }
   if (input.steps) {
     await tx.delete(steps).where(eq(steps.recipeId, recipeId));
@@ -88,4 +89,27 @@ export async function replaceRecipeRelations(
         .values(input.tagIds.map((tagId) => ({ recipeId, tagId })));
     }
   }
+}
+
+export function toRecipeListItem({
+  tags,
+  constituents,
+  ...recipe
+}: {
+  id: number;
+  title: string;
+  imageUrl: string | null;
+  calories: number;
+  tags: { id: number }[];
+  constituents: { ingredient: { title: string } }[];
+}) {
+  return {
+    ...recipe,
+    tagIds: tags.map((t) => t.id),
+    ingredients: constituents.map((c) => c.ingredient.title),
+  };
+}
+
+export function toRecipe<T extends { tags: { id: number }[] }>(recipe: T) {
+  return { ...recipe, tagIds: recipe.tags.map((t) => t.id) };
 }

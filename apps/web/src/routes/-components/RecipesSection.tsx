@@ -68,7 +68,7 @@ function RecipeSectionFilters({ ids }: { ids?: number[] }) {
   const tags = {
     data: ids
       ? allTags.data.filter((tag) =>
-          ids.some((id) => api.get(id)?.tags.some((t) => t.id === tag.id)),
+          ids.some((id) => api.get(id)?.tagIds.includes(tag.id)),
         )
       : allTags.data,
   };

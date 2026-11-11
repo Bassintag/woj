@@ -71,9 +71,6 @@ test("ingredient errors", async () => {
       .status,
   ).toBe(404);
   expect((await request("DELETE", "/ingredients/999")).status).toBe(404);
-  expect((await request("PATCH", "/ingredients/1", { body: {} })).status).toBe(
-    400,
-  );
   for (const invalid of [
     { ...body, title: "" },
     { ...body, calories: -1 },

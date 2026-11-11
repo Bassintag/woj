@@ -1,7 +1,7 @@
 import { oc } from "@orpc/contract";
 import { openapi } from "@orpc/openapi";
 import { z } from "zod";
-import { IngredientSchema } from "./ingredient";
+import { IngredientSchema } from "./ingredient.contract.";
 import { auth } from "./lib/auth";
 import {
   IdParamsSchema,
@@ -9,8 +9,8 @@ import {
   PatchSchema,
   TextSchema,
 } from "./lib/shared";
-import { TagSchema } from "./tag";
-import { UnitSchema } from "./unit";
+import { TagSchema } from "./tag.contract";
+import { UnitSchema } from "./unit.contract";
 
 // Schemas
 
@@ -33,15 +33,13 @@ export const RecipeSchema = z.object({
   title: z.string(),
   imageUrl: z.string().nullable(),
   calories: z.number().nullable(),
-  tags: z.array(TagSchema.pick({ id: true })),
+  tagIds: z.array(TagSchema.shape.id),
 });
 
 export type Recipe = z.infer<typeof RecipeSchema>;
 
 export const RecipeListItemSchema = RecipeSchema.extend({
-  constituents: z.array(
-    z.object({ ingredient: IngredientSchema.pick({ title: true }) }),
-  ),
+  ingredients: z.array(IngredientSchema.shape.title),
 });
 
 export type RecipeListItem = z.infer<typeof RecipeListItemSchema>;
@@ -58,6 +56,7 @@ export type RecipeDetail = z.infer<typeof RecipeDetailSchema>;
 
 export const CreateRecipeSchema = z.object({
   title: TextSchema(128),
+  calories: z.number().nonnegative().nullish(),
   bakingTime: z.number().int().nonnegative().nullish(),
   cookingTime: z.number().int().nonnegative().nullish(),
   constituents: z.array(
@@ -73,7 +72,7 @@ export const CreateRecipeSchema = z.object({
 
 export type CreateRecipe = z.infer<typeof CreateRecipeSchema>;
 
-export const UpdateRecipeSchema = PatchSchema(CreateRecipeSchema.shape);
+export const UpdateRecipeSchema = CreateRecipeSchema.partial();
 
 export type UpdateRecipe = z.infer<typeof UpdateRecipeSchema>;
 
@@ -97,7 +96,7 @@ const create = oc
 
 const update = oc
   .meta(openapi({ method: "PATCH", path: "/{id}" }))
-  .input(UpdateRecipeSchema)
+  .input(PatchSchema(UpdateRecipeSchema))
   .output(RecipeDetailSchema);
 
 const remove = oc

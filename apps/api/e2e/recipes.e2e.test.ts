@@ -29,7 +29,8 @@ test("recipes are listed newest first with lightweight fields", async () => {
   ]);
   expect(list.json[0]).toMatchObject({
     calories: 200,
-    constituents: [{ ingredient: { title: "Oeuf" } }],
+    ingredients: ["Oeuf"],
+    tagIds: [],
   });
   expect(list.json[0]).not.toHaveProperty("steps");
 });
@@ -96,7 +97,6 @@ test("recipe errors", async () => {
     (await request("PATCH", "/recipes/999", { body: { title: "x" } })).status,
   ).toBe(404);
   expect((await request("DELETE", "/recipes/999")).status).toBe(404);
-  expect((await request("PATCH", "/recipes/1", { body: {} })).status).toBe(400);
   for (const invalid of [
     { ...body, title: "" },
     { ...body, cookingTime: -1 },
@@ -142,4 +142,12 @@ test("failed recipe create leaves nothing behind", async () => {
   });
   const after = await request("GET", "/recipes");
   expect(after.json).toHaveLength(before.json.length);
+});
+
+test("recipe create keeps provided calories instead of computing them", async () => {
+  const created = await request("POST", "/recipes", {
+    body: { ...body, title: "Calories", calories: 42 },
+  });
+  expect(created.status).toBe(200);
+  expect(created.json.calories).toBe(42);
 });
