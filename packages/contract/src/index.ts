@@ -1,7 +1,7 @@
 import { oc } from "@orpc/contract";
 
 import { imagesContract } from "./image.contract";
-import { ingredientsContract } from "./ingredient.contract.";
+import { ingredientsContract } from "./ingredient.contract";
 import { menusContract } from "./menu.contract";
 import { recipesContract } from "./recipe.contract";
 import { tagsContract } from "./tag.contract";
@@ -13,7 +13,7 @@ export { IdParamsSchema } from "./lib/shared";
 // Contract
 
 export * from "./image.contract";
-export * from "./ingredient.contract.";
+export * from "./ingredient.contract";
 export * from "./menu.contract";
 export * from "./recipe.contract";
 export * from "./tag.contract";

@@ -1,7 +1,7 @@
 import { oc } from "@orpc/contract";
 import { openapi } from "@orpc/openapi";
 import { z } from "zod";
-import { IngredientSchema } from "./ingredient.contract.";
+import { IngredientSchema } from "./ingredient.contract";
 import { auth } from "./lib/auth";
 import {
   IdParamsSchema,
