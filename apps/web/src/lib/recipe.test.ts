@@ -2,13 +2,13 @@ import { expect, test } from "bun:test";
 import { createRecipeIndex, filterByTags } from "./recipe";
 
 const recipes = new Map([
-  [1, { tags: [{ id: 10 }] }],
-  [2, { tags: [{ id: 20 }, { id: 30 }] }],
-  [3, { tags: [] }],
+  [1, { tagIds: [10] }],
+  [2, { tagIds: [20, 30] }],
+  [3, { tagIds: [] }],
 ]);
 
 function get(id: number) {
-  return recipes.get(id) as { tags: { id: number }[] };
+  return recipes.get(id) as { tagIds: number[] };
 }
 
 const results = [{ id: 1 }, { id: 2 }, { id: 3 }];
@@ -40,8 +40,8 @@ function item(id: number, title: string, ingredients: string[]) {
     title,
     imageUrl: null,
     calories: null,
-    tags: [],
-    constituents: ingredients.map((title) => ({ ingredient: { title } })),
+    tagIds: [],
+    ingredients,
   };
 }
 

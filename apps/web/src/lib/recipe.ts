@@ -7,7 +7,7 @@ export function createRecipeIndex(recipes: RecipeListItem[]) {
     fields: ["title", "ingredients"],
     extractField: (recipe, field) =>
       field === "ingredients"
-        ? recipe.constituents.map((c) => c.ingredient.title).join(" ")
+        ? recipe.ingredients.join(" ")
         : recipe[field as "title"],
     searchOptions: { fuzzy: 2, boost: { title: 3 } },
   });
@@ -18,10 +18,10 @@ export function createRecipeIndex(recipes: RecipeListItem[]) {
 export function filterByTags<T extends { id: number }>(
   results: T[],
   tags: number[],
-  get: (id: number) => { tags: { id: number }[] },
+  get: (id: number) => { tagIds: number[] },
 ) {
   return results.filter((result) => {
     const recipe = get(result.id);
-    return tags.every((id) => recipe.tags.some((tag) => tag.id === id));
+    return tags.every((id) => recipe.tagIds.includes(id));
   });
 }

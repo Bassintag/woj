@@ -64,7 +64,6 @@ test("unit mutation errors", async () => {
     (await request("PATCH", "/units/999", { body: { title: "x" } })).status,
   ).toBe(404);
   expect((await request("DELETE", "/units/999")).status).toBe(404);
-  expect((await request("PATCH", "/units/1", { body: {} })).status).toBe(400);
   for (const invalid of [
     { title: "", symbols: [] },
     { title: "x" },

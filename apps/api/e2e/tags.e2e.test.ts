@@ -34,7 +34,6 @@ test("tag errors", async () => {
   expect(
     (await request("POST", "/tags", { body: { title: " " } })).status,
   ).toBe(400);
-  expect((await request("PATCH", "/tags/1", { body: {} })).status).toBe(400);
   expect((await request("GET", "/tags/abc")).status).toBe(400);
   await request("POST", "/tags", { body: { title: "dup" } });
   expect(

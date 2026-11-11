@@ -1,16 +1,4 @@
-import type { Ingredient, Recipe, Unit } from "@woj/jow";
-
-export async function batch<T, R>(
-  rows: T[],
-  insert: (rows: T[]) => PromiseLike<R>,
-  size = 100,
-) {
-  const results: R[] = [];
-  for (let i = 0; i < rows.length; i += size) {
-    results.push(await insert(rows.slice(i, i + size)));
-  }
-  return results;
-}
+import type { Ingredient, Recipe } from "@woj/jow";
 
 export function idByTitle(rows: { id: number; title: string }[]) {
   return new Map(rows.map((r) => [r.title, r.id]));
@@ -79,22 +67,6 @@ export function getConversions(ingredients: Ingredient[]) {
             .map((a) => ({ ingredient, ...a }));
         })
         .map((c) => [`${c.ingredient.id}:${c.unit.name}`, c]),
-    ).values(),
-  ];
-}
-
-export function getUnits(
-  ingredients: Ingredient[],
-  conversions: ReturnType<typeof getConversions>,
-  extra: Unit[] = [],
-) {
-  return [
-    ...new Map(
-      [
-        ...ingredients.map((i) => i.naturalUnit),
-        ...conversions.map((c) => c.unit),
-        ...extra,
-      ].map((u) => [u.name, u]),
     ).values(),
   ];
 }

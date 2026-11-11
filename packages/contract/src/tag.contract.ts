@@ -19,7 +19,7 @@ export const CreateTagSchema = z.object({
 
 export type CreateTag = z.infer<typeof CreateTagSchema>;
 
-export const UpdateTagSchema = PatchSchema(CreateTagSchema.shape);
+export const UpdateTagSchema = CreateTagSchema.partial();
 
 export type UpdateTag = z.infer<typeof UpdateTagSchema>;
 
@@ -43,7 +43,7 @@ const create = oc
 
 const update = oc
   .meta(openapi({ method: "PATCH", path: "/{id}" }))
-  .input(UpdateTagSchema)
+  .input(PatchSchema(UpdateTagSchema))
   .output(TagSchema);
 
 const remove = oc

@@ -25,15 +25,36 @@
         "@orpc/server": "^2.0.0-beta.48",
         "@woj/contract": "workspace:*",
         "@woj/db": "workspace:*",
-        "@woj/jow": "workspace:*",
         "drizzle-orm": "^1.0.0-rc.5-ab785fc",
-        "p-map": "^7.1.1",
         "pino": "^10.4.0",
         "zod": "^4.6.7",
       },
       "devDependencies": {
         "@types/bun": "latest",
         "pino-pretty": "^13.2.0",
+      },
+      "peerDependencies": {
+        "typescript": "^7.0.2",
+      },
+    },
+    "apps/cli": {
+      "name": "@woj/cli",
+      "bin": {
+        "woj": "src/index.ts",
+      },
+      "dependencies": {
+        "@bomb.sh/router": "^0.8.0",
+        "@orpc/client": "^2.0.0-beta.48",
+        "@orpc/contract": "^2.0.0-beta.48",
+        "@orpc/openapi": "^2.0.0-beta.48",
+        "@woj/contract": "workspace:*",
+        "@woj/jow": "workspace:*",
+        "minisearch": "^7.2.0",
+        "p-map": "^7.1.1",
+        "zod": "^4.6.7",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
       },
       "peerDependencies": {
         "typescript": "^7.0.2",
@@ -333,6 +354,8 @@
     "@biomejs/cli-win32-arm64": ["@biomejs/cli-win32-arm64@2.6.5", "", { "os": "win32", "cpu": "arm64" }, "sha512-uBbfpdR/cH5up1iRJFGAPP97xKMzrgMs685CSrY7NM+Q4Unw7chY0o3JulEvJdmU6c6hGQxwqotMq7DDH0DzxA=="],
 
     "@biomejs/cli-win32-x64": ["@biomejs/cli-win32-x64@2.6.5", "", { "os": "win32", "cpu": "x64" }, "sha512-07LaCeN9vvmbAAMOMsUjMfL5UbsCDkvVeyMJIgwNRc0xYqhizBGkjVzx05LYEwCXl2AiHcdzqVPR4IOYAsI1QQ=="],
+
+    "@bomb.sh/router": ["@bomb.sh/router@0.8.0", "", { "dependencies": { "@standard-schema/spec": "^1.1.0" } }, "sha512-9Y0fA76+dlFL8aRf8PVfgXrI0qHr4GQrLLv09E75tGRqCtCI5+E/ZzLnyTGJMo/j4CzYt44c4jdXDLv+m9/g9g=="],
 
     "@commitlint/cli": ["@commitlint/cli@21.2.4", "", { "dependencies": { "@commitlint/config-conventional": "^21.2.4", "@commitlint/format": "^21.2.3", "@commitlint/lint": "^21.2.4", "@commitlint/load": "^21.2.4", "@commitlint/read": "^21.2.3", "@commitlint/types": "^21.2.3", "tinyexec": "^1.0.0", "yargs": "^18.0.0" }, "bin": { "commitlint": "cli.js" } }, "sha512-g3M/wrQdElqGH5vROIeL2QiYIxrzqUkhCgsDyDlWfKEyQdCt10OyMB28W2cJtpZ+VNGMvmaN923infr1hOfyrg=="],
 
@@ -805,6 +828,8 @@
     "@vitejs/plugin-react": ["@vitejs/plugin-react@6.2.1", "", { "dependencies": { "@rolldown/pluginutils": "^1.0.1" }, "peerDependencies": { "@rolldown/plugin-babel": "^0.1.7 || ^0.2.0 || ^0.3.0", "babel-plugin-react-compiler": "^1.0.0", "oxc-transform-react": ">=0.152.0 <0.157.0", "vite": "^8.0.0" }, "optionalPeers": ["@rolldown/plugin-babel", "babel-plugin-react-compiler", "oxc-transform-react"] }, "sha512-9KyWCij3r0+qLG3Q62vBmv0VyevmYibAtxaCIVK9o0k6CXgaajZRIe8tpfchQcdZArJ5b/7OrIz4W3b2uxVRDA=="],
 
     "@woj/api": ["@woj/api@workspace:apps/api"],
+
+    "@woj/cli": ["@woj/cli@workspace:apps/cli"],
 
     "@woj/contract": ["@woj/contract@workspace:packages/contract"],
 

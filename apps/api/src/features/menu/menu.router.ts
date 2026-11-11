@@ -2,17 +2,32 @@ import { menus } from "@woj/db";
 import { eq } from "drizzle-orm";
 import { firstOrThrow, orThrow } from "../../lib/db";
 import { orpc, scope } from "../../lib/orpc";
+import { toRecipe } from "../recipe/recipe.lib";
 import { replaceMeals } from "./menu.lib";
 import { createMenuQueries } from "./menu.queries";
 
 const scoped = orpc.menus.use(scope(createMenuQueries));
 
-const list = scoped.list.handler(({ context }) => {
-  return context.queries.list();
+type Menu = Awaited<
+  ReturnType<ReturnType<typeof createMenuQueries>["list"]>
+>[number];
+
+function toMenu({ meals, ...menu }: Menu) {
+  return {
+    ...menu,
+    meals: meals.map(({ recipe, ...meal }) => ({
+      ...meal,
+      recipe: toRecipe(recipe),
+    })),
+  };
+}
+
+const list = scoped.list.handler(async ({ context }) => {
+  return (await context.queries.list()).map(toMenu);
 });
 
-const get = scoped.get.handler(({ context, input }) => {
-  return orThrow(context.queries.get({ id: input.id }));
+const get = scoped.get.handler(async ({ context, input }) => {
+  return toMenu(await orThrow(context.queries.get({ id: input.id })));
 });
 
 const create = scoped.create.handler(async ({ context, input }) => {
@@ -24,7 +39,7 @@ const create = scoped.create.handler(async ({ context, input }) => {
     await replaceMeals(tx, inserted.id, meals);
     return inserted.id;
   });
-  return orThrow(context.queries.get({ id }));
+  return toMenu(await orThrow(context.queries.get({ id })));
 });
 
 const update = scoped.update.handler(async ({ context, input }) => {
@@ -39,7 +54,7 @@ const update = scoped.update.handler(async ({ context, input }) => {
     );
     if (meals) await replaceMeals(tx, id, meals);
   });
-  return orThrow(context.queries.get({ id }));
+  return toMenu(await orThrow(context.queries.get({ id })));
 });
 
 const remove = scoped.remove.handler(async ({ context, input }) => {

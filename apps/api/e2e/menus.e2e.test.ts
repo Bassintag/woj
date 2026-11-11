@@ -83,7 +83,6 @@ test("menu errors", async () => {
     (await request("PATCH", "/menus/999", { body: { title: "x" } })).status,
   ).toBe(404);
   expect((await request("DELETE", "/menus/999")).status).toBe(404);
-  expect((await request("PATCH", "/menus/1", { body: {} })).status).toBe(400);
   for (const invalid of [
     { title: "", meals: [] },
     { title: "x", meals: [{ recipeId: a, quantity: 0 }] },

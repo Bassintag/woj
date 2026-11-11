@@ -1,16 +1,14 @@
 import { expect, test } from "bun:test";
 import type { Ingredient, Recipe } from "@woj/jow";
 import {
-  batch,
   getCalories,
   getConversions,
   getJowCalories,
   getQuantity,
   getTags,
   getUnit,
-  getUnits,
   idByTitle,
-} from "./transform";
+} from "./jow.transform";
 
 function unit(name: string) {
   return { id: name, name, abbreviations: [] };
@@ -34,23 +32,6 @@ function ingredient(
     recipes: options.recipes ?? [],
   } as unknown as Ingredient;
 }
-
-test("batch splits rows into chunks and keeps the order", async () => {
-  const sizes: number[] = [];
-  const results = await batch(
-    Array.from({ length: 250 }, (_, i) => i),
-    async (rows) => {
-      sizes.push(rows.length);
-      return rows[0];
-    },
-  );
-  expect(sizes).toEqual([100, 100, 50]);
-  expect(results).toEqual([0, 100, 200]);
-});
-
-test("batch does nothing without rows", async () => {
-  expect(await batch([], async () => 1)).toEqual([]);
-});
 
 test("idByTitle maps titles to ids", () => {
   const ids = idByTitle([
@@ -149,12 +130,6 @@ test("getConversions ignores alternative units without id and other ingredients"
     ],
   });
   expect(getConversions([other])).toEqual([]);
-});
-
-test("getUnits merges natural and conversion units without duplicates", () => {
-  const a = withConversions("a", ["cl", "g"]);
-  const units = getUnits([a], getConversions([a]));
-  expect(units.map((u) => u.name)).toEqual(["g", "cl"]);
 });
 
 test("getTags keeps parent families and enabled diets without duplicates", () => {

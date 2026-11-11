@@ -10,10 +10,6 @@ export function TextSchema(length: number) {
   return z.string().trim().min(1).max(length);
 }
 
-export function PatchSchema<T extends z.ZodRawShape>(shape: T) {
-  return IdParamsSchema.extend(z.object(shape).partial().shape).refine(
-    (input: Record<string, unknown>) =>
-      Object.entries(input).some(([k, v]) => k !== "id" && v !== undefined),
-    { message: "At least one field is required" },
-  );
+export function PatchSchema<T extends z.ZodRawShape>(schema: z.ZodObject<T>) {
+  return IdParamsSchema.extend(schema.shape);
 }

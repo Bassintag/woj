@@ -1,3 +1,6 @@
+import { mkdtemp } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { ingredients, units } from "@woj/db";
 import pino from "pino";
 import { createApp } from "../src/app";
@@ -15,10 +18,16 @@ export async function createTestApp() {
   await db
     .insert(ingredients)
     .values({ id: 1, title: "Oeuf", calories: 100, defaultUnitId: 1 });
+  const imagesDirectory = await mkdtemp(join(tmpdir(), "woj-images-"));
   const context = {
     db,
     log: pino({ level: "silent" }),
-    env: { API_KEY: API_KEY, ADMIN_USERNAME: "admin", ADMIN_PASSWORD: "pw" },
+    env: {
+      API_KEY: API_KEY,
+      ADMIN_USERNAME: "admin",
+      ADMIN_PASSWORD: "pw",
+      IMAGES_DIRECTORY: imagesDirectory,
+    },
   } as unknown as Context;
   const app = createApp(context);
 
@@ -33,9 +42,14 @@ export async function createTestApp() {
         method,
         headers: {
           ...headers,
-          ...(body === undefined ? {} : { "content-type": "application/json" }),
+          ...(body === undefined || body instanceof FormData
+            ? {}
+            : { "content-type": "application/json" }),
         },
-        body: body === undefined ? undefined : JSON.stringify(body),
+        body:
+          body === undefined || body instanceof FormData
+            ? body
+            : JSON.stringify(body),
       }),
     );
     const text = await response.text();
@@ -45,5 +59,5 @@ export async function createTestApp() {
     };
   }
 
-  return { db, request };
+  return { db, app, request, imagesDirectory };
 }

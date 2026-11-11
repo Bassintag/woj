@@ -40,7 +40,7 @@ export const CreateUnitSchema = z.object({
 
 export type CreateUnit = z.infer<typeof CreateUnitSchema>;
 
-export const UpdateUnitSchema = PatchSchema(CreateUnitSchema.shape);
+export const UpdateUnitSchema = CreateUnitSchema.partial();
 
 export type UpdateUnit = z.infer<typeof UpdateUnitSchema>;
 
@@ -64,7 +64,7 @@ const create = oc
 
 const update = oc
   .meta(openapi({ method: "PATCH", path: "/{id}" }))
-  .input(UpdateUnitSchema)
+  .input(PatchSchema(UpdateUnitSchema))
   .output(UnitSchema);
 
 const remove = oc
