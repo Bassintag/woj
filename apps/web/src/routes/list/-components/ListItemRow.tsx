@@ -34,6 +34,7 @@ export function ListItemRow({
       {...attributes}
       {...listeners}
       style={{ transform: CSS.Transform.toString(transform), transition }}
+      data-item
       data-dragging={isDragging || undefined}
       className="relative flex min-h-10 touch-pan-y flex-row items-center gap-4 px-layout select-none data-dragging:z-10 data-dragging:bg-muted-bg data-dragging:**:cursor-grabbing"
     >
@@ -59,6 +60,11 @@ export function ListItemRow({
         onBlur={(event) => update(item.id, event.currentTarget.value.trim())}
         onKeyDown={(event) => {
           if (event.key === "Backspace" && !event.currentTarget.value) {
+            event.preventDefault();
+            event.currentTarget
+              .closest("[data-item]")
+              ?.previousElementSibling?.querySelector("textarea")
+              ?.focus();
             event.currentTarget.blur();
           }
           if (event.key !== "Enter") return;
