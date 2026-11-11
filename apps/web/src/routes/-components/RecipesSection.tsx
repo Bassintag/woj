@@ -185,7 +185,6 @@ function RecipesSectionContent({ ids }: { ids?: number[] }) {
                 key={result.id}
                 to="/$id"
                 params={{ id: result.id }}
-                search={{ from: ids ? "favorites" : undefined }}
                 className="block rounded-2xl"
               >
                 <RecipeCard recipe={api.get(result.id)} />
