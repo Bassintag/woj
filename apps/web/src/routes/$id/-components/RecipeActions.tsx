@@ -1,4 +1,4 @@
-import { BasketIcon, HeartIcon, TrashIcon } from "@phosphor-icons/react";
+import { BasketIcon, TrashIcon } from "@phosphor-icons/react";
 import { getRouteApi } from "@tanstack/react-router";
 import { Button } from "@/components/ui/Button";
 import { useCartStore } from "@/hooks/useCartStore";
