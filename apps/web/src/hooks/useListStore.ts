@@ -9,20 +9,30 @@ export interface ListItem {
   image?: string;
 }
 
+export interface ListRecipe {
+  recipeId: number;
+  servings: number;
+}
+
 interface ListState {
   items: ListItem[];
+  recipes: ListRecipe[];
   add(label: string): void;
   update(id: string, label: string): void;
   toggle(id: string): void;
   remove(id: string): void;
   move(activeId: string, overId: string): void;
-  replace(items: Pick<ListItem, "label" | "image">[]): void;
+  replace(
+    items: Pick<ListItem, "label" | "image">[],
+    recipes: ListRecipe[],
+  ): void;
 }
 
 export const useListStore = create<ListState>()(
   persist(
     (set) => ({
       items: [],
+      recipes: [],
       add(label) {
         set((state) => ({
           items: [
@@ -60,8 +70,9 @@ export const useListStore = create<ListState>()(
           return { items: arrayMove(state.items, from, to) };
         });
       },
-      replace(items) {
+      replace(items, recipes) {
         set({
+          recipes,
           items: items.map((item) => ({
             ...item,
             id: crypto.randomUUID(),

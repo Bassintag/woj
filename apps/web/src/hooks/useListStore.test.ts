@@ -2,7 +2,7 @@ import { beforeEach, expect, test } from "bun:test";
 import { useListStore } from "./useListStore";
 
 beforeEach(() => {
-  useListStore.setState({ items: [] });
+  useListStore.setState({ items: [], recipes: [] });
 });
 
 function items() {
@@ -87,7 +87,7 @@ test("replace swaps all items with unchecked ones", () => {
   const { add, toggle, replace } = useListStore.getState();
   add("Café");
   toggle(items()[0].id);
-  replace([{ label: "A", image: "a.png" }, { label: "B" }]);
+  replace([{ label: "A", image: "a.png" }, { label: "B" }], []);
   expect(items()).toHaveLength(2);
   expect(items()[0]).toMatchObject({
     label: "A",
@@ -95,4 +95,12 @@ test("replace swaps all items with unchecked ones", () => {
     checked: false,
   });
   expect(items()[0].id).not.toBe(items()[1].id);
+});
+
+test("replace stores the recipes the list was built from", () => {
+  const { replace } = useListStore.getState();
+  replace([{ label: "A" }], [{ recipeId: 1, servings: 2 }]);
+  expect(useListStore.getState().recipes).toEqual([
+    { recipeId: 1, servings: 2 },
+  ]);
 });
