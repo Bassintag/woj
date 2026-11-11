@@ -21,7 +21,7 @@ const upload = orpc.images.upload.handler(async ({ context, input }) => {
       .where(eq(table.id, input.id)),
   );
   await mkdir(dirname(path), { recursive: true });
-  await new Bun.Image(input.file)
+  await new Bun.Image(await input.file.arrayBuffer())
     .resize(MAX_SIZE, MAX_SIZE, { fit: "inside", withoutEnlargement: true })
     .webp({ quality: QUALITY })
     .write(path);

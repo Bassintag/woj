@@ -17,11 +17,12 @@ const detail = {
   cookingTime: 10,
   constituents: [],
   steps: [{ id: 1, description: "Mélanger" }],
+  tagIds: [1],
   tags: [tag],
 };
 
 test("RecipeSchema accepts nullable image and calories", () => {
-  const recipe = RecipeSchema.parse({ ...detail, tags: [{ id: 1 }] });
+  const recipe = RecipeSchema.parse(detail);
   expect(recipe.imageUrl).toBeNull();
   expect(recipe.calories).toBeNull();
 });
@@ -49,7 +50,10 @@ test("CreateRecipeSchema makes times optional", () => {
 });
 
 test("CreateRecipeSchema rejects references to full objects", () => {
-  expect(CreateRecipeSchema.safeParse(detail).success).toBe(false);
+  const { tagIds, ...rest } = detail;
+  expect(CreateRecipeSchema.safeParse({ ...rest, tags: [tag] }).success).toBe(
+    false,
+  );
 });
 
 test("CreateUnitSchema requires symbols and positive factors", () => {
