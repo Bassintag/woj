@@ -13,10 +13,12 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { createFileRoute } from "@tanstack/react-router";
-import { Fragment } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Fragment, Suspense } from "react";
 import { Header } from "@/components/layout/Header";
+import { RecipeCard } from "@/components/recipe/RecipeCard";
 import { useListStore } from "@/hooks/useListStore";
+import { useRecipeSearch } from "@/hooks/useRecipeIndex";
 import { pageTitle } from "@/lib/pageTitle";
 import { AddItemRow } from "./-components/AddItemRow";
 import { ListItemRow } from "./-components/ListItemRow";
@@ -29,6 +31,7 @@ export const Route = createFileRoute("/list/")({
 function RouteComponent() {
   const items = useListStore((state) => state.items);
   const move = useListStore((state) => state.move);
+  const recipes = useListStore((state) => state.recipes);
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: { delay: 250, tolerance: 5 },
@@ -89,7 +92,30 @@ function RouteComponent() {
             ))}
           </div>
         )}
+        {recipes.length > 0 && (
+          <Suspense>
+            <ListRecipes ids={recipes.map((recipe) => recipe.recipeId)} />
+          </Suspense>
+        )}
       </div>
     </Fragment>
+  );
+}
+
+function ListRecipes({ ids }: { ids: number[] }) {
+  const { get } = useRecipeSearch();
+  return (
+    <section className="flex flex-col gap-4">
+      <h2 className="px-layout text-h2 text-fg">Recettes</h2>
+      <ul className="mx-layout grid grid-cols-2 gap-4">
+        {ids.filter(get).map((id) => (
+          <li key={id}>
+            <Link to="/$id" params={{ id }} className="block rounded-2xl">
+              <RecipeCard recipe={get(id)} />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

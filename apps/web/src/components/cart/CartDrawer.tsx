@@ -44,7 +44,13 @@ export function CartDrawer() {
           servings: item.quantity,
         })),
       );
-      useListStore.getState().replace(buildShoppingList(entries));
+      useListStore.getState().replace(
+        buildShoppingList(entries),
+        items.map((item) => ({
+          recipeId: item.recipeId,
+          servings: item.quantity,
+        })),
+      );
       useCartStore.getState().clear();
       await navigate({ to: "/list" });
     },
