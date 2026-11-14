@@ -18,6 +18,16 @@ test("add creates an unchecked item with a unique id", () => {
   expect(items()[0].id).not.toBe(items()[1].id);
 });
 
+test("add with afterId inserts right after that item", () => {
+  const { add } = useListStore.getState();
+  add("A");
+  add("B");
+  add("C", items()[0].id);
+  expect(items().map((i) => i.label)).toEqual(["A", "C", "B"]);
+  add("D", "nope");
+  expect(items().map((i) => i.label)).toEqual(["A", "C", "B", "D"]);
+});
+
 test("toggle flips only the targeted item", () => {
   const { add, toggle } = useListStore.getState();
   add("Café");

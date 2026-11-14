@@ -17,7 +17,7 @@ export interface ListRecipe {
 interface ListState {
   items: ListItem[];
   recipes: ListRecipe[];
-  add(label: string): void;
+  add(label: string, afterId?: string): void;
   update(id: string, label: string): void;
   toggle(id: string): void;
   remove(id: string): void;
@@ -33,13 +33,21 @@ export const useListStore = create<ListState>()(
     (set) => ({
       items: [],
       recipes: [],
-      add(label) {
-        set((state) => ({
-          items: [
-            ...state.items,
-            { id: crypto.randomUUID(), label, checked: false },
-          ],
-        }));
+      add(label, afterId) {
+        set((state) => {
+          const index = state.items.findIndex((item) => item.id === afterId);
+          const item = { id: crypto.randomUUID(), label, checked: false };
+          return {
+            items:
+              index === -1
+                ? [...state.items, item]
+                : [
+                    ...state.items.slice(0, index + 1),
+                    item,
+                    ...state.items.slice(index + 1),
+                  ],
+          };
+        });
       },
       update(id, label) {
         set((state) => ({
