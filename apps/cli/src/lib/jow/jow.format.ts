@@ -10,6 +10,6 @@ export function formatImportResult(result: ImportResult) {
 ${line("units", result.units)}
 ${line("tags", result.tags)}
 ${line("ingredients", result.ingredients)}
-${line("recipes", result.recipes)}
+- **recipes**: ${result.recipes.created} created, ${result.recipes.updated} updated
 ${result.failures.length > 0 ? `\n## Failures\n\n${result.failures.map((f) => `- ${f}`).join("\n")}\n` : ""}`;
 }

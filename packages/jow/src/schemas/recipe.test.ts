@@ -47,6 +47,13 @@ test("times are optional and nullable but must be integers", () => {
   );
 });
 
+test("seasons are optional and kept", () => {
+  expect(RecipeSchema.parse(base).seasons).toBeUndefined();
+  expect(
+    RecipeSchema.parse({ ...base, seasons: ["summer", "automn"] }).seasons,
+  ).toEqual(["summer", "automn"]);
+});
+
 test("family ancestors and eating habits are optional", () => {
   expect(RecipeSchema.safeParse(base).success).toBe(true);
   const recipe = RecipeSchema.parse({
