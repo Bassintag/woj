@@ -16,6 +16,8 @@
     "@orpc/openapi": "^2.0.0-beta.48",
     "@woj/contract": "workspace:*",
     "@woj/jow": "workspace:*",
+    "change-case": "^5.4.4",
+    "citty": "^0.2.2",
     "minisearch": "^7.2.0",
     "p-map": "^7.1.1",
     "zod": "^4.6.7"

@@ -16,9 +16,9 @@ export function mdFormatter<T>(item: (data: T) => string): MdFormatter<T> {
 export function render(
   data: unknown,
   format: Format,
-  md: MdFormatter<never, never>,
+  md?: MdFormatter<never, never>,
 ) {
-  if (format === "json") return JSON.stringify(data ?? null, null, 2);
+  if (format === "json" || !md) return JSON.stringify(data ?? null, null, 2);
   if (data == null) return;
   return Bun.markdown.ansi(
     Array.isArray(data) ? md.list(data as never) : md.item(data as never),
