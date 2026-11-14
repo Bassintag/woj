@@ -1,7 +1,7 @@
-import type { CreateUnit } from "@woj/contract";
+import type { RouterContractClient } from "@orpc/contract";
+import type { CreateUnit, contract } from "@woj/contract";
 import * as j from "@woj/jow";
 import pMap from "p-map";
-import type { Context } from "../../lib/context";
 import {
   getCalories,
   getConversions,
@@ -61,7 +61,9 @@ function createRegistry(titles: Map<string, number>) {
   return { resolve, count };
 }
 
-export async function importJow({ client }: Context): Promise<ImportResult> {
+export async function importJow(
+  client: RouterContractClient<typeof contract>,
+): Promise<ImportResult> {
   const jow = new j.JowClient();
   const failures: string[] = [];
 

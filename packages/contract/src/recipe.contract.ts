@@ -79,34 +79,74 @@ export type UpdateRecipe = z.infer<typeof UpdateRecipeSchema>;
 // Contract
 
 const list = oc
-  .meta(openapi({ method: "GET", path: "/" }))
+  .meta(
+    openapi({
+      method: "GET",
+      path: "/",
+      summary: "List recipes",
+      description: "Returns all recipes. Does not require authentication.",
+    }),
+  )
   .meta(auth(false))
   .output(z.array(RecipeListItemSchema));
 
 const get = oc
-  .meta(openapi({ method: "GET", path: "/{id}" }))
+  .meta(
+    openapi({
+      method: "GET",
+      path: "/{id}",
+      summary: "Get a recipe",
+      description:
+        "Returns a recipe with its constituents, steps and tags. Does not require authentication.",
+    }),
+  )
   .meta(auth(false))
   .input(IdParamsSchema)
   .output(RecipeDetailSchema);
 
 const create = oc
-  .meta(openapi({ method: "POST", path: "/" }))
+  .meta(
+    openapi({
+      method: "POST",
+      path: "/",
+      summary: "Create a recipe",
+      description:
+        "Creates and returns a recipe with its constituents, steps and tags.",
+    }),
+  )
   .input(CreateRecipeSchema)
   .output(RecipeDetailSchema);
 
 const update = oc
-  .meta(openapi({ method: "PATCH", path: "/{id}" }))
+  .meta(
+    openapi({
+      method: "PATCH",
+      path: "/{id}",
+      summary: "Update a recipe",
+      description:
+        "Updates only the provided fields of a recipe and returns a recipe with its constituents, steps and tags.",
+    }),
+  )
   .input(PatchSchema(UpdateRecipeSchema))
   .output(RecipeDetailSchema);
 
 const remove = oc
-  .meta(openapi({ method: "DELETE", path: "/{id}" }))
+  .meta(
+    openapi({
+      method: "DELETE",
+      path: "/{id}",
+      summary: "Delete a recipe",
+      description: "Permanently deletes a recipe.",
+    }),
+  )
   .input(IdParamsSchema);
 
-export const recipesContract = oc.meta(openapi({ prefix: "/recipes" })).router({
-  list,
-  get,
-  create,
-  update,
-  remove,
-});
+export const recipesContract = oc
+  .meta(openapi({ prefix: "/recipes", tags: ["Recipes"] }))
+  .router({
+    list,
+    get,
+    create,
+    update,
+    remove,
+  });

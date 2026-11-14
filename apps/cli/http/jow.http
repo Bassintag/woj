@@ -1,4 +1,0 @@
-POST https://api.jow.fr/public/recipes/recipesFromIngredientsId
-Content-Type: application/json
-
-["598b41defd078b00111409fc"]

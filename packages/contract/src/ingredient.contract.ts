@@ -47,32 +47,68 @@ export type UpdateIngredient = z.infer<typeof UpdateIngredientSchema>;
 // Contract
 
 const list = oc
-  .meta(openapi({ method: "GET", path: "/" }))
+  .meta(
+    openapi({
+      method: "GET",
+      path: "/",
+      summary: "List ingredients",
+      description: "Returns all ingredients. Does not require authentication.",
+    }),
+  )
   .meta(auth(false))
   .output(z.array(IngredientSchema));
 
 const get = oc
-  .meta(openapi({ method: "GET", path: "/{id}" }))
+  .meta(
+    openapi({
+      method: "GET",
+      path: "/{id}",
+      summary: "Get an ingredient",
+      description: "Returns an ingredient. Does not require authentication.",
+    }),
+  )
   .meta(auth(false))
   .input(IdParamsSchema)
   .output(IngredientSchema);
 
 const create = oc
-  .meta(openapi({ method: "POST", path: "/" }))
+  .meta(
+    openapi({
+      method: "POST",
+      path: "/",
+      summary: "Create an ingredient",
+      description: "Creates and returns an ingredient.",
+    }),
+  )
   .input(CreateIngredientSchema)
   .output(IngredientSchema);
 
 const update = oc
-  .meta(openapi({ method: "PATCH", path: "/{id}" }))
+  .meta(
+    openapi({
+      method: "PATCH",
+      path: "/{id}",
+      summary: "Update an ingredient",
+      description:
+        "Updates only the provided fields of an ingredient and returns an ingredient.",
+    }),
+  )
   .input(PatchSchema(UpdateIngredientSchema))
   .output(IngredientSchema);
 
 const remove = oc
-  .meta(openapi({ method: "DELETE", path: "/{id}" }))
+  .meta(
+    openapi({
+      method: "DELETE",
+      path: "/{id}",
+      summary: "Delete an ingredient",
+      description: "Permanently deletes an ingredient.",
+    }),
+  )
   .input(IdParamsSchema);
 
 export const ingredientsContract = oc
-  .meta(openapi({ prefix: "/ingredients" }))
+  .meta(openapi({ prefix: "/ingredients", tags: ["Ingredients"] }))
   .router({
     list,
     get,

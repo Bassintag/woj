@@ -47,34 +47,72 @@ export type UpdateUnit = z.infer<typeof UpdateUnitSchema>;
 // Contract
 
 const list = oc
-  .meta(openapi({ method: "GET", path: "/" }))
+  .meta(
+    openapi({
+      method: "GET",
+      path: "/",
+      summary: "List units",
+      description: "Returns all units. Does not require authentication.",
+    }),
+  )
   .meta(auth(false))
   .output(z.array(UnitSchema));
 
 const get = oc
-  .meta(openapi({ method: "GET", path: "/{id}" }))
+  .meta(
+    openapi({
+      method: "GET",
+      path: "/{id}",
+      summary: "Get an unit",
+      description: "Returns a unit. Does not require authentication.",
+    }),
+  )
   .meta(auth(false))
   .input(IdParamsSchema)
   .output(UnitSchema);
 
 const create = oc
-  .meta(openapi({ method: "POST", path: "/" }))
+  .meta(
+    openapi({
+      method: "POST",
+      path: "/",
+      summary: "Create an unit",
+      description: "Creates and returns a unit.",
+    }),
+  )
   .input(CreateUnitSchema)
   .output(UnitSchema);
 
 const update = oc
-  .meta(openapi({ method: "PATCH", path: "/{id}" }))
+  .meta(
+    openapi({
+      method: "PATCH",
+      path: "/{id}",
+      summary: "Update an unit",
+      description:
+        "Updates only the provided fields of an unit and returns a unit.",
+    }),
+  )
   .input(PatchSchema(UpdateUnitSchema))
   .output(UnitSchema);
 
 const remove = oc
-  .meta(openapi({ method: "DELETE", path: "/{id}" }))
+  .meta(
+    openapi({
+      method: "DELETE",
+      path: "/{id}",
+      summary: "Delete an unit",
+      description: "Permanently deletes an unit.",
+    }),
+  )
   .input(IdParamsSchema);
 
-export const unitsContract = oc.meta(openapi({ prefix: "/units" })).router({
-  list,
-  get,
-  create,
-  update,
-  remove,
-});
+export const unitsContract = oc
+  .meta(openapi({ prefix: "/units", tags: ["Units"] }))
+  .router({
+    list,
+    get,
+    create,
+    update,
+    remove,
+  });
