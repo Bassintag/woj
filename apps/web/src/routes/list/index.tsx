@@ -71,12 +71,8 @@ function RouteComponent() {
               items={todo}
               strategy={verticalListSortingStrategy}
             >
-              {todo.map((item, index) => (
-                <ListItemRow
-                  key={item.id}
-                  item={item}
-                  last={index === todo.length - 1}
-                />
+              {todo.map((item) => (
+                <ListItemRow key={item.id} item={item} />
               ))}
             </SortableContext>
           </DndContext>

@@ -7,13 +7,7 @@ import { type ListItem, useListStore } from "@/hooks/useListStore";
 import { cn } from "@/lib/cn";
 import { image } from "@/lib/image";
 
-export function ListItemRow({
-  item,
-  last,
-}: {
-  item: ListItem;
-  last?: boolean;
-}) {
+export function ListItemRow({ item }: { item: ListItem }) {
   const toggle = useListStore((state) => state.toggle);
   const update = useListStore((state) => state.update);
   const add = useListStore((state) => state.add);
@@ -71,7 +65,7 @@ export function ListItemRow({
           event.preventDefault();
           const filled = event.currentTarget.value.trim() !== "";
           event.currentTarget.blur();
-          if (last && filled) add("");
+          if (filled) add("", item.id);
         }}
         className={cn(
           "field-sizing-content min-w-0 flex-1 resize-none bg-transparent py-2 text-md text-fg focus-visible:outline-none",
