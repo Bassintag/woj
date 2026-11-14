@@ -1,16 +1,14 @@
 {
   "name": "@woj/cli",
+  "version": "0.1.0",
   "private": true,
-  "bin": {
-    "woj": "src/index.ts"
-  },
   "scripts": {
+    "build": "bun scripts/build.ts",
     "typecheck": "bun check",
     "start": "bun src/index.ts",
     "test": "bun test"
   },
-  "dependencies": {
-    "@bomb.sh/router": "^0.8.0",
+  "devDependencies": {
     "@orpc/client": "^2.0.0-beta.48",
     "@orpc/contract": "^2.0.0-beta.48",
     "@orpc/openapi": "^2.0.0-beta.48",
@@ -20,12 +18,8 @@
     "citty": "^0.2.2",
     "minisearch": "^7.2.0",
     "p-map": "^7.1.1",
-    "zod": "^4.6.7"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
+    "zod": "^4.6.7",
+    "@types/bun": "latest",
     "typescript": "^7.0.2"
   }
 }
