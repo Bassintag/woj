@@ -155,6 +155,19 @@ test("getTags keeps a root family and handles missing data", () => {
   expect(getTags({} as Recipe)).toEqual([]);
 });
 
+test("getTags adds seasons in a fixed order and ignores all-year recipes", () => {
+  expect(getTags({ seasons: ["winter", "automn", "nope"] } as Recipe)).toEqual([
+    "Automne",
+    "Hiver",
+  ]);
+  expect(getTags({ seasons: [] } as unknown as Recipe)).toEqual([]);
+  expect(
+    getTags({
+      seasons: ["winter", "spring", "summer", "automn"],
+    } as Recipe),
+  ).toEqual([]);
+});
+
 test("getTags excludes internal families", () => {
   const recipe = {
     familyAncestors: [

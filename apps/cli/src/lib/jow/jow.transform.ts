@@ -36,6 +36,13 @@ const DIETS = [
 
 const EXCLUDED_FAMILIES = new Set(["Protéines Animales", "Fait maison"]);
 
+const SEASONS = [
+  ["spring", "Printemps"],
+  ["summer", "Été"],
+  ["automn", "Automne"],
+  ["winter", "Hiver"],
+] as const;
+
 export function getTags(recipe: Recipe) {
   const ancestors = (recipe.familyAncestors ?? []).map((a) => a.name);
   const families = (
@@ -44,7 +51,16 @@ export function getTags(recipe: Recipe) {
   const diets = DIETS.filter(
     ([key]) => recipe.eatingHabitsCompatibility?.[key],
   ).map(([, title]) => title);
-  return [...new Set([...families, ...diets])];
+  const seasons = SEASONS.filter(([key]) => recipe.seasons?.includes(key));
+  return [
+    ...new Set([
+      ...families,
+      ...diets,
+      ...(seasons.length < SEASONS.length
+        ? seasons.map(([, title]) => title)
+        : []),
+    ]),
+  ];
 }
 
 export function getUnit(

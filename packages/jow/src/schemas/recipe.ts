@@ -25,6 +25,7 @@ export const RecipeSchema = z.object({
       vegan: z.boolean(),
     })
     .nullish(),
+  seasons: z.array(z.string()).nullish(),
   directions: z.array(
     z.object({
       id: z.string(),

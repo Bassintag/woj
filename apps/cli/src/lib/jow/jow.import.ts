@@ -25,7 +25,7 @@ export interface ImportResult {
   units: ImportCount;
   tags: ImportCount;
   ingredients: ImportCount;
-  recipes: ImportCount;
+  recipes: { created: number; updated: number };
   failures: string[];
 }
 
@@ -79,7 +79,7 @@ export async function importJow(
   const tags = createRegistry(idByTitle(existingTags));
   const ingredients = createRegistry(idByTitle(existingIngredients));
   const recipeTitles = idByTitle(existingRecipes);
-  const recipes: ImportCount = { created: 0, existing: 0 };
+  const recipes = { created: 0, updated: 0 };
 
   async function uploadImage(
     kind: "ingredients" | "recipes",
@@ -166,7 +166,7 @@ export async function importJow(
     });
   }
 
-  async function importRecipe(id: string) {
+  async function importRecipe(id: string, existingId?: number) {
     const recipe = await jow.fetchRecipe(id);
     const constituents = await Promise.all(
       recipe.constituents.map(async (c) => {
@@ -178,7 +178,7 @@ export async function importJow(
         };
       }),
     );
-    const created = await client.recipes.create({
+    const data = {
       title: recipe.title,
       calories: getJowCalories(recipe),
       bakingTime: recipe.cookingTime,
@@ -186,8 +186,15 @@ export async function importJow(
       constituents,
       steps: recipe.directions.map((d) => ({ description: d.label })),
       tagIds: await Promise.all(getTags(recipe).map(tagId)),
-    });
+    };
+    if (existingId != null) {
+      await client.recipes.update({ id: existingId, ...data });
+      recipes.updated++;
+      return;
+    }
+    const created = await client.recipes.create(data);
     await uploadImage("recipes", created.id, recipe.imageUrl);
+    recipes.created++;
   }
 
   const stubs = new Map(
@@ -203,18 +210,15 @@ export async function importJow(
       .map((r) => [r.id, r]),
   );
 
-  const missing = new Map<string, string>();
-  for (const { id, title } of stubs.values()) {
-    if (recipeTitles.has(title)) recipes.existing++;
-    else missing.set(title, id);
-  }
+  const byTitle = new Map(
+    [...stubs.values()].map(({ id, title }) => [title, id]),
+  );
 
   await pMap(
-    missing.values(),
-    async (id) => {
+    byTitle,
+    async ([title, id]) => {
       try {
-        await importRecipe(id);
-        recipes.created++;
+        await importRecipe(id, recipeTitles.get(title));
       } catch (error) {
         failures.push(`recipe ${id}: ${(error as Error).message}`);
       }
