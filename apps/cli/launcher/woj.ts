@@ -3,7 +3,7 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const ext = process.platform === "win32" ? ".exe" : "";
-const pkg = `@woj/cli-${process.platform}-${process.arch}`;
+const pkg = `woj-cli-${process.platform}-${process.arch}`;
 
 let binary: string;
 try {
