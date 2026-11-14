@@ -1,16 +1,19 @@
 #!/usr/bin/env bun
 
 import { defineCommand, runMain } from "citty";
+import { apiCommand } from "./commands/api";
 import { configCommand } from "./commands/config";
-import { recipeCommand } from "./commands/recipe";
+import { jowCommand } from "./commands/jow";
 
 const main = defineCommand({
   meta: {
     name: "woj",
+    description: "Woj command line interface",
   },
   subCommands: {
+    api: apiCommand,
     config: configCommand,
-    recipe: recipeCommand,
+    jow: jowCommand,
   },
 });
 
