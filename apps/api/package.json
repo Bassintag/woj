@@ -15,11 +15,13 @@
     "@woj/contract": "workspace:*",
     "@woj/db": "workspace:*",
     "drizzle-orm": "^1.0.0-rc.5-ab785fc",
+    "jsonwebtoken": "^9.0.3",
     "pino": "^10.4.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/jsonwebtoken": "^9.0.10",
     "pino-pretty": "^13.2.0"
   },
   "peerDependencies": {
