@@ -3,6 +3,7 @@ import { ingredientRouter } from "./features/ingredient/ingredient.router";
 import { menuRouter } from "./features/menu/menu.router";
 import { recipeRouter } from "./features/recipe/recipe.router";
 import { tagRouter } from "./features/tag/tag.router";
+import { tokenRouter } from "./features/token/token.router";
 import { unitRouter } from "./features/unit/unit.router";
 import { orpc } from "./lib/orpc";
 
@@ -12,5 +13,6 @@ export const router = orpc.router({
   menus: menuRouter,
   recipes: recipeRouter,
   tags: tagRouter,
+  tokens: tokenRouter,
   units: unitRouter,
 });

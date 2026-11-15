@@ -1,7 +1,11 @@
+import crypto from "node:crypto";
 import { z } from "zod";
 
 const EnvSchema = z.object({
   DB_FILE_PATH: z.string(),
+  JWT_SECRET: z
+    .string()
+    .default(() => crypto.randomBytes(128).toString("base64")),
   IMAGES_DIRECTORY: z.string(),
   MIGRATIONS_DIRECTORY: z.string().default("../../packages/db/migrations"),
   ADMIN_USERNAME: z.string().optional(),

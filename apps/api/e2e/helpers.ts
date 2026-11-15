@@ -24,6 +24,7 @@ export async function createTestApp() {
     log: pino({ level: "silent" }),
     env: {
       API_KEY: API_KEY,
+      JWT_SECRET: "test-secret",
       ADMIN_USERNAME: "admin",
       ADMIN_PASSWORD: "pw",
       IMAGES_DIRECTORY: imagesDirectory,

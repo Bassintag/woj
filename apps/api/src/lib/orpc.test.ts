@@ -1,14 +1,27 @@
 import { describe, expect, test } from "bun:test";
 import { LibsqlError } from "@libsql/client";
 import { call } from "@orpc/server";
+import jwt from "jsonwebtoken";
 import type { RequestContext } from "../context";
 import { orpc, scope } from "./orpc";
 
 const env = {
-  ADMIN_USERNAME: "admin",
-  ADMIN_PASSWORD: "pa:ss",
+  JWT_SECRET: "jwt-secret",
   API_KEY: "secret-key",
 };
+
+function signTokens(secret: string) {
+  return {
+    access: jwt.sign({ typ: "access" }, secret, { expiresIn: "5min" }),
+    refresh: jwt.sign({ typ: "refresh" }, secret, { expiresIn: "7days" }),
+  };
+}
+
+const tokens = signTokens(env.JWT_SECRET);
+
+function bearer(token: string) {
+  return { authorization: `Bearer ${token}` };
+}
 
 const protectedProcedure = orpc.tags.remove.handler(() => undefined);
 const publicProcedure = orpc.tags.list.handler(() => []);
@@ -23,10 +36,6 @@ function run(
     request: new Request("http://localhost", { headers }),
   } as unknown as RequestContext;
   return call(procedure as never, { id: 1 } as never, { context });
-}
-
-function basic(username: string, password: string) {
-  return { authorization: `Basic ${btoa(`${username}:${password}`)}` };
 }
 
 async function expectUnauthorized(promise: Promise<unknown>) {
@@ -48,22 +57,26 @@ describe("protected procedures", () => {
     await expectUnauthorized(run(protectedProcedure));
   });
 
-  test("accept valid basic credentials", async () => {
-    await run(protectedProcedure, basic("admin", "pa:ss"));
+  test("accept a valid access token", async () => {
+    await run(protectedProcedure, bearer(tokens.access));
   });
 
-  test("reject a wrong password or username", async () => {
-    await expectUnauthorized(run(protectedProcedure, basic("admin", "nope")));
-    await expectUnauthorized(run(protectedProcedure, basic("root", "pa:ss")));
+  test("reject a refresh token", async () => {
+    await expectUnauthorized(run(protectedProcedure, bearer(tokens.refresh)));
+  });
+
+  test("reject a token signed with another secret", async () => {
+    const other = signTokens("other-secret");
+    await expectUnauthorized(run(protectedProcedure, bearer(other.access)));
+  });
+
+  test("reject basic credentials", async () => {
+    const authorization = `Basic ${btoa("admin:pw")}`;
+    await expectUnauthorized(run(protectedProcedure, { authorization }));
   });
 
   test("reject malformed authorization headers", async () => {
-    for (const authorization of [
-      "Basic",
-      "Basic a b",
-      `Bearer ${btoa("admin:pa:ss")}`,
-      `Basic ${btoa("adminpa:ss".replace(":", ""))}`,
-    ]) {
+    for (const authorization of ["Bearer", "Bearer a b", "Bearer nope"]) {
       await expectUnauthorized(run(protectedProcedure, { authorization }));
     }
   });
@@ -76,10 +89,7 @@ describe("protected procedures", () => {
     await expectUnauthorized(run(protectedProcedure, { "x-api-key": "nope" }));
   });
 
-  test("reject everything when env credentials are not configured", async () => {
-    await expectUnauthorized(
-      run(protectedProcedure, basic("admin", "pa:ss"), {}),
-    );
+  test("reject an api key when none is configured", async () => {
     await expectUnauthorized(
       run(protectedProcedure, { "x-api-key": "secret-key" }, {}),
     );
