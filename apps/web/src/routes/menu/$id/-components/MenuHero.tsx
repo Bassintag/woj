@@ -4,7 +4,7 @@ import { image } from "@/lib/image";
 export function MenuHero({ menu }: { menu: Menu }) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex h-64 items-center justify-center rounded-4xl bg-muted-bg">
+      <div className="flex h-64 items-center justify-center rounded-4xl bg-surface">
         <div className="grid aspect-square h-full grid-cols-2 gap-2 p-2">
           {menu.meals.slice(0, 4).map((meal) => (
             <div key={meal.id}>

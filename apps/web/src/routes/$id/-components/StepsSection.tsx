@@ -42,9 +42,9 @@ function StepSectionContent() {
       {steps.data.map((step, i) => (
         <li
           key={step.id}
-          className="flex flex-col gap-2 rounded-2xl bg-muted-bg p-4"
+          className="flex flex-col gap-2 rounded-2xl bg-surface p-4"
         >
-          <h3 className="text-xs text-muted-fg uppercase">étape {i + 1}</h3>
+          <h3 className="text-xs text-muted uppercase">étape {i + 1}</h3>
           <p className="text-md whitespace-pre-wrap text-fg">
             {step.description}
           </p>

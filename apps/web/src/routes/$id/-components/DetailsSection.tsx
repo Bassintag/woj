@@ -50,7 +50,7 @@ export function DetailsSectionContent() {
   return (
     <section className="flex flex-col gap-6 px-layout">
       <title>{pageTitle(recipe.data.title)}</title>
-      <div className="relative rounded-4xl bg-muted-bg">
+      <div className="relative rounded-4xl bg-surface">
         {recipe.data.imageUrl && (
           <img
             className="aspect-square w-full object-cover object-center"
@@ -106,11 +106,11 @@ export function DetailsCard({
   description: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-2xl bg-muted-bg p-3 text-fg *:[svg]:size-6">
+    <div className="flex flex-col gap-2 rounded-2xl bg-surface p-3 text-fg *:[svg]:size-6">
       {icon}
       <div className="flex flex-col">
         <h3 className="text-md font-bold">{title}</h3>
-        <p className="text-xs text-muted-fg">{description}</p>
+        <p className="text-xs text-muted">{description}</p>
       </div>
     </div>
   );

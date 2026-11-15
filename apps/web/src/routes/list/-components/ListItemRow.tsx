@@ -30,7 +30,7 @@ export function ListItemRow({ item }: { item: ListItem }) {
       style={{ transform: CSS.Transform.toString(transform), transition }}
       data-item
       data-dragging={isDragging || undefined}
-      className="relative flex min-h-10 touch-pan-y flex-row items-center gap-4 px-layout select-none data-dragging:z-10 data-dragging:bg-muted-bg data-dragging:**:cursor-grabbing"
+      className="relative flex min-h-10 touch-pan-y flex-row items-center gap-4 px-layout select-none data-dragging:z-10 data-dragging:bg-surface data-dragging:**:cursor-grabbing"
     >
       <Checkbox
         aria-label={item.label}
@@ -41,7 +41,7 @@ export function ListItemRow({ item }: { item: ListItem }) {
         <img
           alt=""
           src={image(item.image)}
-          className="size-10 shrink-0 rounded-sm bg-muted-bg object-cover"
+          className="size-10 shrink-0 rounded-sm bg-surface object-cover"
         />
       )}
       <textarea
@@ -69,7 +69,7 @@ export function ListItemRow({ item }: { item: ListItem }) {
         }}
         className={cn(
           "field-sizing-content min-w-0 flex-1 resize-none bg-transparent py-2 text-md text-fg focus-visible:outline-none",
-          item.checked && "text-muted-fg line-through",
+          item.checked && "text-muted line-through",
         )}
       />
       <Button

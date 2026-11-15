@@ -1,7 +1,12 @@
 import { MinusIcon, PlusIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import type { Menu } from "@woj/contract";
-import { Stepper, StepperButton, StepperValue } from "@/components/ui/Stepper";
+import {
+  Stepper,
+  StepperDecrement,
+  StepperIncrement,
+  StepperValue,
+} from "@/components/ui/Stepper";
 import { image } from "@/lib/image";
 
 export function MenuRecipes({
@@ -20,7 +25,7 @@ export function MenuRecipes({
         {menu.meals.map((meal) => (
           <div key={meal.id} className="flex flex-row items-center gap-4">
             <Link
-              className="size-27 shrink-0 overflow-hidden rounded-2xl bg-muted-bg"
+              className="size-27 shrink-0 overflow-hidden rounded-2xl bg-surface"
               to="/$id"
               params={{ id: meal.recipe.id }}
             >
@@ -41,25 +46,24 @@ export function MenuRecipes({
                 {meal.recipe.title}
               </Link>
               {meal.recipe.calories != null && (
-                <p className="text-sm text-muted-fg">
+                <p className="text-sm text-muted">
                   {meal.recipe.calories.toFixed(0)} kcal
                 </p>
               )}
-              <Stepper className="self-start">
-                <StepperButton
-                  aria-label="Diminuer"
-                  disabled={quantities[meal.id] <= 1}
-                  onClick={() => onChange(meal.id, quantities[meal.id] - 1)}
-                >
+              <Stepper
+                className="self-start"
+                value={quantities[meal.id]}
+                onValueChange={(value) =>
+                  value != null && onChange(meal.id, value)
+                }
+              >
+                <StepperDecrement aria-label="Diminuer">
                   <MinusIcon />
-                </StepperButton>
+                </StepperDecrement>
                 <StepperValue>{quantities[meal.id]} pers.</StepperValue>
-                <StepperButton
-                  aria-label="Augmenter"
-                  onClick={() => onChange(meal.id, quantities[meal.id] + 1)}
-                >
+                <StepperIncrement aria-label="Augmenter">
                   <PlusIcon />
-                </StepperButton>
+                </StepperIncrement>
               </Stepper>
             </div>
           </div>

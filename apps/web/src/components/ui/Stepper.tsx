@@ -1,21 +1,29 @@
+import { NumberField } from "@base-ui/react/number-field";
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
 import { Button } from "./Button";
 
-export function Stepper({ className, ...props }: ComponentProps<"div">) {
+export function Stepper({
+  children,
+  min = 1,
+  ...props
+}: NumberField.Root.Props) {
   return (
-    <div
-      className={cn(
-        "flex min-w-36 flex-row items-center gap-2 rounded-xl bg-input-bg p-1 text-sm text-fg",
-        className,
-      )}
-      {...props}
-    />
+    <NumberField.Root min={min} {...props}>
+      <NumberField.Group className="flex min-w-36 flex-row items-center gap-2 text-sm text-fg">
+        {children}
+        <NumberField.Input className="sr-only" />
+      </NumberField.Group>
+    </NumberField.Root>
   );
 }
 
-export function StepperButton(props: ComponentProps<typeof Button>) {
-  return <Button size="sm" {...props} />;
+export function StepperDecrement(props: ComponentProps<typeof Button>) {
+  return <NumberField.Decrement render={<Button size="sm" {...props} />} />;
+}
+
+export function StepperIncrement(props: ComponentProps<typeof Button>) {
+  return <NumberField.Increment render={<Button size="sm" {...props} />} />;
 }
 
 export function StepperValue({ className, ...props }: ComponentProps<"span">) {

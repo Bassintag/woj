@@ -80,7 +80,7 @@ function RouteComponent() {
         </div>
         {done.length > 0 && (
           <div className="flex flex-col gap-2">
-            <p className="px-layout text-xs text-muted-fg">
+            <p className="px-layout text-xs text-muted">
               Dans le panier - {done.length}
             </p>
             {done.map((item) => (
