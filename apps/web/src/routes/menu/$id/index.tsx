@@ -59,16 +59,20 @@ function MenuContentSkeleton() {
 function MenuContent({ onAdded }: { onAdded: () => void }) {
   const id = Route.useParams({ select: (p) => p.id });
   const { data: menu } = useSuspenseQuery(
-    q.menus.list.queryOptions({
-      select: (menus) => menus.find((m) => m.id === id),
-    }),
+    q.menus.get.queryOptions({ input: { id } }),
   );
 
   if (!menu) {
     throw notFound();
   }
 
-  return <MenuBody key={menu.id} menu={menu} onAdded={onAdded} />;
+  return (
+    <MenuBody
+      key={`${menu.id}:${menu.meals.map((meal) => meal.id)}`}
+      menu={menu}
+      onAdded={onAdded}
+    />
+  );
 }
 
 function MenuBody({ menu, onAdded }: { menu: Menu; onAdded: () => void }) {

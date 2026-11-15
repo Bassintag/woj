@@ -1,32 +1,18 @@
-import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useRouter, useSearch } from "@tanstack/react-router";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { debounce, range, sortBy } from "es-toolkit";
-import {
-  type ChangeEvent,
-  Suspense,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
+import { range, sortBy } from "es-toolkit";
+import { Suspense, useCallback, useRef } from "react";
 import { z } from "zod";
 import { RecipeCard, RecipeCardSkeleton } from "@/components/recipe/RecipeCard";
-import { InputGroup, InputGroupInput } from "@/components/ui/InputGroup";
+import { RecipeSearchInput } from "@/components/recipe/RecipeSearchInput";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tag, TagGroup } from "@/components/ui/Tag";
 import { useRecipeSearch } from "@/hooks/useRecipeIndex";
+import { useRecipeResults } from "@/hooks/useRecipeResults";
 import { q } from "@/lib/orpc";
-import { filterByTags } from "@/lib/recipe";
 
 const COLUMNS = 2;
-
-const orders = new Map<number, number>();
-
-function randomOrder({ id }: { id: number }) {
-  if (!orders.has(id)) orders.set(id, Math.random());
-  return orders.get(id);
-}
 
 export const recipeSearchSchema = z.object({
   q: z.string().nullish(),
@@ -121,23 +107,17 @@ function RecipeSectionFiltersSkeleton() {
 function RecipeSectionInput() {
   const update = useUpdateSearch();
   const search = useSearch({ strict: false, select: (s) => s.q });
-  const onChange = useMemo(
-    () =>
-      debounce((e: ChangeEvent<HTMLInputElement>) => {
-        update({ q: e.target.value });
-      }, 500),
+  const onSearch = useCallback(
+    (value: string) => update({ q: value }),
     [update],
   );
 
   return (
-    <InputGroup className="mx-layout">
-      <MagnifyingGlassIcon />
-      <InputGroupInput
-        placeholder="Rechercher"
-        defaultValue={search ?? ""}
-        onChange={onChange}
-      />
-    </InputGroup>
+    <RecipeSearchInput
+      className="mx-layout"
+      defaultValue={search}
+      onSearch={onSearch}
+    />
   );
 }
 
@@ -152,20 +132,9 @@ function RecipesSectionContentSkeleton() {
 }
 
 function RecipesSectionContent({ ids }: { ids?: number[] }) {
-  const api = useRecipeSearch();
   const q = useSearch({ strict: false, select: (s) => s.q });
   const tags = useSearch({ strict: false, select: (s) => s.tags });
-  const shuffled = useMemo(
-    () => sortBy(api.recipes, [randomOrder]),
-    [api.recipes],
-  );
-  let results: { id: number }[] = q ? api.index.search(q) : shuffled;
-  if (ids) {
-    results = results.filter((result) => ids.includes(result.id));
-  }
-  if (tags) {
-    results = filterByTags(results, tags, api.get);
-  }
+  const { api, results } = useRecipeResults({ q, tags, ids });
 
   const virtualizer = useWindowVirtualizer({
     count: Math.ceil(results.length / COLUMNS),

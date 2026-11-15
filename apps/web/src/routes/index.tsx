@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Fragment } from "react/jsx-runtime";
+import { DrawerTrigger } from "@/components/ui/Drawer";
 import { CartButton } from "../components/cart/CartButton";
 import { Header } from "../components/layout/Header";
 import { pageTitle } from "../lib/pageTitle";
+import { LoginFormDrawer } from "./-components/LoginFormDrawer";
 import { MenusSection } from "./-components/MenusSection";
 import {
   RecipesSection,
@@ -19,7 +21,9 @@ function RouteComponent() {
     <Fragment>
       <title>{pageTitle()}</title>
       <Header>
-        Woj
+        <LoginFormDrawer>
+          <DrawerTrigger>Woj</DrawerTrigger>
+        </LoginFormDrawer>
         <CartButton />
       </Header>
       <MenusSection />

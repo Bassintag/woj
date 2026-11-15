@@ -3,7 +3,6 @@ import {
   NotepadIcon,
   PlusIcon,
   TrashIcon,
-  XIcon,
 } from "@phosphor-icons/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -11,9 +10,12 @@ import { range } from "es-toolkit";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/Button";
 import {
+  DrawerActions,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
+  DrawerHeader,
+  DrawerPopup,
   DrawerTitle,
 } from "@/components/ui/Drawer";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -62,19 +64,14 @@ export function CartDrawer() {
   });
 
   return (
-    <DrawerContent>
-      <div className="flex flex-row items-start justify-between">
-        <div className="flex flex-col gap-1">
-          <DrawerTitle>Panier</DrawerTitle>
-          <DrawerDescription>
-            {plural(items.length, "recette")} - {plural(portions, "portion")}
-          </DrawerDescription>
-        </div>
-        <DrawerClose render={<Button aria-label="Fermer" />}>
-          <XIcon />
-        </DrawerClose>
-      </div>
-      <div className="-mx-8 min-h-0 flex-1 overflow-y-auto px-8">
+    <DrawerPopup>
+      <DrawerHeader>
+        <DrawerTitle>Panier</DrawerTitle>
+        <DrawerDescription>
+          {plural(items.length, "recette")} - {plural(portions, "portion")}
+        </DrawerDescription>
+      </DrawerHeader>
+      <DrawerContent>
         {items.length ? (
           <Suspense fallback={<CartLinesSkeleton count={items.length} />}>
             <CartLines />
@@ -82,21 +79,23 @@ export function CartDrawer() {
         ) : (
           <p className="text-md text-muted">Le panier est vide.</p>
         )}
-      </div>
-      <DrawerClose
-        render={
-          <Button
-            variant="brand"
-            className="shrink-0"
-            disabled={!items.length || submit.isPending}
-            onClick={() => submit.mutate()}
-          />
-        }
-      >
-        <NotepadIcon />
-        Créer la liste de courses
-      </DrawerClose>
-    </DrawerContent>
+      </DrawerContent>
+      <DrawerActions>
+        <DrawerClose
+          render={
+            <Button
+              variant="brand"
+              className="shrink-0"
+              disabled={!items.length || submit.isPending}
+              onClick={() => submit.mutate()}
+            />
+          }
+        >
+          <NotepadIcon />
+          Créer la liste de courses
+        </DrawerClose>
+      </DrawerActions>
+    </DrawerPopup>
   );
 }
 

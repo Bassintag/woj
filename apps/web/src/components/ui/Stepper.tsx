@@ -10,7 +10,7 @@ export function Stepper({
 }: NumberField.Root.Props) {
   return (
     <NumberField.Root min={min} {...props}>
-      <NumberField.Group className="flex min-w-36 flex-row items-center gap-2 text-sm text-fg">
+      <NumberField.Group className="flex min-w-24 flex-row items-center gap-2 text-sm text-fg">
         {children}
         <NumberField.Input className="sr-only" />
       </NumberField.Group>
