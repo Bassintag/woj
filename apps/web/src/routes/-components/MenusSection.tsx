@@ -16,7 +16,7 @@ export function MenusSection() {
 function MenusSectionContentSkeleton() {
   return (
     <section className="flex flex-col gap-6">
-      <h2 className="px-layout text-h2 text-fg">Menus</h2>
+      <h2 className="px-layout font-display text-h2 text-fg">Menus</h2>
       <div className="-my-2 flex flex-row gap-4 overflow-hidden px-layout py-2">
         {range(3).map((i) => (
           <div key={i} className="shrink-0">
@@ -37,7 +37,7 @@ export function MenusSectionContent() {
 
   return (
     <section className="flex flex-col gap-6">
-      <h2 className="px-layout text-h2 text-fg">Menus</h2>
+      <h2 className="px-layout font-display text-h2 text-fg">Menus</h2>
       <ul className="-my-2 flex snap-x scroll-px-(--layout-gutter) scrollbar-none flex-row gap-4 overflow-x-scroll px-layout py-2">
         {menus.data.map((menu) => (
           <li key={menu.id} className="shrink-0 snap-start">

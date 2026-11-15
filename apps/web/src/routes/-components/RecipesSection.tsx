@@ -56,7 +56,9 @@ export function RecipesSection({
 }) {
   return (
     <section className="flex flex-col gap-6">
-      {title && <h2 className="px-layout text-h2 text-fg">{title}</h2>}
+      {title && (
+        <h2 className="px-layout font-display text-h2 text-fg">{title}</h2>
+      )}
       <div className="flex flex-col gap-4">
         <RecipeSectionInput />
         <Suspense fallback={<RecipeSectionFiltersSkeleton />}>

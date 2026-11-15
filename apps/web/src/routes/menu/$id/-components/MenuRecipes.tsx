@@ -20,7 +20,7 @@ export function MenuRecipes({
 }) {
   return (
     <section className="flex flex-col gap-6">
-      <h2 className="text-h2 text-fg">Préparation</h2>
+      <h2 className="font-display text-h2 text-fg">Préparation</h2>
       <div className="flex flex-col gap-4">
         {menu.meals.map((meal) => (
           <div key={meal.id} className="flex flex-row items-center gap-4">

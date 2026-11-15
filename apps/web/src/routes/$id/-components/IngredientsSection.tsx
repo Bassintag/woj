@@ -23,7 +23,7 @@ export function IngredientsSections() {
   return (
     <section className="flex flex-col gap-6 px-layout">
       <div className="flex min-h-10 flex-row items-center justify-between">
-        <h2 className="text-h2 text-fg">Ingrédients</h2>
+        <h2 className="font-display text-h2 text-fg">Ingrédients</h2>
         <Stepper
           value={store.servings}
           onValueChange={(value) => value != null && store.set(value)}

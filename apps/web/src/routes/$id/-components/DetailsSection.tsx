@@ -68,7 +68,7 @@ export function DetailsSectionContent() {
           <HeartIcon weight={isFavorite ? "fill" : "regular"} />
         </Button>
       </div>
-      <h1 className="text-h2 text-fg">{recipe.data.title}</h1>
+      <h1 className="font-display text-h2 text-fg">{recipe.data.title}</h1>
       <div className="grid grid-cols-3 gap-4">
         {recipe.data.calories != null && (
           <DetailsCard

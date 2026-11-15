@@ -102,7 +102,7 @@ function ListRecipes({ ids }: { ids: number[] }) {
   const { get } = useRecipeSearch();
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="px-layout text-h2 text-fg">Recettes</h2>
+      <h2 className="px-layout font-display text-h2 text-fg">Recettes</h2>
       <ul className="mx-layout grid grid-cols-2 gap-4">
         {ids.filter(get).map((id) => (
           <li key={id}>

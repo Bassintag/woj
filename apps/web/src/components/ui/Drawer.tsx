@@ -26,7 +26,10 @@ export function DrawerContent({ className, ...props }: BaseDrawer.Popup.Props) {
 
 export function DrawerTitle({ className, ...props }: BaseDrawer.Title.Props) {
   return (
-    <BaseDrawer.Title className={cn("text-h1 text-fg", className)} {...props} />
+    <BaseDrawer.Title
+      className={cn("font-display text-h1 text-fg", className)}
+      {...props}
+    />
   );
 }
 

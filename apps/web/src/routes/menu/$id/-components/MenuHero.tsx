@@ -19,7 +19,7 @@ export function MenuHero({ menu }: { menu: Menu }) {
           ))}
         </div>
       </div>
-      <h1 className="text-h1 text-fg">{menu.title}</h1>
+      <h1 className="font-display text-h1 text-fg">{menu.title}</h1>
     </div>
   );
 }

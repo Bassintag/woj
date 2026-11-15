@@ -1,6 +1,26 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "DM Sans";
+  src: url("./assets/DMSans-Variable.ttf") format("truetype");
+  font-weight: 100 1000;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/Archivo-Variable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+}
+
 @theme {
+  --font-*: initial;
+
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
+
   --color-*: initial;
 
   --color-bg: #fbfaf9;
@@ -48,7 +68,7 @@
 }
 
 :root {
-  overscroll-behavior: none;
+  @apply overscroll-none;
 }
 
 *:focus-visible {

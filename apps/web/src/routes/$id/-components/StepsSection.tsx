@@ -10,7 +10,7 @@ const Route = getRouteApi("/$id/");
 export function StepsSection() {
   return (
     <section className="flex flex-col gap-6 px-layout">
-      <h2 className="text-h2 text-fg">Préparation</h2>
+      <h2 className="font-display text-h2 text-fg">Préparation</h2>
       <Suspense fallback={<StepSectionContentSkeleton />}>
         <StepSectionContent />
       </Suspense>
