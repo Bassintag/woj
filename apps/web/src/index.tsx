@@ -6,6 +6,7 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { ToastProvider } from "./components/ui/Toast";
 import { persister, queryClient } from "./lib/query";
 import { router } from "./router";
 
@@ -17,7 +18,9 @@ createRoot(document.getElementById("root") as HTMLElement).render(
       persistOptions={{ persister }}
       client={queryClient}
     >
-      <RouterProvider router={router} />
+      <ToastProvider>
+        <RouterProvider router={router} />
+      </ToastProvider>
       <ReactQueryDevtools />
     </PersistQueryClientProvider>
   </StrictMode>,

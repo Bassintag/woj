@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 export function Field({ className, ...props }: BaseField.Root.Props) {
   return (
     <BaseField.Root
-      className={cn("flex flex-col items-start gap-2", className)}
+      className={cn("flex flex-col gap-2", className)}
       {...props}
     />
   );
@@ -31,7 +31,7 @@ export function FieldDescription({
 export function FieldError({ className, ...props }: BaseField.Error.Props) {
   return (
     <BaseField.Error
-      className={cn("text-xs text-muted", className)}
+      className={cn("text-xs text-error", className)}
       {...props}
     />
   );

@@ -33,9 +33,12 @@ export function Button({
   return useRender({
     defaultTagName: "button",
     render,
-    props: mergeProps(props, {
-      type: "button",
-      className: cn(buttonVariants({ variant, size }), className),
-    }),
+    props: mergeProps(
+      {
+        type: "button",
+        className: cn(buttonVariants({ variant, size }), className),
+      },
+      props,
+    ),
   });
 }

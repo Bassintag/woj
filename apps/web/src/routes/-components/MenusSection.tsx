@@ -1,9 +1,14 @@
+import { PlusIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { range } from "es-toolkit";
 import { Suspense } from "react";
+import { AuthGate } from "@/components/auth/AuthGate";
 import { MenuCard, MenuCardSkeleton } from "@/components/menu/MenuCard";
+import { Button } from "@/components/ui/Button";
+import { DrawerTrigger } from "@/components/ui/Drawer";
 import { q } from "@/lib/orpc";
+import { CreateMenuFormDrawer } from "./MenuFormDrawer";
 
 export function MenusSection() {
   return (
@@ -30,27 +35,41 @@ function MenusSectionContentSkeleton() {
 
 export function MenusSectionContent() {
   const menus = useSuspenseQuery(q.menus.list.queryOptions());
-
-  if (menus.data.length === 0) {
-    return null;
-  }
-
   return (
     <section className="flex flex-col gap-6">
-      <h2 className="px-layout font-display text-h2 text-fg">Menus</h2>
-      <ul className="-my-2 flex snap-x scroll-px-(--layout-gutter) scrollbar-none flex-row gap-4 overflow-x-scroll px-layout py-2">
-        {menus.data.map((menu) => (
-          <li key={menu.id} className="shrink-0 snap-start">
-            <Link
-              to="/menu/$id"
-              params={{ id: menu.id }}
-              className="block rounded-2xl"
-            >
-              <MenuCard menu={menu} />
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <div className="flex flex-row items-center justify-between px-layout">
+        <h2 className="font-display text-h2 text-fg">Menus</h2>
+        <AuthGate>
+          <CreateMenuFormDrawer>
+            <DrawerTrigger
+              render={
+                <Button size="sm">
+                  <PlusIcon />
+                </Button>
+              }
+            />
+          </CreateMenuFormDrawer>
+        </AuthGate>
+      </div>
+      {menus.data.length > 0 ? (
+        <ul className="-my-2 flex snap-x scroll-px-(--layout-gutter) scrollbar-none flex-row gap-4 overflow-x-scroll px-layout py-2">
+          {menus.data.map((menu) => (
+            <li key={menu.id} className="shrink-0 snap-start">
+              <Link
+                to="/menu/$id"
+                params={{ id: menu.id }}
+                className="block rounded-2xl"
+              >
+                <MenuCard menu={menu} />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mx-layout text-center text-sm text-muted">
+          Aucun menu pour le moment
+        </p>
+      )}
     </section>
   );
 }

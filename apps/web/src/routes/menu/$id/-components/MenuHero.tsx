@@ -1,5 +1,10 @@
+import { PencilSimpleIcon } from "@phosphor-icons/react";
 import type { Menu } from "@woj/contract";
+import { AuthGate } from "@/components/auth/AuthGate";
+import { Button } from "@/components/ui/Button";
+import { DrawerTrigger } from "@/components/ui/Drawer";
 import { image } from "@/lib/image";
+import { UpdateMenuFormDrawer } from "@/routes/-components/MenuFormDrawer";
 
 export function MenuHero({ menu }: { menu: Menu }) {
   return (
@@ -19,7 +24,16 @@ export function MenuHero({ menu }: { menu: Menu }) {
           ))}
         </div>
       </div>
-      <h1 className="font-display text-h1 text-fg">{menu.title}</h1>
+      <div className="flex flex-row items-center justify-between">
+        <h1 className="font-display text-h1 text-fg">{menu.title}</h1>
+        <AuthGate>
+          <UpdateMenuFormDrawer menu={menu}>
+            <DrawerTrigger render={<Button size="sm" />}>
+              <PencilSimpleIcon />
+            </DrawerTrigger>
+          </UpdateMenuFormDrawer>
+        </AuthGate>
+      </div>
     </div>
   );
 }

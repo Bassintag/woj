@@ -32,7 +32,7 @@ export function MenuAttributes({
       />
       <DetailsCard
         icon={<FireIcon />}
-        title={`${(calories / portions).toFixed(0)} kcal`}
+        title={`${(portions === 0 ? 0 : calories / portions).toFixed(0)} kcal`}
         description="par portion"
       />
     </div>

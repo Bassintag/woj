@@ -7,7 +7,7 @@ import {
 } from "@woj/contract";
 import { jwtDecode } from "jwt-decode";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface DecodedToken<T> {
   raw: string;
@@ -45,6 +45,9 @@ export const useAuthStore = create<AuthState>()(
         set({ tokens: undefined });
       },
     }),
-    { name: "woj-auth" },
+    {
+      name: "woj-auth",
+      storage: createJSONStorage(() => window.sessionStorage),
+    },
   ),
 );
