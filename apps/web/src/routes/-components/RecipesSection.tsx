@@ -1,3 +1,4 @@
+import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useRouter, useSearch } from "@tanstack/react-router";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
@@ -10,10 +11,10 @@ import {
   useRef,
 } from "react";
 import { z } from "zod";
-import { Tag, TagGroup } from "@/components/layout/Tag";
 import { RecipeCard, RecipeCardSkeleton } from "@/components/recipe/RecipeCard";
-import { Input } from "@/components/ui/Input";
+import { InputGroup, InputGroupInput } from "@/components/ui/InputGroup";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Tag, TagGroup } from "@/components/ui/Tag";
 import { useRecipeSearch } from "@/hooks/useRecipeIndex";
 import { q } from "@/lib/orpc";
 import { filterByTags } from "@/lib/recipe";
@@ -127,12 +128,14 @@ function RecipeSectionInput() {
   );
 
   return (
-    <Input
-      placeholder="Search"
-      className="mx-layout"
-      defaultValue={search ?? ""}
-      onChange={onChange}
-    />
+    <InputGroup className="mx-layout">
+      <MagnifyingGlassIcon />
+      <InputGroupInput
+        placeholder="Rechercher"
+        defaultValue={search ?? ""}
+        onChange={onChange}
+      />
+    </InputGroup>
   );
 }
 
@@ -174,7 +177,7 @@ function RecipesSectionContent({ ids }: { ids?: number[] }) {
   if (results.length === 0) {
     return (
       <div className="mx-layout flex h-36 items-center justify-center">
-        <p className="text-center text-md text-muted-fg">Aucun résultat</p>
+        <p className="text-center text-md text-muted">Aucun résultat</p>
       </div>
     );
   }

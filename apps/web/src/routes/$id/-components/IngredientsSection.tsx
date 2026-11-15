@@ -4,7 +4,12 @@ import { getRouteApi } from "@tanstack/react-router";
 import { range } from "es-toolkit";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { Stepper, StepperButton, StepperValue } from "@/components/ui/Stepper";
+import {
+  Stepper,
+  StepperDecrement,
+  StepperIncrement,
+  StepperValue,
+} from "@/components/ui/Stepper";
 import { useServingsStore } from "@/hooks/useServingsStore";
 import { image } from "@/lib/image";
 import { q } from "@/lib/orpc";
@@ -19,21 +24,17 @@ export function IngredientsSections() {
     <section className="flex flex-col gap-6 px-layout">
       <div className="flex min-h-10 flex-row items-center justify-between">
         <h2 className="text-h2 text-fg">Ingrédients</h2>
-        <Stepper>
-          <StepperButton
-            aria-label="Diminuer"
-            disabled={store.servings <= 1}
-            onClick={() => store.set(store.servings - 1)}
-          >
+        <Stepper
+          value={store.servings}
+          onValueChange={(value) => value != null && store.set(value)}
+        >
+          <StepperDecrement aria-label="Diminuer">
             <MinusIcon />
-          </StepperButton>
+          </StepperDecrement>
           <StepperValue>{store.servings} pers.</StepperValue>
-          <StepperButton
-            aria-label="Augmenter"
-            onClick={() => store.set(store.servings + 1)}
-          >
+          <StepperIncrement aria-label="Augmenter">
             <PlusIcon />
-          </StepperButton>
+          </StepperIncrement>
         </Stepper>
       </div>
       <Suspense fallback={<IngredientsSectionsContentSkeleton />}>
@@ -71,7 +72,7 @@ function IngredientsSectionsContent() {
     <ul className="grid grid-cols-3 items-stretch gap-4">
       {constituents.data.map((constituent) => (
         <li className="flex flex-col gap-2" key={constituent.id}>
-          <div className="aspect-square rounded-2xl bg-muted-bg p-4">
+          <div className="aspect-square rounded-2xl bg-surface p-4">
             {constituent.ingredient.imageUrl && (
               <img
                 className="aspect-square w-full rounded-xl"
@@ -81,7 +82,7 @@ function IngredientsSectionsContent() {
             )}
           </div>
           <div className="flex grow flex-col gap-1">
-            <h3 className="line-clamp-2 text-xs text-muted-fg">
+            <h3 className="line-clamp-2 text-xs text-muted">
               {constituent.ingredient.title}
             </h3>
             <p className="mt-auto text-md text-fg">

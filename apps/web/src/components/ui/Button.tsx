@@ -7,7 +7,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        solid: "bg-muted-bg text-fg",
+        surface: "bg-surface text-fg",
         ghost: "bg-bg text-fg",
         brand: "bg-brand text-fg",
       },
@@ -17,7 +17,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: "solid",
+      variant: "surface",
       size: "md",
     },
   },

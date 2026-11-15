@@ -17,7 +17,12 @@ import {
   DrawerTitle,
 } from "@/components/ui/Drawer";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { Stepper, StepperButton, StepperValue } from "@/components/ui/Stepper";
+import {
+  Stepper,
+  StepperDecrement,
+  StepperIncrement,
+  StepperValue,
+} from "@/components/ui/Stepper";
 import { useCartStore } from "@/hooks/useCartStore";
 import { useListStore } from "@/hooks/useListStore";
 import { useRecipeSearch } from "@/hooks/useRecipeIndex";
@@ -75,7 +80,7 @@ export function CartDrawer() {
             <CartLines />
           </Suspense>
         ) : (
-          <p className="text-md text-muted-fg">Le panier est vide.</p>
+          <p className="text-md text-muted">Le panier est vide.</p>
         )}
       </div>
       <DrawerClose
@@ -123,7 +128,7 @@ function CartLines() {
         const recipe = get(item.recipeId);
         return (
           <li className="flex flex-row items-center gap-4" key={item.recipeId}>
-            <div className="size-18 shrink-0 overflow-hidden rounded-2xl bg-muted-bg">
+            <div className="size-18 shrink-0 overflow-hidden rounded-2xl bg-surface">
               {recipe.imageUrl && (
                 <img
                   className="size-full object-cover"
@@ -135,25 +140,19 @@ function CartLines() {
             <div className="flex min-w-0 flex-1 flex-col gap-2">
               <h3 className="truncate text-md text-fg">{recipe.title}</h3>
               <div className="flex flex-row items-end justify-between">
-                <Stepper>
-                  <StepperButton
-                    aria-label="Diminuer"
-                    disabled={item.quantity <= 1}
-                    onClick={() =>
-                      setQuantity(item.recipeId, item.quantity - 1)
-                    }
-                  >
+                <Stepper
+                  value={item.quantity}
+                  onValueChange={(value) =>
+                    value != null && setQuantity(item.recipeId, value)
+                  }
+                >
+                  <StepperDecrement aria-label="Diminuer">
                     <MinusIcon />
-                  </StepperButton>
+                  </StepperDecrement>
                   <StepperValue>{item.quantity} pers.</StepperValue>
-                  <StepperButton
-                    aria-label="Augmenter"
-                    onClick={() =>
-                      setQuantity(item.recipeId, item.quantity + 1)
-                    }
-                  >
+                  <StepperIncrement aria-label="Augmenter">
                     <PlusIcon />
-                  </StepperButton>
+                  </StepperIncrement>
                 </Stepper>
                 <Button
                   size="sm"

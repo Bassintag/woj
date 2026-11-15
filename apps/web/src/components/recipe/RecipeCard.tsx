@@ -25,7 +25,7 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="relative aspect-square rounded-2xl bg-muted-bg">
+      <div className="relative aspect-square rounded-2xl bg-surface">
         {recipe.imageUrl && (
           <img
             alt={recipe.title}
@@ -51,7 +51,7 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
       <div className="flex flex-col gap-1">
         <h3 className="line-clamp-2 text-md text-fg">{recipe.title}</h3>
         {recipe.calories && (
-          <p className="text-xs text-muted-fg">
+          <p className="text-xs text-muted">
             {recipe.calories.toFixed(0)} kcal
           </p>
         )}

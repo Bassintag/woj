@@ -17,7 +17,7 @@ export function MenuCardSkeleton() {
 export function MenuCard({ menu }: { menu: Menu }) {
   return (
     <div className="flex w-40 flex-col gap-2">
-      <div className="grid aspect-square w-full grid-cols-2 gap-2 rounded-2xl bg-muted-bg p-2">
+      <div className="grid aspect-square w-full grid-cols-2 gap-2 rounded-2xl bg-surface p-2">
         {menu.meals.slice(0, 4).map((meal) => (
           <div key={meal.id}>
             {meal.recipe.imageUrl && (
@@ -33,7 +33,7 @@ export function MenuCard({ menu }: { menu: Menu }) {
       <div className="flex flex-col gap-1">
         <h3 className="line-clamp-2 text-md text-fg">{menu.title}</h3>
         {menu.meals.length > 1 && (
-          <p className="text-xs text-muted-fg">{menu.meals.length} recettes</p>
+          <p className="text-xs text-muted">{menu.meals.length} recettes</p>
         )}
       </div>
     </div>
