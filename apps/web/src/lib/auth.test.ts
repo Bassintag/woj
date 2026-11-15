@@ -4,6 +4,7 @@ import { getAccessToken, login } from "./auth";
 import { orpc } from "./orpc";
 
 const realFetch = globalThis.fetch;
+const realWindow = globalThis.window;
 let calls: Request[];
 
 function jwt(payload: object) {
@@ -34,6 +35,7 @@ beforeEach(() => {
 
 afterEach(() => {
   globalThis.fetch = realFetch;
+  globalThis.window = realWindow;
 });
 
 test("login stores the tokens using basic auth", async () => {
