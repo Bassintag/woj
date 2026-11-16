@@ -1,5 +1,5 @@
 import { useSelector } from "@tanstack/react-form";
-import type { ComponentProps, ComponentType, ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { useFieldContext } from "@/hooks/useAppForm";
 import { Field, FieldDescription, FieldError, FieldLabel } from "../Field";
 
@@ -30,7 +30,9 @@ export function FormField({
   );
 }
 
-export function withField<P extends object>(Component: ComponentType<P>) {
+export function withField<P extends object>(
+  Component: (props: P) => ReactNode,
+) {
   return function FieldComponent({
     label,
     description,

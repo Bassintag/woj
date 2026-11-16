@@ -2,18 +2,22 @@ import {
   FireIcon,
   HeartIcon,
   OvenIcon,
+  PencilSimpleIcon,
   TimerIcon,
 } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { range } from "es-toolkit";
 import { type ReactNode, Suspense } from "react";
+import { AuthGate } from "@/components/auth/AuthGate";
 import { Button } from "@/components/ui/Button";
+import { DrawerTrigger } from "@/components/ui/Drawer";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useFavoritesStore } from "@/hooks/useFavoritesStore";
 import { image } from "@/lib/image";
 import { q } from "@/lib/orpc";
 import { pageTitle } from "@/lib/pageTitle";
+import { UpdateRecipeFormDrawer } from "@/routes/-components/RecipeFormDrawer";
 
 const Route = getRouteApi("/$id/");
 
@@ -50,10 +54,10 @@ export function DetailsSectionContent() {
   return (
     <section className="flex flex-col gap-6 px-layout">
       <title>{pageTitle(recipe.data.title)}</title>
-      <div className="relative rounded-4xl bg-surface">
+      <div className="relative h-64 shrink-0 rounded-4xl bg-surface">
         {recipe.data.imageUrl && (
           <img
-            className="aspect-square w-full object-cover object-center"
+            className="mx-auto aspect-square h-full object-cover object-center"
             alt={recipe.data.title}
             src={image(recipe.data.imageUrl)}
           />
@@ -68,7 +72,18 @@ export function DetailsSectionContent() {
           <HeartIcon weight={isFavorite ? "fill" : "regular"} />
         </Button>
       </div>
-      <h1 className="font-display text-h2 text-fg">{recipe.data.title}</h1>
+      <div className="flex flex-row items-center justify-between gap-4">
+        <h1 className="font-display text-h2 text-fg">{recipe.data.title}</h1>
+        <AuthGate>
+          <UpdateRecipeFormDrawer recipe={recipe.data}>
+            <DrawerTrigger
+              render={<Button size="sm" aria-label="Modifier la recette" />}
+            >
+              <PencilSimpleIcon />
+            </DrawerTrigger>
+          </UpdateRecipeFormDrawer>
+        </AuthGate>
+      </div>
       <div className="grid grid-cols-3 gap-4">
         {recipe.data.calories != null && (
           <DetailsCard

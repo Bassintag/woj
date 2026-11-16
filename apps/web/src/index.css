@@ -58,14 +58,23 @@
   --shadow-base: 0 0 8px rgba(12, 10, 9, 10%);
 
   --layout-gutter: --spacing(8);
+  --layout-spacing: var(--layout-gutter);
 }
 
 @utility px-layout {
-  padding-inline: var(--layout-gutter);
+  padding-inline: var(--layout-spacing);
+}
+
+@utility -px-layout {
+  padding-inline: calc(-1 * var(--layout-spacing));
 }
 
 @utility mx-layout {
-  margin-inline: var(--layout-gutter);
+  margin-inline: var(--layout-spacing);
+}
+
+@utility -mx-layout {
+  margin-inline: calc(-1 * var(--layout-spacing));
 }
 
 :root {

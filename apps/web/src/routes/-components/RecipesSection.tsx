@@ -1,16 +1,21 @@
+import { PlusIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useRouter, useSearch } from "@tanstack/react-router";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { range, sortBy } from "es-toolkit";
 import { Suspense, useCallback, useRef } from "react";
 import { z } from "zod";
+import { AuthGate } from "@/components/auth/AuthGate";
 import { RecipeCard, RecipeCardSkeleton } from "@/components/recipe/RecipeCard";
 import { RecipeSearchInput } from "@/components/recipe/RecipeSearchInput";
+import { Button } from "@/components/ui/Button";
+import { DrawerTrigger } from "@/components/ui/Drawer";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Tag, TagGroup } from "@/components/ui/Tag";
 import { useRecipeSearch } from "@/hooks/useRecipeIndex";
 import { useRecipeResults } from "@/hooks/useRecipeResults";
 import { q } from "@/lib/orpc";
+import { CreateRecipeFormDrawer } from "./RecipeFormDrawer";
 
 const COLUMNS = 2;
 
@@ -43,7 +48,24 @@ export function RecipesSection({
   return (
     <section className="flex flex-col gap-6">
       {title && (
-        <h2 className="px-layout font-display text-h2 text-fg">{title}</h2>
+        <div className="flex flex-row items-center justify-between px-layout">
+          <h2 className="font-display text-h2 text-fg">{title}</h2>
+          <AuthGate>
+            <CreateRecipeFormDrawer>
+              <DrawerTrigger
+                render={
+                  <Button
+                    variant="surface"
+                    size="sm"
+                    aria-label="Nouvelle recette"
+                  />
+                }
+              >
+                <PlusIcon />
+              </DrawerTrigger>
+            </CreateRecipeFormDrawer>
+          </AuthGate>
+        </div>
       )}
       <div className="flex flex-col gap-4">
         <RecipeSectionInput />

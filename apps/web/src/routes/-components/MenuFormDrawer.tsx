@@ -1,9 +1,11 @@
-import { FloppyDiskIcon } from "@phosphor-icons/react";
+import { FloppyDiskIcon, TrashIcon } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { CreateMenuSchema, type Menu } from "@woj/contract";
 import { type PropsWithChildren, type ReactNode, useState } from "react";
 import type { z } from "zod";
+import { Button } from "@/components/ui/Button";
+import { ConfirmDrawer } from "@/components/ui/ConfirmDrawer";
 import {
   Drawer,
   DrawerActions,
@@ -30,10 +32,12 @@ export function MenuFormDrawer({
   title,
   defaultValues: propsDefaultValues,
   onSubmit,
+  onDelete,
 }: {
   title: ReactNode;
   defaultValues?: MenuFormValues;
   onSubmit: (values: MenuFormValues) => void;
+  onDelete?: () => void;
 }) {
   const form = useAppForm({
     defaultValues: propsDefaultValues ?? defaultValues,
@@ -66,9 +70,14 @@ export function MenuFormDrawer({
           )}
         </form.AppField>
       </DrawerContent>
-      <DrawerActions>
+      <DrawerActions className="flex-row">
+        {onDelete && (
+          <Button aria-label="Supprimer" onClick={onDelete}>
+            <TrashIcon />
+          </Button>
+        )}
         <form.AppForm>
-          <form.SubmitButton type="submit" variant="brand">
+          <form.SubmitButton type="submit" variant="brand" className="flex-1">
             <FloppyDiskIcon />
             Enregistrer
           </form.SubmitButton>
@@ -115,6 +124,20 @@ export function UpdateMenuFormDrawer({
   menu,
 }: PropsWithChildren & { menu: Menu }) {
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const navigate = useNavigate();
+  const deleteMenu = useMutation(
+    q.menus.remove.mutationOptions({
+      async onSuccess() {
+        queryClient.removeQueries({
+          queryKey: q.menus.get.queryKey({ input: { id: menu.id } }),
+        });
+        await queryClient.invalidateQueries({ queryKey: q.menus.list.key() });
+        setConfirmOpen(false);
+        await navigate({ to: "/" });
+      },
+    }),
+  );
   const updateMenu = useMutation(
     q.menus.update.mutationOptions({
       async onSuccess(data) {
@@ -131,15 +154,28 @@ export function UpdateMenuFormDrawer({
   );
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      {children}
-      <MenuFormDrawer
-        title="Modifier le menu"
-        defaultValues={{ title: menu.title }}
-        onSubmit={(values) => {
-          return updateMenu.mutateAsync({ ...values, id: menu.id });
-        }}
+    <>
+      <Drawer open={open} onOpenChange={setOpen}>
+        {children}
+        <MenuFormDrawer
+          title="Modifier le menu"
+          defaultValues={{ title: menu.title }}
+          onSubmit={(values) => {
+            return updateMenu.mutateAsync({ ...values, id: menu.id });
+          }}
+          onDelete={() => {
+            setOpen(false);
+            setConfirmOpen(true);
+          }}
+        />
+      </Drawer>
+      <ConfirmDrawer
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Supprimer le menu"
+        description={`« ${menu.title} » sera définitivement supprimé.`}
+        onConfirm={() => deleteMenu.mutateAsync({ id: menu.id })}
       />
-    </Drawer>
+    </>
   );
 }
