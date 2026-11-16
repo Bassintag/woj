@@ -11,7 +11,7 @@ import {
   UpdateRecipeFormDrawer,
 } from "./RecipeFormDrawer";
 
-const gram = { id: 1, title: "g" };
+const gram = { id: 1, title: "g", symbols: [] };
 const flour = {
   id: 10,
   title: "Farine",
